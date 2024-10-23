@@ -3,26 +3,35 @@
 #include "logger.h"
 
 struct DoublyLinkedList{
-    void* data;
-    struct DoublyLinkedList* next;
-    struct DoublyLinkedList* prev;
+    void* data;                       /* Pointer to the data stored in the node */
+    struct DoublyLinkedList* next;    /* Pointer to the next node in the list */
+    struct DoublyLinkedList* prev;    /* Pointer to the previous node in the list */
 } typedef DoublyLinkedList;
 
-DoublyLinkedList* allocate_list_mem();
+/* Allocates memory for a new  doubly linked list */
+DoublyLinkedList* allocate_node_mem();
 
+/* Returns the head  of the doubly linked list */
 DoublyLinkedList* get_list_head(DoublyLinkedList* doubly_linked_list);
 
+/* Returns the tail of the doubly linked list */
 DoublyLinkedList* get_list_tail(DoublyLinkedList* doubly_linked_list);
 
+/* Returns the length (number of nodes) in the doubly linked list */
 int get_list_length(DoublyLinkedList* doubly_linked_list);
 
-int is_list_empty(DoublyLinkedList* doubly_linked_list);
+/* Adds a new node to the tail of the doubly linked list */
+int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
 
-int list_add(DoublyLinkedList* doubly_linked_list, void* data);
-
+/* Merges the second list into the first one by appending its elements */
 int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList doubly_linked_list2);
 
+/* Returns 1 if the list is empty, otherwise returns 0 */
+int is_list_empty(DoublyLinkedList* doubly_linked_list);
+
+/* Checks if the list contains the given string; returns 1 if found, 0 otherwise */
 int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string);
 
-int free_list(DoublyLinkedList* doubly_linked_list);
+/* Frees all nodes in the list and their data, uses a callback function to free the data */
+int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
 
