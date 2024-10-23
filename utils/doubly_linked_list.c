@@ -26,7 +26,7 @@ DoublyLinkedList* get_list_head(DoublyLinkedList* doublyLinkedList){
 DoublyLinkedList* get_list_tail(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = doublyLinkedList;
     while(current->next != NULL){
-        current = current.next;
+        current = current->next;
     }
     return current;
 }
@@ -89,12 +89,13 @@ int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string){
 
 
 int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
+    DoublyLinkedList* current;
+    DoublyLinkedList* next_node;
     if (is_list_empty(doubly_linked_list)) {
         return TRUE;
     }
 
-    DoublyLinkedList* current = get_list_head(doubly_linked_list);
-    DoublyLinkedList* next_node;
+    current = get_list_head(doubly_linked_list);
 
     while (current != NULL) {
         next_node = current->next;
@@ -114,12 +115,13 @@ int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void
 
 
 int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
+    DoublyLinkedList* current;
+    DoublyLinkedList* next_node;
     if (is_list_empty(doubly_linked_list)) {
         return TRUE;
     }
 
-    DoublyLinkedList* current = get_list_head(doubly_linked_list);
-    DoublyLinkedList* next_node;
+    current = get_list_head(doubly_linked_list);
 
     while (current != NULL) {
         next_node = current->next;
