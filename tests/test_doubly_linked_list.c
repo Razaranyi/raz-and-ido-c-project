@@ -94,13 +94,15 @@ int main() {
 
     /* Clean up */
     free_list(list, free_node_data);
+    list = NULL;  /* Prevent dangling pointer */
 
-    /* Verify that the list is empty after freeing */
+/* Verify that the list is empty after freeing */
     if (is_list_empty(list)) {
         printf("Test 7 Passed: free_list\n");
     } else {
         printf("Test 7 Failed: free_list\n");
     }
+
 
     return 0;
 }

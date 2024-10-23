@@ -17,6 +17,12 @@ DoublyLinkedList* allocate_node_mem(){
 
 DoublyLinkedList* get_list_head(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = doublyLinkedList;
+
+    if (current == NULL) {
+        warn("List is empty",__LINE__);
+        return NULL;
+    }
+
     while (current->prev != NULL){
         current = current->prev;
     }
@@ -25,6 +31,11 @@ DoublyLinkedList* get_list_head(DoublyLinkedList* doublyLinkedList){
 
 DoublyLinkedList* get_list_tail(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = doublyLinkedList;
+    if (current == NULL) {
+        warn("List is empty",__LINE__);
+        return NULL;
+    }
+
     while(current->next != NULL){
         current = current->next;
     }
@@ -34,6 +45,11 @@ DoublyLinkedList* get_list_tail(DoublyLinkedList* doublyLinkedList){
 int get_list_length(DoublyLinkedList* doublyLinkedList){
     int length = 0;
     DoublyLinkedList* current = get_list_head(doublyLinkedList);
+
+    if (doublyLinkedList == NULL) {
+        warn("List is Null", __LINE__);
+        return 0;
+    }
 
     if(current->data != NULL){
         length+=1;
@@ -73,7 +89,10 @@ int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_
 }
 
 
-int is_list_empty(DoublyLinkedList* doubly_linked_list){
+int is_list_empty(DoublyLinkedList* doubly_linked_list) {
+    if (doubly_linked_list == NULL) {
+        return TRUE;
+    }
     return get_list_length(doubly_linked_list) == 0;
 }
 
@@ -117,7 +136,8 @@ int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void
 int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
     DoublyLinkedList* current;
     DoublyLinkedList* next_node;
-    if (is_list_empty(doubly_linked_list)) {
+
+    if (doubly_linked_list == NULL) {
         return TRUE;
     }
 

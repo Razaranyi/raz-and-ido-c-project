@@ -5,62 +5,54 @@ CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils
 # Directories
 UTILS_DIR = utils
 OBJ_DIR = obj
-TEST_DIR = tests
+TESTS_DIR = tests
 
-# Target executable name
-TARGET = assembler
-TEST_TARGET = test_runner
+# Executables
+MAIN_EXEC = assembler
+TEST_EXEC = test_runner
 
 # Source files
-MAIN_SRC := main.c
-SRC_FILES := $(filter-out $(MAIN_SRC), $(wildcard *.c))
-UTILS_FILES := $(wildcard $(UTILS_DIR)/*.c)
-TEST_FILES := $(wildcard $(TEST_DIR)/*.c)
-SRCS := $(MAIN_SRC) $(SRC_FILES) $(UTILS_FILES)
+MAIN_SRC = main.c
+UTILS_SRC = $(wildcard $(UTILS_DIR)/*.c)
+TEST_SRC = $(wildcard $(TESTS_DIR)/test_*.c)
 
-# Object files for the main executable
-MAIN_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(MAIN_SRC))
-APP_OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES)) \
-            $(patsubst $(UTILS_DIR)/%.c,$(OBJ_DIR)/%.o,$(UTILS_FILES))
-OBJS := $(APP_OBJS) $(MAIN_OBJS)
+# Object files
+MAIN_OBJS = $(OBJ_DIR)/main.o
+UTILS_OBJS = $(patsubst $(UTILS_DIR)/%.c,$(OBJ_DIR)/%.o,$(UTILS_SRC))
+TEST_OBJS = $(patsubst $(TESTS_DIR)/%.c,$(OBJ_DIR)/%.o,$(TEST_SRC))
 
-# Object files for tests (excluding main.c)
-TEST_OBJS := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%.o,$(TEST_FILES))
-TEST_APP_OBJS := $(APP_OBJS)  # Reuse APP_OBJS without main.o
+# Default target: Build the main executable
+all: $(MAIN_EXEC)
 
-# Default target
-all: $(TARGET)
-
-# Link object files to create the main executable
-$(TARGET): $(OBJS)
+# Build the main executable
+$(MAIN_EXEC): $(MAIN_OBJS) $(UTILS_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-# Compile source files in current directory to object files
-$(OBJ_DIR)/%.o: %.c
+# Build the test executable
+$(TEST_EXEC): $(TEST_OBJS) $(UTILS_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+# Compile main source file
+$(OBJ_DIR)/main.o: $(MAIN_SRC)
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile source files from utils to object files
+# Compile utility source files
 $(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile test files to object files
-$(OBJ_DIR)/%.o: $(TEST_DIR)/%.c
+# Compile test source files
+$(OBJ_DIR)/%.o: $(TESTS_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Build the test runner (exclude main.o)
-test: $(TEST_OBJS) $(TEST_APP_OBJS)
-	$(CC) $(CFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(TEST_APP_OBJS)
-
 # Run tests
-run-test: test
-	./$(TEST_TARGET)
+test: $(TEST_EXEC)
+	./$(TEST_EXEC)
 
 # Clean up build artifacts
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(TARGET) $(TEST_TARGET)
+	rm -rf $(OBJ_DIR) $(MAIN_EXEC) $(TEST_EXEC)
 
-# Phony targets
-.PHONY: all clean test run-test
+.PHONY: all test clean
