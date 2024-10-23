@@ -87,6 +87,32 @@ int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string){
     return FALSE;
 }
 
+
+int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
+    if (is_list_empty(doubly_linked_list)) {
+        return TRUE;
+    }
+
+    DoublyLinkedList* current = get_list_head(doubly_linked_list);
+    DoublyLinkedList* next_node;
+
+    while (current != NULL) {
+        next_node = current->next;
+        if (current->data != NULL) {
+            free_node_data(current->data);
+        }
+        free(current);
+        current = next_node;
+    }
+
+    doubly_linked_list->data = NULL;
+    doubly_linked_list->next = NULL;
+    doubly_linked_list->prev = NULL;
+
+    return TRUE;
+}
+
+
 int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
     if (is_list_empty(doubly_linked_list)) {
         return TRUE;

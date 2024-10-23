@@ -26,6 +26,9 @@ int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
 /* Merges the second list into the first one by appending its elements */
 int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList doubly_linked_list2);
 
+/*Deletes list content w/o free its memory for re-use*/
+int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
+
 /* Returns 1 if the list is empty, otherwise returns 0 */
 int is_list_empty(DoublyLinkedList* doubly_linked_list);
 
