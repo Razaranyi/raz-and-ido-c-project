@@ -1,6 +1,8 @@
+#ifndef LOGGER_H
+#define LOGGER_H
 
-/* Log level Enum */
-typedef  enum {
+/* Define the log levels used in the logger */
+typedef enum {
     DEBUG,
     INFO,
     WARN,
@@ -8,19 +10,10 @@ typedef  enum {
     FATAL
 } LogLevel;
 
-
-/*print log in level debug*/
+/* Function prototypes for logging at different levels */
 void debug(char* message, int line);
-
-/*print log in level info*/
-void info(char* message, int line);
-
-/*print log in level warning*/
 void warn(char* message, int line);
-
-/*print log in level error*/
 void error(char* message, int line);
-
-/*print log in level critical*/
 void fatal(char* message, int line);
 
+#endif

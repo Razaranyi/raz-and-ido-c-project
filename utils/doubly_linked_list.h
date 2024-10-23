@@ -1,12 +1,18 @@
 #include <stdlib.h>
+#ifndef DOUBLY_LINKED_LIST_H
+#define DOUBLY_LINKED_LIST_H
+
+#include <stdlib.h>
 #include "commons.h"
 #include "logger.h"
 
-struct DoublyLinkedList{
+
+typedef struct DoublyLinkedList{
     void* data;                       /* Pointer to the data stored in the node */
     struct DoublyLinkedList* next;    /* Pointer to the next node in the list */
     struct DoublyLinkedList* prev;    /* Pointer to the previous node in the list */
-} typedef DoublyLinkedList;
+} DoublyLinkedList;
+
 
 /* Allocates memory for a new  doubly linked list */
 DoublyLinkedList* allocate_node_mem();
@@ -24,7 +30,7 @@ int get_list_length(DoublyLinkedList* doubly_linked_list);
 int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
 
 /* Merges the second list into the first one by appending its elements */
-int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList doubly_linked_list2);
+int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_linked_list2);
 
 /*Deletes list content w/o free its memory for re-use*/
 int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
@@ -38,3 +44,4 @@ int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string);
 /* Frees all nodes in the list and their data, uses a callback function to free the data */
 int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
 
+#endif
