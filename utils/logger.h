@@ -24,3 +24,4 @@ void error(char* message, int line);
 
 /*print log in level critical*/
 void critical(char* message, int line);
+
