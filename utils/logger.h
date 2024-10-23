@@ -1,4 +1,3 @@
-#pragma once
 
 /* Log level Enum */
 typedef  enum {
