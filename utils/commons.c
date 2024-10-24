@@ -22,7 +22,7 @@ int is_string_begin_with_substring(char* string, char* substring){
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
-    const char* pattern = "^[A-Za-z][A-Za-z0-9]*:$";
+    char* pattern = "^[A-Za-z][A-Za-z0-9]*:$";
     return is_string_equal_by_regex(line, pattern);
 }
 
@@ -31,12 +31,12 @@ int is_string_equal_by_regex(char* string, char* pattern) {
     regex_t reg;
     int res;
 
-    /* Compile the regular expression */
+    /* compile the regular expression */
     if (regcomp(&reg, pattern, REG_EXTENDED) != 0) {
-        return 0;  /* Return 0 if regex compilation fails */
+        return 0;  /*regex compilation fails */
     }
 
-    /* Execute the regular expression */
+    /* exec the regular expression */
     res = regexec(&reg, string, 0, NULL, 0);
 
     regfree(&reg);
@@ -44,19 +44,19 @@ int is_string_equal_by_regex(char* string, char* pattern) {
     return res != REG_NOMATCH;
 }
 
-int str_substring(const char* string, int start_ind, int end_ind, char* result) {
+int str_substring(char* string, int start_ind, int end_ind, char* result) {
     int string_length = strlen(string);
 
     if (end_ind == -1) {
         end_ind = string_length;
     }
 
-    /* Check for valid indices */
+    /* check for valid indices */
     if (string_length != 0 && (start_ind < 0 || start_ind >= string_length || end_ind < start_ind || end_ind > string_length)) {
         return FALSE;
     }
 
-    /* Copy the substring to result */
+    /* copy the substring to result */
     strncpy(result, string + start_ind, end_ind - start_ind);
     result[end_ind - start_ind] = '\0';
 
@@ -75,4 +75,58 @@ int remove_leading_and_trailing_whitespaces(char* string, char* result) {
         /* Keep looping until not space */
     }
     return str_substring(string,start_ind,end_ind,result);
+}
+
+char* skip_separators(char* string, char* separator) {
+    while (*string && strchr(separator, *string)) {
+        string++;
+    }
+    return string;
+}
+
+char* get_last_separator(char* string, char* separator) {
+    int separator_length = strlen(separator);
+    char* current = string + strlen(string) - 1;
+
+    while (strstr(current - separator_length, separator) == current && current - separator_length >= current) {
+        current -= separator_length;
+    }
+
+    return current + 1;
+}
+
+int split_string_by_separator(char* string,char* separator, DoublyLinkedList** result_list, int max_splits){
+    char* current;
+    char item[4096];
+    int number_of_splits =0;
+
+    DoublyLinkedList* items_list = allocate_node_mem();
+
+    do {
+        number_of_splits++;
+        string = skip_separators(string,separator);
+        current = (strstr(string,separator));
+
+        if(current == NULL){
+            strcpy(item,string);
+        } else{
+            str_substring(string,0,current - string,item);
+        }
+
+        add_to_list(items_list, allocate_string(item));
+        string = current;
+    } while ((max_splits == -1 || number_of_splits < max_splits) && current != NULL && strlen(string) > 0);
+
+    if(string != NULL && number_of_splits == max_splits){
+        string = skip_separators(string,separator);
+        current = get_last_separator(string,separator);
+
+        if(string != current){
+            str_substring(string, 0, current - string,item);
+            add_to_list(items_list, allocate_string(item));
+        }
+    }
+
+    *result_list = items_list;
+    return 0;
 }

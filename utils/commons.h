@@ -1,6 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
-#include "doubly_linked_list.h"
+#include "common_types.h"
 
 
 typedef enum {
@@ -24,7 +24,6 @@ int replace_spaces_with_single_space(char* string);
 
 int remove_leading_and_trailing_whitespaces(char* string,char* result);
 
-int str_substring(const char* string, int start_ind, int end_ind, char* result);
-
+int str_substring(char* string, int start_ind, int end_ind, char* result);
 
 #endif
