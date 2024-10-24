@@ -133,15 +133,9 @@ int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void
 }
 
 
-int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*)) {
-    DoublyLinkedList* current;
+int free_list(DoublyLinkedList** doubly_linked_list, void (*free_node_data)(void*)) {
+    DoublyLinkedList* current = get_list_head(*doubly_linked_list);
     DoublyLinkedList* next_node;
-
-    if (doubly_linked_list == NULL) {
-        return TRUE;
-    }
-
-    current = get_list_head(doubly_linked_list);
 
     while (current != NULL) {
         next_node = current->next;
@@ -151,6 +145,7 @@ int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*
         free(current);
         current = next_node;
     }
+    *doubly_linked_list = NULL;
     return TRUE;
 }
 
