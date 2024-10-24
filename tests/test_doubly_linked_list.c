@@ -1,7 +1,7 @@
-#include <stdio.h>          /* Include for printf */
-#include <string.h>         /* Include for strcmp, memcpy */
-#include <stdlib.h>         /* Include for malloc, free */
-#include <assert.h>         /* Include for assert */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
 #include "doubly_linked_list.h"
 #include "logger.h"
 
