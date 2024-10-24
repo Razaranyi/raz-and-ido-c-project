@@ -66,7 +66,6 @@ int str_substring(const char* string, int start_ind, int end_ind, char* result) 
 int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     int start_ind;
     int end_ind;
-    int i, j;
 
     for (start_ind = 0; isspace((unsigned char)string[start_ind]); start_ind++) {
         /* Keep looping until not space */
