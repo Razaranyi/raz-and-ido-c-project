@@ -54,17 +54,19 @@ int str_substring(char* string, int start_ind, int end_ind, char* result) {
         end_ind = string_length;
     }
 
-    /* check for valid indices */
+    /* Check for valid indices */
     if (string_length != 0 && (start_ind < 0 || start_ind >= string_length || end_ind < start_ind || end_ind > string_length)) {
         return FALSE;
     }
 
-    /* copy the substring to result */
+    /* Copy the substring to result */
     strncpy(result, string + start_ind, end_ind - start_ind);
     result[end_ind - start_ind] = '\0';
 
     return TRUE;
 }
+
+
 
 int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     int start_ind;
@@ -77,8 +79,10 @@ int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     for (end_ind = strlen(string) - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {
         /* Keep looping until not space */
     }
-    return str_substring(string,start_ind,end_ind,result);
+
+    return str_substring(string, start_ind, end_ind + 1, result);
 }
+
 
 char* skip_separators(char* string, char* separator) {
     while (*string && strchr(separator, *string)) {

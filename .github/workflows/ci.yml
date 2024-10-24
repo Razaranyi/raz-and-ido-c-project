@@ -14,11 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build the main program
-        run: |
-          make clean
-          make
+      - name: Set up Docker container with Ubuntu 16.04 (32-bit)
+        run: docker pull i386/ubuntu:16.04
 
-      - name: Build and run tests
+      - name: Build and run tests in Docker
         run: |
-          make test
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace i386/ubuntu:16.04 /bin/bash -c "
+            apt-get update &&
+            apt-get install -y gcc make diffutils git &&
+            make clean &&
+            make &&
+            make test TEST_NAME=doubly_linked_list &&
+            make test TEST_NAME=commons
+          "
