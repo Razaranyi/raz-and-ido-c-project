@@ -22,7 +22,7 @@ int split_string_by_separator(char* string,char* separator, DoublyLinkedList** r
 
 int replace_spaces_with_single_space(char* string);
 
-int remove_trailing_whitespaces(char* string,char* result);
+int remove_leading_and_trailing_whitespaces(char* string,char* result);
 
 int str_substring(const char* string, int start_ind, int end_ind, char* result);
 

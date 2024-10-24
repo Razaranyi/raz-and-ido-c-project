@@ -63,7 +63,7 @@ int str_substring(const char* string, int start_ind, int end_ind, char* result) 
     return TRUE;
 }
 
-int remove_trailing_whitespaces(char* string, char* result) {
+int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     int start_ind;
     int end_ind;
     int i, j;
