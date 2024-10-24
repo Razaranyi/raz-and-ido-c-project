@@ -1,5 +1,3 @@
-/* tests/test_doubly_linked_list.c */
-
 #include <stdio.h>          /* Include for printf */
 #include <string.h>         /* Include for strcmp, memcpy */
 #include <stdlib.h>         /* Include for malloc, free */
@@ -93,8 +91,10 @@ int main() {
     }
 
     /* Clean up */
-    free_list(list, free_node_data);
+    free_list(&list, free_node_data);
     list = NULL;  /* Prevent dangling pointer */
+
+
 
 /* Verify that the list is empty after freeing */
     if (is_list_empty(list)) {

@@ -42,6 +42,6 @@ int is_list_empty(DoublyLinkedList* doubly_linked_list);
 int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string);
 
 /* Frees all nodes in the list and their data, uses a callback function to free the data */
-int free_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
+int free_list(DoublyLinkedList** doubly_linked_list, void (*free_node_data)(void*));
 
 #endif
