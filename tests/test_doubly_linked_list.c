@@ -2,7 +2,6 @@
 #include <string.h>         /* Include for strcmp, memcpy */
 #include <stdlib.h>         /* Include for malloc, free */
 #include "doubly_linked_list.h"
-#include "commons.h"
 #include "logger.h"
 
 /* Custom strdup function to replace the non-C89 strdup */

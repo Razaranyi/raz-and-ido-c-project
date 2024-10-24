@@ -1,9 +1,7 @@
-#include <stdlib.h>
 #ifndef DOUBLY_LINKED_LIST_H
 #define DOUBLY_LINKED_LIST_H
-
 #include <stdlib.h>
-#include "commons.h"
+#include "boolean.h"
 #include "logger.h"
 
 

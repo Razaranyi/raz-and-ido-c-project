@@ -1,7 +1,10 @@
 #include <string.h>
+#include <stdlib.h>
 #include <regex.h>
 #include <ctype.h>
 #include "commons.h"
+#include "doubly_linked_list.h"
+
 
 char* allocate_string(char* string){
     int str_len = strlen(string);
@@ -32,7 +35,7 @@ int is_string_equal_by_regex(char* string, char* pattern) {
     int res;
 
     /* compile the regular expression */
-    if (regcomp(&reg, pattern, REG_EXTENDED) != 0) {
+    if (regcomp(&reg, pattern, REG_EXTENDED | REG_ICASE) != 0) {
         return 0;  /*regex compilation fails */
     }
 

@@ -1,12 +1,9 @@
 #ifndef COMMON_H
 #define COMMON_H
-#include "common_types.h"
+#include "doubly_linked_list.h"
+#include "boolean.h"
 
-/* Boolean values: TRUE or FALSE */
-typedef enum {
-    FALSE,
-    TRUE
-} Boolean;
+
 
 /* Allocates memory for a copy of the string */
 char* allocate_string(char* string);
