@@ -3,56 +3,57 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils
 
 # Directories
-UTILS_DIR = utils
-OBJ_DIR = obj
+SRC_DIR = src
 TESTS_DIR = tests
-
-# Executables
-MAIN_EXEC = assembler
-TEST_EXEC = test_runner
+OBJ_DIR = obj
+UTILS_DIR = utils
 
 # Source files
-MAIN_SRC = main.c
-UTILS_SRC = $(wildcard $(UTILS_DIR)/*.c)
-TEST_SRC = $(wildcard $(TESTS_DIR)/test_*.c)
+COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c)
 
-# Object files
-MAIN_OBJS = $(OBJ_DIR)/main.o
-UTILS_OBJS = $(patsubst $(UTILS_DIR)/%.c,$(OBJ_DIR)/%.o,$(UTILS_SRC))
-TEST_OBJS = $(patsubst $(TESTS_DIR)/%.c,$(OBJ_DIR)/%.o,$(TEST_SRC))
+# Object files for the source code (common objects)
+COMMON_OBJS = $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/%.o, $(COMMON_SRC))
 
-# Default target: Build the main executable
-all: $(MAIN_EXEC)
+# Default target for compiling source files only
+all: compile_sources
 
-# Build the main executable
-$(MAIN_EXEC): $(MAIN_OBJS) $(UTILS_OBJS)
+# Compile all source files (only compile, no linking)
+compile_sources: $(COMMON_OBJS)
+	@echo "Source files compiled successfully."
+
+# Test target
+TEST_EXEC = test_runner
+
+# User-defined input for test name
+TEST_NAME ?= all
+
+# Test source dynamically determined by the input
+TEST_SRC = $(wildcard $(TESTS_DIR)/test_$(TEST_NAME).c)
+
+# Object files for the test
+TEST_OBJ = $(patsubst $(TESTS_DIR)/%.c, $(OBJ_DIR)/%.o, $(TEST_SRC))
+
+# Default test target
+test: $(TEST_EXEC)
+	./$(TEST_EXEC)
+
+# Build test runner based on the input
+$(TEST_EXEC): $(TEST_OBJ) $(COMMON_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-# Build the test executable
-$(TEST_EXEC): $(TEST_OBJS) $(UTILS_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
-
-# Compile main source file
-$(OBJ_DIR)/main.o: $(MAIN_SRC)
-	mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compile utility source files
-$(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
-	mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compile test source files
+# Compile test sources into object files
 $(OBJ_DIR)/%.o: $(TESTS_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Run tests
-test: $(TEST_EXEC)
-	./$(TEST_EXEC)
+# Compile common object files
+$(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean up build artifacts
 clean:
-	rm -rf $(OBJ_DIR) $(MAIN_EXEC) $(TEST_EXEC)
+	rm -rf $(OBJ_DIR)/*.o $(TEST_EXEC)
 
-.PHONY: all test clean
+# Phony targets
+.PHONY: test clean compile_sources all
