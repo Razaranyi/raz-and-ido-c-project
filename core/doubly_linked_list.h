@@ -12,10 +12,10 @@ typedef struct DoublyLinkedList{
 } DoublyLinkedList;
 
 
-/* Allocates memory for a new  doubly linked list */
+/*Allocates memory for a new  doubly linked list */
 DoublyLinkedList* allocate_node_mem();
 
-/* Returns the head  of the doubly linked list */
+/*Returns the head  of the doubly linked list */
 DoublyLinkedList* get_list_head(DoublyLinkedList* doubly_linked_list);
 
 /* Returns the tail of the doubly linked list */
@@ -30,16 +30,16 @@ int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
 /* Merges the second list into the first one by appending its elements */
 int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_linked_list2);
 
-/*Deletes list content w/o free its memory for re-use*/
+/*deletes list content w/o free its memory for re-use*/
 int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
 
-/* Returns 1 if the list is empty, otherwise returns 0 */
+/* returns 1 if the list is empty, otherwise returns 0 */
 int is_list_empty(DoublyLinkedList* doubly_linked_list);
 
-/* Checks if the list contains the given string; returns 1 if found, 0 otherwise */
+/* checks if the list contains the given string; returns 1 if found, 0 otherwise */
 int is_list_contains_string(DoublyLinkedList* doubly_linked_list, char* string);
 
-/* Frees all nodes in the list and their data, uses a callback function to free the data */
+/* Frees all nods in the list and their data, using a callback function to free the data */
 int free_list(DoublyLinkedList** doubly_linked_list, void (*free_node_data)(void*));
 
 #endif
