@@ -4,6 +4,131 @@
 #include <ctype.h>
 #include "commons.h"
 #include "../core/doubly_linked_list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+/*get pointer and checks if malloc worked OK*/
+void check_malloc(void * p)
+{
+	if(p == NULL)
+	{
+		printf("Memory allocation failed. \n");
+		exit(0); 
+	}
+}
+
+
+/*get word, list of words and list of words size , run over the list and check if the word is in the list
+return bollean int for true or false*/
+int is_word_in_list(char *word, char *word_list[], int list_size)
+{
+    int i;
+    cut_spaces(word);
+    for (i = 0; i < list_size; i++)
+    {
+        if (strcmp(word, word_list[i]) == 0)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*get word
+with macro COMMANDS and is_word_in_list checks if the word is in the command list
+return int as boolean*/
+int check_if_command(char *word)
+{
+    char commands = "this is not real I am waiting for real data";
+    return is_word_in_list(word, commands, COMMANDS_LEN);
+}
+
+
+/*get word
+with macro INSTRUCTIONS and is_word_in_list checks if the word is in the instruction list
+return int as boolean*/
+int check_if_instruction(char *word)
+{
+    char instructions = "this is not real I am waiting for real data";
+    return is_word_in_list(word, instructions, INSTRUCTIONS_LEN);
+}
+
+
+/*get char * (fname)
+add to it ".as" in tne end
+return char* */
+char * add_as(char* fname)
+{
+
+	size_t len = strlen(fname); /*get the length of the original string*/
+	fname = realloc(fname, len + 4); /*allocate memory for the one with the ".as"*/
+	if (fname == NULL)
+	{
+		printf("Memory allocation failed. \n");
+		return NULL;
+	}
+	strcat(fname, ".as");
+	return fname;
+}
+
+
+/*get char * (fname)
+add to it ".am" in tne end
+return char* */
+char * add_am(char* fname)
+{
+	size_t len = strlen(fname); /*get the length of the original string*/
+	fname = realloc(fname, len + 4*sizeof(char)); /*allocate memory for the one with the ".as"*/
+	if (fname == NULL)
+	{
+		printf("Memory allocation failed. \n");
+		return NULL;
+	}
+	strcat(fname, ".am");
+	return fname;
+}
+
+/*get input and remove the whitespaces in word
+return void, change the input*/
+void cut_spaces(char * input)
+{
+    int i = 0, j =0;
+    while(input[i] != '\0')
+    {
+        if(!isspace(input[i])) /*pass on space indexs*/
+        {
+            input[j++] = input[i];
+        }
+        i++;
+    }
+    input[j] = '\0';
+    
+}
+
+/*get input and remove the whitespaces from the start of the word
+return void, change the input*/
+void cut_spaces_start(char * input)
+{
+    int i = 0, j =0;
+    /*till space*/
+    while(isspace(input[i]))
+    {
+        i++;
+    }
+    /*till end*/
+    while(input[i] != '\0')
+    {
+        input[j++] = input[i++]; 
+    }
+    input[j] = '\0';
+    
+}
+
+
+
+
 
 
 char* allocate_string(char* string){
