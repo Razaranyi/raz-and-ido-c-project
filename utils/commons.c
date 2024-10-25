@@ -3,7 +3,7 @@
 #include <regex.h>
 #include <ctype.h>
 #include "commons.h"
-#include "doubly_linked_list.h"
+#include "../core/doubly_linked_list.h"
 
 
 char* allocate_string(char* string){

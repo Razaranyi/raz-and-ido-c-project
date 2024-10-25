@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "symbol.h"
-#include "doubly_linked_list.h"
+#include "../core/symbol.h"
+#include "../core/doubly_linked_list.h"
 #include "commons.h"
 #include "boolean.h"
 
