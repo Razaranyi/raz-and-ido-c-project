@@ -201,7 +201,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || check_if_command(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
 				{
 					checker = FALSE;
-					printf("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
+					error("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
 				}
 				else /*adds the macro name*/
 				{
