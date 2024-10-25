@@ -10,6 +10,12 @@ typedef struct Symbol {
 
 }Symbol;
 
+typedef enum {
+    ENTRY,
+    EXTERNAL
+} SymbolProperty;
+
+
 Symbol* allocate_sym_mem(char* label, int value, DoublyLinkedList* sym_properties);
 int free_symbol(Symbol* symbol);
 int is_entry(Symbol symbol);
