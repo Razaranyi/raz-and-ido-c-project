@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "symbol.h"
 #include "doubly_linked_list.h"
-#include "boolean.h"
-#include "commons.h"
+#include "../utils/boolean.h"
+#include "../utils/commons.h"
 
 
 Symbol* allocate_sym_mem(char* label, int value, DoublyLinkedList* sym_properties){

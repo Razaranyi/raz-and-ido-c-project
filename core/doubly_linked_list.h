@@ -1,8 +1,8 @@
 #ifndef DOUBLY_LINKED_LIST_H
 #define DOUBLY_LINKED_LIST_H
 #include <stdlib.h>
-#include "boolean.h"
-#include "logger.h"
+#include "../utils/boolean.h"
+#include "../utils/logger.h"
 
 
 typedef struct DoublyLinkedList{

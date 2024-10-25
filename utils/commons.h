@@ -1,6 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
-#include "doubly_linked_list.h"
+#include "../core/doubly_linked_list.h"
 #include "boolean.h"
 
 
@@ -65,4 +65,4 @@ int str_substring(char* string, int start_ind, int end_ind, char* result);
    str_substring("Hello", 0, 3, result); // result = "Hel"
 */
 
-#endif /* COMMON_H */
+#endif

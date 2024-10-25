@@ -1,18 +1,19 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils
+CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils -Icore
 
 # Directories
 SRC_DIR = src
 TESTS_DIR = tests
 OBJ_DIR = obj
 UTILS_DIR = utils
+CORE_DIR = core
 
 # Source files
-COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c)
+COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c) $(wildcard $(CORE_DIR)/*.c)
 
 # Object files for the source code (common objects)
-COMMON_OBJS = $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/%.o, $(COMMON_SRC))
+COMMON_OBJS = $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/%.o, $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/%.o, $(COMMON_SRC)))
 
 # Default target for compiling source files only
 all: compile_sources
@@ -48,6 +49,11 @@ $(OBJ_DIR)/%.o: $(TESTS_DIR)/%.c
 
 # Compile common object files
 $(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile core object files
+$(OBJ_DIR)/%.o: $(CORE_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 

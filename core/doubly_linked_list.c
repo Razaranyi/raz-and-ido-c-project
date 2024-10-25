@@ -52,7 +52,7 @@ int get_list_length(DoublyLinkedList* doublyLinkedList){
     }
 
     if(current->data != NULL){
-        length+=1;
+        length++;
     }
 
     while (current->next != NULL){

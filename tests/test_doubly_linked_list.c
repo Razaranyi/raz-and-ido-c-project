@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "../utils/doubly_linked_list.h"
+#include "../core/doubly_linked_list.h"
 
 /* Custom strdup function to replace the non-C89 strdup */
 char* custom_strdup(const char* str) {

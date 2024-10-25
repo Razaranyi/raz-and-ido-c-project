@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "../utils/doubly_linked_list.h"
+#include "../core/doubly_linked_list.h"
 #include "../utils/commons.h"
 
 /* Function to free data stored in the list nodes */
