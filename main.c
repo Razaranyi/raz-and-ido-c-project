@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include "commons.h"
-#include "logger.h"
 #include <stdlib.h>
 #include <string.h>
-#include "macro_part.h"
+#include "utils/commons.h"
+#include "utils/logger.h"
+#include "utils/macro_part.h"
 #include "core/doubly_linked_list.h"
 
 int main(int argc, char* argv[]) {
