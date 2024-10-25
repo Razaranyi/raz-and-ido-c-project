@@ -2,7 +2,9 @@
 #define COMMON_H
 #include "../core/doubly_linked_list.h"
 #include "boolean.h"
-
+#define COMMANDS_LEN 16
+#define INSTRUCTIONS_LEN 4
+#define LEN_LINE 80
 
 
 /* Allocates memory for a copy of the string */
@@ -64,5 +66,33 @@ int str_substring(char* string, int start_ind, int end_ind, char* result);
    char result[100];
    str_substring("Hello", 0, 3, result); // result = "Hel"
 */
+/*adds .as to the file names we get from the user in the CLI*/
+char * add_as(char * fname);
+
+/*adds .am to the file names we get from the user in the CLI*/
+char * add_am(char * fname);
+
+/*get input and remove the whitespaces in word
+return void, change the input*/
+void  cut_spaces(char * name);
+
+/*cut out spaces from the begging of string
+return void, change the input*/
+void cut_spaces_start(char * input);
+
+/*verify that the malloc works*/
+void check_malloc(void * p);
+
+/*get word, checks if word is command
+return int as boolean*/
+int check_if_command(char *word);
+
+/*get word, checks if word is instruction
+return int as boolean*/
+int check_if_instruction(char *word);
+
+/*get word, list of words and list of words size , 
+return bollean int for true or false*/
+int is_word_in_list(char *word, char *word_list[], int list_size);
 
 #endif
