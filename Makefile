@@ -3,7 +3,6 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils -Icore
 
 # Directories
-SRC_DIR = src
 TESTS_DIR = tests
 OBJ_DIR = obj
 UTILS_DIR = utils
@@ -12,15 +11,13 @@ CORE_DIR = core
 # Source files
 COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c) $(wildcard $(CORE_DIR)/*.c)
 
-# Object files for the source code (common objects)
-COMMON_OBJS = $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/%.o, $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/%.o, $(COMMON_SRC)))
+# Object files for the source code (excluding tests and main.c for tests)
+COMMON_OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(COMMON_SRC)))
 
-# Default target for compiling source files only
-all: compile_sources
-
-# Compile all source files (only compile, no linking)
-compile_sources: $(COMMON_OBJS)
-	@echo "Source files compiled successfully."
+# Target for building the assembler executable
+assembler: $(COMMON_OBJS) $(OBJ_DIR)/main.o
+	$(CC) $(CFLAGS) -o assembler $(COMMON_OBJS) $(OBJ_DIR)/main.o
+	@echo "Executable 'assembler' created successfully."
 
 # Test target
 TEST_EXEC = test_runner
@@ -34,11 +31,11 @@ TEST_SRC = $(wildcard $(TESTS_DIR)/test_$(TEST_NAME).c)
 # Object files for the test
 TEST_OBJ = $(patsubst $(TESTS_DIR)/%.c, $(OBJ_DIR)/%.o, $(TEST_SRC))
 
-# Default test target
+# Default test target (excluding main.c)
 test: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
-# Build test runner based on the input
+# Build test runner based on the input (excluding main.o)
 $(TEST_EXEC): $(TEST_OBJ) $(COMMON_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -57,9 +54,14 @@ $(OBJ_DIR)/%.o: $(CORE_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Compile main object file for the assembler executable only
+$(OBJ_DIR)/main.o: main.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # Clean up build artifacts
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(TEST_EXEC)
+	rm -rf $(OBJ_DIR)/*.o $(TEST_EXEC) assembler
 
 # Phony targets
-.PHONY: test clean compile_sources all
+.PHONY: test clean assembler

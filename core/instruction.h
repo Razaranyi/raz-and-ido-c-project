@@ -1,7 +1,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-#include "boolean.h"
+#include "../utils/boolean.h"
 #include "doubly_linked_list.h"
 
 /* addressing modes */
@@ -35,13 +35,15 @@ void free_instruction_set();
 /* Finds an instruction by name */
 Instruction* find_instruction(char* name);
 
+/* Cheks if given name is an instruction name */
+int is_instruction_name(char* name);
+
 /* Checks if a given addressing mode is allowed for the source operand */
 int is_src_addressing_mode_allowed(Instruction* instr, int mode);
 
 /* Checks if a given addressing mode is allowed for the destination operand */
 int is_dst_addressing_mode_allowed(Instruction* instr, int mode);
 
-void initialize_instruction_set();
 
 
 #endif

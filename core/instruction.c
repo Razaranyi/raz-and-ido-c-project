@@ -1,15 +1,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "instruction.h"
-#include "commons.h" /* For allocate_string */
-#include "boolean.h"
+#include "../utils/commons.h"
+#include "../utils/boolean.h"
 #include "doubly_linked_list.h"
 
 /* Global instruction list */
 DoublyLinkedList* instruction_list = NULL;
 
 /* Function to free the data stored in the instruction list nodes */
-void free_instruction_data(void* data) {
+static void free_instruction_data(void* data) {
     Instruction* instr = (Instruction*)data;
     if (instr != NULL) {
         if (instr->instruction_name != NULL) {
@@ -22,6 +22,11 @@ void free_instruction_data(void* data) {
 /* Frees the instruction set */
 void free_instruction_set() {
     free_list(&instruction_list, free_instruction_data);
+}
+
+int is_instruction_name(char* name) {
+    Instruction* instr = find_instruction(name);
+    return (instr != NULL) ? TRUE : FALSE;
 }
 
 /* Finds an instruction by name */
@@ -43,7 +48,7 @@ Instruction* find_instruction(char* name) {
         current = current->next;
     }
 
-    return NULL; /* Instruction not found */
+    return NULL;
 }
 
 /* Checks if a given addressing mode is allowed for the source operand */
@@ -178,7 +183,7 @@ void initialize_instruction_set() {
         instr->instruction_name = allocate_string(instruction_init_data[i].instruction_name);
         if (instr->instruction_name == NULL) {
             free(instr);
-            error("Instruction not found");
+            error("Instruction not found",__LINE__);
             exit(1);
         }
 
