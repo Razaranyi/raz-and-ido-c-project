@@ -3,6 +3,7 @@
 #include <regex.h>
 #include <ctype.h>
 #include "commons.h"
+#include "../core/command.h"
 #include "../core/doubly_linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,14 +37,6 @@ int is_word_in_list(char *word, char *word_list[], int list_size)
     return FALSE;
 }
 
-/*get word
-with macro COMMANDS and is_word_in_list checks if the word is in the command list
-return int as boolean*/
-int check_if_command(char *word)
-{
-    char commands = "this is not real I am waiting for real data";
-    return is_word_in_list(word, commands, COMMANDS_LEN);
-}
 
 
 /*get word
@@ -51,7 +44,7 @@ with macro INSTRUCTIONS and is_word_in_list checks if the word is in the instruc
 return int as boolean*/
 int check_if_instruction(char *word)
 {
-    char instructions = "this is not real I am waiting for real data";
+    char *instructions[INSTRUCTIONS_LEN] = INSTRUCTIONS;
     return is_word_in_list(word, instructions, INSTRUCTIONS_LEN);
 }
 
