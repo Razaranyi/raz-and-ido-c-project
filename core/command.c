@@ -1,49 +1,49 @@
 #include <stdlib.h>
 #include <string.h>
-#include "instruction.h"
+#include "command.h"
 #include "../utils/commons.h"
 #include "../utils/boolean.h"
 #include "doubly_linked_list.h"
 
-/* Global instruction list */
-DoublyLinkedList* instruction_list = NULL;
+/* Global command list */
+DoublyLinkedList* command_list = NULL;
 
-/* Function to free the data stored in the instruction list nodes */
-static void free_instruction_data(void* data) {
-    Instruction* instr = (Instruction*)data;
-    if (instr != NULL) {
-        if (instr->instruction_name != NULL) {
-            free(instr->instruction_name);
+/* Function to free the data stored in the command list nodes */
+static void free_command_data(void* data) {
+    Command* command = (Command*)data;
+    if (command != NULL) {
+        if (command->command_name != NULL) {
+            free(command->command_name);
         }
-        free(instr);
+        free(command);
     }
 }
 
-/* Frees the instruction set */
-void free_instruction_set() {
-    free_list(&instruction_list, free_instruction_data);
+/* Frees the command set */
+void free_command_set() {
+    free_list(&command_list, free_command_data);
 }
 
-int is_instruction_name(char* name) {
-    Instruction* instr = find_instruction(name);
-    return (instr != NULL) ? TRUE : FALSE;
+int is_command_name(char* name) {
+    Command* command = find_command(name);
+    return (command != NULL) ? TRUE : FALSE;
 }
 
-/* Finds an instruction by name */
-Instruction* find_instruction(char* name) {
+/* Finds an command by name */
+Command* find_command(char* name) {
     DoublyLinkedList* current;
-    Instruction* instr;
+    Command* command;
 
-    if (instruction_list == NULL || is_list_empty(instruction_list)) {
+    if (command_list == NULL || is_list_empty(command_list)) {
         return NULL;
     }
 
-    current = get_list_head(instruction_list);
+    current = get_list_head(command_list);
 
     while (current != NULL) {
-        instr = (Instruction*)current->data;
-        if (strcmp(instr->instruction_name, name) == 0) {
-            return instr;
+        command = (Command*)current->data;
+        if (strcmp(command->command_name, name) == 0) {
+            return command;
         }
         current = current->next;
     }
@@ -52,22 +52,22 @@ Instruction* find_instruction(char* name) {
 }
 
 /* Checks if a given addressing mode is allowed for the source operand */
-int is_src_addressing_mode_allowed(Instruction* instr, int mode) {
-    if (instr == NULL || mode < 0 || mode > 3) {
+int is_src_addressing_mode_allowed(Command* command, int mode) {
+    if (command == NULL || mode < 0 || mode > 3) {
         return FALSE;
     }
-    return instr->allowed_src_addressing_modes[mode];
+    return command->allowed_src_addressing_modes[mode];
 }
 
 /* Checks if a given addressing mode is allowed for the destination operand */
-int is_dst_addressing_mode_allowed(Instruction* instr, int mode) {
-    if (instr == NULL || mode < 0 || mode > 3) {
+int is_dst_addressing_mode_allowed(Command* command, int mode) {
+    if (command == NULL || mode < 0 || mode > 3) {
         return FALSE;
     }
-    return instr->allowed_dst_addressing_modes[mode];
+    return command->allowed_dst_addressing_modes[mode];
 }
 
-static const Instruction instruction_init_data[] = {
+static const Command command_init_data[] = {
         /* mov */
         {
                 "mov", 0, -1, 2,
@@ -166,41 +166,41 @@ static const Instruction instruction_init_data[] = {
         }
 };
 
-void initialize_instruction_set() {
-    int num_instructions = sizeof(instruction_init_data) / sizeof(instruction_init_data[0]);
+void initialize_command_set() {
+    int num_commands = sizeof(command_init_data) / sizeof(command_init_data[0]);
     int i, j;
-    Instruction *instr;
+    Command *command;
 
-    instruction_list = allocate_node_mem();
+    command_list = allocate_node_mem();
 
-    for (i = 0; i < num_instructions; i++) {
-        instr = (Instruction *) malloc(sizeof(Instruction));
-        if (instr == NULL) {
+    for (i = 0; i < num_commands; i++) {
+        command = (Command *) malloc(sizeof(Command));
+        if (command == NULL) {
             error("Aloocation failed",__LINE__);
             exit(1);
         }
 
-        instr->instruction_name = allocate_string(instruction_init_data[i].instruction_name);
-        if (instr->instruction_name == NULL) {
-            free(instr);
-            error("Instruction not found",__LINE__);
+        command->command_name = allocate_string(command_init_data[i].command_name);
+        if (command->command_name == NULL) {
+            free(command);
+            error("Command not found",__LINE__);
             exit(1);
         }
 
-        instr->opcode = instruction_init_data[i].opcode;
-        instr->funct = instruction_init_data[i].funct;
-        instr->number_of_operands = instruction_init_data[i].number_of_operands;
+        command->opcode = command_init_data[i].opcode;
+        command->funct = command_init_data[i].funct;
+        command->number_of_operands = command_init_data[i].number_of_operands;
 
         /* Copy allowed source addressing modes */
         for (j = 0; j < 4; j++) {
-            instr->allowed_src_addressing_modes[j] = instruction_init_data[i].allowed_src_addressing_modes[j];
+            command->allowed_src_addressing_modes[j] = command_init_data[i].allowed_src_addressing_modes[j];
         }
 
         /* Copy allowed destination addressing modes */
         for (j = 0; j < 4; j++) {
-            instr->allowed_dst_addressing_modes[j] = instruction_init_data[i].allowed_dst_addressing_modes[j];
+            command->allowed_dst_addressing_modes[j] = command_init_data[i].allowed_dst_addressing_modes[j];
         }
 
-        add_to_list(instruction_list, instr);
+        add_to_list(command_list, command);
     }
 }
