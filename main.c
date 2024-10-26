@@ -5,18 +5,21 @@
 #include "utils/logger.h"
 #include "utils/macro_part.h"
 #include "core/doubly_linked_list.h"
+#include "core/command.h"
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
     printf("Assembler started.\n");
-	Macro * Macros = create_macro_table(); /*for the macros*/
 	if (argc < 2)
 	{
 		printf("ERROR - There is not a file name \n");
 		return 1;
 	}
-	
-	for(i = 1; i < argc; i++)
+    Macro * Macros = create_macro_table(); /*for the macros*/
+    initialize_command_set();
+
+
+    for(i = 1; i < argc; i++)
 	{
 		int checker = 0; /*checks if we get problem while reading and parse the file if 1 its all good if 0 its bad*/
 		char* fname = malloc(strlen(argv[i]) +1);/*create memory space for fname*/

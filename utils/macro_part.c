@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "macro_part.h"
+#include "../core/command.h"
 #include "commons.h"
 
 
@@ -198,7 +199,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				token++;                
 				macroname = strtok(token, " \t\0");
 				/*check valid macro name*/
-				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || check_if_command(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
+				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || check_if_command(macroname) == TRUE || is_command_name(macroname))
 				{
 					checker = FALSE;
 					error("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
