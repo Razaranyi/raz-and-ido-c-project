@@ -203,7 +203,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || is_command_name(macroname) == TRUE || get_instruction_enum(macroname))
 				{
 					checker = FALSE;
-					error("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
+					error("ERROR - theres a problems with the macro name", linecounter);
 				}
 				else /*adds the macro name*/
 				{
