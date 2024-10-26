@@ -9,13 +9,14 @@
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
+    Macro * Macros;
     printf("Assembler started.\n");
 	if (argc < 2)
 	{
 		printf("ERROR - There is not a file name \n");
 		return 1;
 	}
-    Macro * Macros = create_macro_table(); /*for the macros*/
+    Macros = create_macro_table(); /*for the macros*/
     initialize_command_set();
 
 
