@@ -8,8 +8,8 @@
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
-    printf("Assembler started.\n");
 	Macro * Macros = create_macro_table(); /*for the macros*/
+    printf("Assembler started.\n");
 	if (argc < 2)
 	{
 		printf("ERROR - There is not a file name \n");
