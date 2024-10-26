@@ -83,9 +83,6 @@ void cut_spaces_start(char * input);
 /*verify that the malloc works*/
 void check_malloc(void * p);
 
-/*get word, checks if word is command
-return int as boolean*/
-int check_if_command(char *word);
 
 /*get word, checks if word is instruction
 return int as boolean*/
