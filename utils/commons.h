@@ -6,6 +6,8 @@
 #define INSTRUCTIONS_LEN 4
 #define LEN_LINE 80
 #define INSTRUCTIONS {".data", ".string", ".entry", ".extern"}
+#define REGS {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"}
+#define REGS_LEN 8
 
 
 /* Allocates memory for a copy of the string */
@@ -84,13 +86,14 @@ void cut_spaces_start(char * input);
 /*verify that the malloc works*/
 void check_malloc(void * p);
 
-/*get word, checks if word is command
-return int as boolean*/
-int check_if_command(char *word);
 
 /*get word, checks if word is instruction
 return int as boolean*/
 int check_if_instruction(char *word);
+
+/*get word, checks if word is registar
+return int as boolean*/
+int check_if_registar(char *word);
 
 /*get word, list of words and list of words size , 
 return bollean int for true or false*/

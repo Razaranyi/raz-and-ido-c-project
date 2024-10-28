@@ -49,6 +49,17 @@ int check_if_instruction(char *word)
 }
 
 
+/*get word
+with macro REGS and is_word_in_list checks if the word is in the regs list
+return int as boolean*/
+int check_if_registar(char *word)
+{
+    char *regs[REGS_LEN] = REGS;
+    return is_word_in_list(word, regs, REGS_LEN);
+}
+
+
+
 /*get char * (fname)
 add to it ".as" in tne end
 return char* */
@@ -143,7 +154,7 @@ int is_string_begin_with_substring(char* string, char* substring){
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
-    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*:.*";
+    char* pattern = "^[a-zA-Z][a-zA-Z0-9].*:.*";
     return is_string_equal_by_regex(line, pattern);
 }
 
@@ -151,7 +162,6 @@ int is_label( char* line) {
 int is_string_equal_by_regex(char* string, char* pattern) {
     regex_t reg;
     int res;
-
     /* compile the regular expression */
     if (regcomp(&reg, pattern, REG_EXTENDED | REG_ICASE) != 0) {
         return 0;  /*regex compilation fails */
@@ -159,7 +169,6 @@ int is_string_equal_by_regex(char* string, char* pattern) {
 
     /* exec the regular expression */
     res = regexec(&reg, string, 0, NULL, 0);
-
     regfree(&reg);
 
     return res != REG_NOMATCH;

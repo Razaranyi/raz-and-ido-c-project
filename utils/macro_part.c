@@ -9,17 +9,20 @@
 
 
 /*main function that read the file and write a new one without macros
+also indexing the lines and take out the labels
 get file name return bollean as int*/
-int write_without_macro(char *fname, Macro ** Macros)
+int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 {
 	char line [LEN_LINE]; /*for moving in the lines*/
 	char temp_line [LEN_LINE]; /*for strtok*/
+	char * labelname; /*for the label name*/
 	char * token; 
 	int checker = TRUE; /*checks if we get problem while reading and parse the file if 0 its all good if 1 its bad*/
 	int macro_close = TRUE; /*check if macro is open*/
 	int linecounter = -1; /*for the line indexer*/
 	char * macro_fname = (char *)malloc(strlen(fname) + 1);
 	FILE* fp, *macrofile;
+	Line * tail = *Lines; /*to add lines*/
 	strcpy(macro_fname, fname);
 	add_as(fname); /*change the file name to .as*/
 	add_am(macro_fname); /*change the file name to .am*/
@@ -36,6 +39,7 @@ int write_without_macro(char *fname, Macro ** Macros)
 		return FALSE;
 	/*open the files*/
 	fp = fopen(fname, "r");
+
 	while (fgets(line, sizeof line, fp)!= NULL) /*run over and change the file with the known macros*/
 	{
         
@@ -68,7 +72,30 @@ int write_without_macro(char *fname, Macro ** Macros)
 				macro_close = TRUE;
 			}
 		}	
+		/*indexing the lines*/
+		printf("line : %s\n", line);
 		
+		if(is_label(line)) /*case where the line start with label*/
+		{
+
+			labelname = strtok(line, ":");
+			cut_spaces(labelname);
+			if (in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
+			{
+				checker = FALSE;
+				error("ERROR - theres a problems with the label name", linecounter);
+			}
+		}
+		else
+		{
+			labelname = NULL;
+		}
+		cut_spaces_start(line);
+		tail->data = line;
+		tail->index = linecounter;
+		tail->label = labelname;
+		tail = add_line(*Lines);
+		linecounter++;
 	}
 
     /*close and free all relevant files*/
@@ -202,7 +229,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				token++;                
 				macroname = strtok(token, " \t\0");
 				/*check valid macro name*/
-				if (strcmp(in_macro_table(macroname, *Macros), "0") == TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
+				if (strcmp(in_macro_table(macroname, *Macros), "0") == TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE || check_if_registar(macroname) == TRUE)
 				{
 					checker = FALSE;
 					error("ERROR - theres a problems with the macro name", linecounter);

@@ -4,11 +4,13 @@
 #include "utils/commons.h"
 #include "utils/logger.h"
 #include "utils/macro_part.h"
+#include "utils/line_part.h"
 #include "core/doubly_linked_list.h"
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
 	Macro * Macros = create_macro_table(); /*for the macros*/
+	Line * Lines = create_line_table(); /*for the lines*/
     printf("Assembler started.\n");
 	if (argc < 2)
 	{
@@ -26,7 +28,9 @@ int main(int argc, char* argv[]) {
 			return -1; 
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
-		checker = write_without_macro(fname, &Macros);
+		checker = write_without_macro(fname, &Macros, &Lines);
+		printf("data %s\n", Lines->label);
+		printf("data %s\n", Lines->data);
 		free(fname);
 		if (checker == FALSE)
 		{

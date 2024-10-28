@@ -1,5 +1,6 @@
 #ifndef __MACRO_PART__H__
 #define __MACRO_PART__H__
+#include "line_part.h"
 
 
 
@@ -13,7 +14,7 @@ typedef struct Macro_t{
 
 
 /*read the assembley file and parse the macro parts return 0 if theres a problems while reading the macros*/
-int write_without_macro(char *fname, Macro ** Macros);
+int write_without_macro(char *fname, Macro ** Macros, Line ** Lines);
 
 
 /*get all the macros from the file return int to check if get errors in the macro names, if 0 unvalid if 1 valid*/
