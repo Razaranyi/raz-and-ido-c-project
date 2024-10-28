@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "macro_part.h"
+#include "line_part.h"
 #include "commons.h"
 #include "../core/command.h"
 
@@ -16,6 +17,7 @@ int write_without_macro(char *fname, Macro ** Macros)
 	char * token; 
 	int checker = TRUE; /*checks if we get problem while reading and parse the file if 0 its all good if 1 its bad*/
 	int macro_close = TRUE; /*check if macro is open*/
+	int linecounter = -1; /*for the line indexer*/
 	char * macro_fname = (char *)malloc(strlen(fname) + 1);
 	FILE* fp, *macrofile;
 	strcpy(macro_fname, fname);
@@ -88,7 +90,10 @@ char * in_macro_table(char * name, Macro * Macros)
 	while(temp->macroName != NULL) /*run all over the Macros*/
 	{
     		if (strcmp(name, temp->macroName) == 0)
+			{
     			return temp->data;
+			}
+
     		temp = temp->next;
 	}
 	return "0";
@@ -146,7 +151,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 	int checker = TRUE; /*checks if we get problem while reading and parse the file*/
 	char * token; 
 	int macrocounter = 0; /*counter for the macros*/
-	int macro_open = 0; /*checks if macro is open, if yes 1, no 0*/
+	int macro_open = FALSE; /*checks if macro is open, if yes 1, no 0*/
 	char *data; /*for the macro data*/
 	char * macroname; /*for the macro name*/
 	Macro * tail = *Macros;
@@ -155,15 +160,13 @@ int getmacros(FILE * fp, Macro ** Macros)
 		linecounter++;
 		token = line;
 		cut_spaces_start(token);
-        
         /*for empty line*/
         if(token == NULL)
             continue;
-		if (macro_open == 1) /*reading the macro data*/
+		if (macro_open == TRUE) /*reading the macro data*/
 		{
 			if(strncmp(token, "mcroend", 7) != 0) /*running while mcroend not coming*/
 			{
-				
 				if(data == NULL)
 				{
 					data = malloc(strlen(token));
@@ -180,7 +183,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 			{		
 				(tail->data = data);
 				tail = add_macro(*Macros);
-				macro_open = 0;
+				macro_open = FALSE;
 				macrocounter++;
 				data = NULL; /*for the macro data*/
 				macroname = NULL; /*for the macro name*/
@@ -199,14 +202,14 @@ int getmacros(FILE * fp, Macro ** Macros)
 				token++;                
 				macroname = strtok(token, " \t\0");
 				/*check valid macro name*/
-				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
+				if (strcmp(in_macro_table(macroname, *Macros), "0") == TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
 				{
 					checker = FALSE;
-					error("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
+					error("ERROR - theres a problems with the macro name", linecounter);
 				}
 				else /*adds the macro name*/
 				{
-					macro_open = FALSE;
+					macro_open = TRUE;
 					tail->macroName = (char *)malloc(strlen(macroname) + 1);	
 					strcpy(tail->macroName, macroname);
 				}
