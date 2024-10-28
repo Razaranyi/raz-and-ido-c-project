@@ -14,7 +14,8 @@ get file name return bollean as int*/
 int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 {
 	char line [LEN_LINE]; /*for moving in the lines*/
-	char temp_line [LEN_LINE]; /*for strtok*/
+	char macro_temp_line [LEN_LINE]; /*for macro strtok*/
+	char line_temp_line [LEN_LINE]; /*for line strtok*/
 	char * labelname; /*for the label name*/
 	char * token; 
 	int checker = TRUE; /*checks if we get problem while reading and parse the file if 0 its all good if 1 its bad*/
@@ -43,8 +44,9 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 	while (fgets(line, sizeof line, fp)!= NULL) /*run over and change the file with the known macros*/
 	{
         
-		strcpy(temp_line, line);
-		token = strtok(temp_line, " \t\n");
+		strcpy(macro_temp_line, line);
+		strcpy(line_temp_line, line);
+		token = strtok(macro_temp_line, " \t\n");
         /*for empty line*/
         if(token == NULL)
             continue;
@@ -78,7 +80,8 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 		if(is_label(line)) /*case where the line start with label*/
 		{
 
-			labelname = strtok(line, ":");
+			labelname = strtok(line_temp_line, ":");
+			cut_two_dots_start(line);
 			cut_spaces(labelname);
 			if (in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
 			{
@@ -88,12 +91,14 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 		}
 		else
 		{
-			labelname = NULL;
+			labelname = "";
 		}
+		
 		cut_spaces_start(line);
 		tail->data = line;
 		tail->index = linecounter;
 		tail->label = labelname;
+
 		tail = add_line(*Lines);
 		linecounter++;
 	}

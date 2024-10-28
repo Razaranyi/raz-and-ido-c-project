@@ -29,8 +29,9 @@ int main(int argc, char* argv[]) {
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
 		checker = write_without_macro(fname, &Macros, &Lines);
-		printf("data %s\n", Lines->label);
-		printf("data %s\n", Lines->data);
+		
+		printf("row %s\n", (Lines)->data);
+		printf("label %s\n", (Lines)->label);
 		free(fname);
 		if (checker == FALSE)
 		{

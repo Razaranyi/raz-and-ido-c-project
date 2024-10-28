@@ -111,6 +111,25 @@ void cut_spaces(char * input)
     
 }
 
+/*cut out vhars from the begging of string till "":"
+return void, change the input*/
+void cut_two_dots_start(char * input)
+{
+    int i = 0, j =0;
+    /*till space*/
+    while(input[i] != ':')
+    {
+        i++;
+    }
+    i++;
+    /*till end*/
+    while(input[i] != '\0')
+    {
+        input[j++] = input[i++]; 
+    }
+    input[j] = '\0';
+    
+}
 /*get input and remove the whitespaces from the start of the word
 return void, change the input*/
 void cut_spaces_start(char * input)

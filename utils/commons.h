@@ -83,6 +83,11 @@ void  cut_spaces(char * name);
 return void, change the input*/
 void cut_spaces_start(char * input);
 
+
+/*cut out vhars from the begging of string till "":"
+return void, change the input*/
+void cut_two_dots_start(char * input);
+
 /*verify that the malloc works*/
 void check_malloc(void * p);
 
