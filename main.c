@@ -28,10 +28,8 @@ int main(int argc, char* argv[]) {
 			return -1; 
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
+		/*write without macros, and get the line list index and macros list*/
 		checker = write_without_macro(fname, &Macros, &Lines);
-		
-		printf("row %s\n", (Lines)->data);
-		printf("label %s\n", (Lines)->label);
 		free(fname);
 		if (checker == FALSE)
 		{
@@ -40,7 +38,8 @@ int main(int argc, char* argv[]) {
 		}
 		/*checker = first_reading(fname);*/
 	}
+
 	free_macro_table(Macros);
-	return 0;
+	free_line_table(Lines);
     return 0;
 }

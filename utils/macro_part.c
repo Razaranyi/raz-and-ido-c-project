@@ -14,6 +14,7 @@ get file name return bollean as int*/
 int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 {
 	char line [LEN_LINE]; /*for moving in the lines*/
+	char clean_line [LEN_LINE]; /*to clean the line in the line indexer*/
 	char macro_temp_line [LEN_LINE]; /*for macro strtok*/
 	char line_temp_line [LEN_LINE]; /*for line strtok*/
 	char * labelname; /*for the label name*/
@@ -23,7 +24,6 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 	int linecounter = -1; /*for the line indexer*/
 	char * macro_fname = (char *)malloc(strlen(fname) + 1);
 	FILE* fp, *macrofile;
-	Line * tail = *Lines; /*to add lines*/
 	strcpy(macro_fname, fname);
 	add_as(fname); /*change the file name to .as*/
 	add_am(macro_fname); /*change the file name to .am*/
@@ -75,15 +75,13 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 			}
 		}	
 		/*indexing the lines*/
-		printf("line : %s\n", line);
-		
 		if(is_label(line)) /*case where the line start with label*/
 		{
 
 			labelname = strtok(line_temp_line, ":");
 			cut_two_dots_start(line);
 			cut_spaces(labelname);
-			if (in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
+			if (strcmp(in_macro_table(labelname, *Macros), "0") != FALSE || in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
 			{
 				checker = FALSE;
 				error("ERROR - theres a problems with the label name", linecounter);
@@ -94,14 +92,11 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 			labelname = "";
 		}
 		
-		cut_spaces_start(line);
-		tail->data = line;
-		tail->index = linecounter;
-		tail->label = labelname;
-
-		tail = add_line(*Lines);
+		remove_leading_and_trailing_whitespaces(line, clean_line);
+		appendNodeLine(Lines, labelname, clean_line, linecounter);
 		linecounter++;
 	}
+
 
     /*close and free all relevant files*/
 
@@ -212,7 +207,14 @@ int getmacros(FILE * fp, Macro ** Macros)
                 }
 			}
 			else
-			{		
+			{	
+				cut_spaces(token);
+				/*checks that there no chars after macroend*/
+				if(strcmp(token, "mcroend") != 0)
+				{
+					checker = FALSE;
+					error("ERROR - theres a char after macroend", linecounter);
+				}
 				(tail->data = data);
 				tail = add_macro(*Macros);
 				macro_open = FALSE;
@@ -233,8 +235,16 @@ int getmacros(FILE * fp, Macro ** Macros)
                 token++;
 				token++;                
 				macroname = strtok(token, " \t\0");
+				cut_spaces(macroname);	
+				/*checks that there no chars after macro define*/
+				if (strtok(NULL, " \t\0") != NULL)
+				{
+					checker = FALSE;
+					error("ERROR - theres a char after macro define", linecounter);
+
+				}
 				/*check valid macro name*/
-				if (strcmp(in_macro_table(macroname, *Macros), "0") == TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE || check_if_registar(macroname) == TRUE)
+				if (strcmp(in_macro_table(macroname, *Macros), "0") != FALSE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE || check_if_registar(macroname) == TRUE)
 				{
 					checker = FALSE;
 					error("ERROR - theres a problems with the macro name", linecounter);
@@ -242,7 +252,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				else /*adds the macro name*/
 				{
 					macro_open = TRUE;
-					tail->macroName = (char *)malloc(strlen(macroname) + 1);	
+					tail->macroName = (char *)malloc(strlen(macroname) + 1);
 					strcpy(tail->macroName, macroname);
 				}
 			}	
