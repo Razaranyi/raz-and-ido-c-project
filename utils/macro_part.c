@@ -174,8 +174,8 @@ return boolean as int*/
 int getmacros(FILE * fp, Macro ** Macros)
 {
 	char line [LEN_LINE]; /*for moving in the lines*/
-	int linecounter = 0; /*counter for the lines*/
 	int checker = TRUE; /*checks if we get problem while reading and parse the file*/
+	int linecounter = 0; /*counter for the lines*/
 	char * token; 
 	int macrocounter = 0; /*counter for the macros*/
 	int macro_open = FALSE; /*checks if macro is open, if yes 1, no 0*/
