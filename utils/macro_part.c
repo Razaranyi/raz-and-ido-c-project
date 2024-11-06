@@ -48,53 +48,54 @@ int write_without_macro(char *fname, Macro ** Macros, Line ** Lines)
 		strcpy(line_temp_line, line);
 		token = strtok(macro_temp_line, " \t\n");
         /*for empty line*/
-        if(token == NULL)
-            continue;
-		if(macro_close == TRUE)
-		{
-            /*checks if this is start of macro*/
-			if(strcmp(in_macro_table(token, *Macros), "0") != 0)
+        if(token != NULL)
+        {    
+			if(macro_close == TRUE)
 			{
-				fputs(in_macro_table(token, *Macros), macrofile);
+				/*checks if this is start of macro*/
+				if(strcmp(in_macro_table(token, *Macros), "0") != 0)
+				{
+					fputs(in_macro_table(token, *Macros), macrofile);
+				}
+				/*checks if start of macro define*/
+				else if (strncmp(token, "mcro", 4) == 0 && strncmp(token, "mcroe", 5) != 0) /*start of macro*/
+				{
+					macro_close = FALSE;
+				}
+				else 
+				{
+					fputs(line, macrofile);
+				}
 			}
-            /*checks if start of macro define*/
-			else if (strncmp(token, "mcro", 4) == 0 && strncmp(token, "mcroe", 5) != 0) /*start of macro*/
+			else
 			{
-				macro_close = FALSE;
-			}
-			else 
+				if (strncmp(token, "mcroend", 7) == 0 && macro_close == FALSE) /*end of macro*/
+				{
+					macro_close = TRUE;
+				}
+			}	
+			/*indexing the lines*/
+			if(is_label(line)) /*case where the line start with label*/
 			{
-				fputs(line, macrofile);
-			}
-		}
-		else
-		{
-			if (strncmp(token, "mcroend", 7) == 0 && macro_close == FALSE) /*end of macro*/
-			{
-				macro_close = TRUE;
-			}
-		}	
-		/*indexing the lines*/
-		if(is_label(line)) /*case where the line start with label*/
-		{
 
-			labelname = strtok(line_temp_line, ":");
-			cut_two_dots_start(line);
-			cut_spaces(labelname);
-			if (strcmp(in_macro_table(labelname, *Macros), "0") != FALSE || in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
-			{
-				checker = FALSE;
-				error("ERROR - theres a problems with the label name", linecounter);
+				labelname = strtok(line_temp_line, ":");
+				cut_two_dots_start(line);
+				cut_spaces(labelname);
+				if (strcmp(in_macro_table(labelname, *Macros), "0") != FALSE || in_line_table(labelname, *Lines) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
+				{
+					checker = FALSE;
+					error("ERROR - theres a problems with the label name", linecounter);
+				}
 			}
+			else
+			{
+				labelname = "";
+			}
+			
+			remove_leading_and_trailing_whitespaces(line, clean_line);
+			appendNodeLine(Lines, labelname, clean_line, linecounter);
+			linecounter++;
 		}
-		else
-		{
-			labelname = "";
-		}
-		
-		remove_leading_and_trailing_whitespaces(line, clean_line);
-		appendNodeLine(Lines, labelname, clean_line, linecounter);
-		linecounter++;
 	}
 
 
@@ -188,43 +189,43 @@ int getmacros(FILE * fp, Macro ** Macros)
 		token = line;
 		cut_spaces_start(token);
         /*for empty line*/
-        if(token == NULL)
-            continue;
-		if (macro_open == TRUE) /*reading the macro data*/
-		{
-			if(strncmp(token, "mcroend", 7) != 0) /*running while mcroend not coming*/
+        if(token != NULL)
+        {
+			if (macro_open == TRUE) /*reading the macro data*/
 			{
-				if(data == NULL)
+				if(strncmp(token, "mcroend", 7) != 0) /*running while mcroend not coming*/
 				{
-					data = malloc(strlen(token));
-					strcpy(data, token);
+					if(data == NULL)
+					{
+						data = malloc(strlen(token));
+						strcpy(data, token);
+					}
+					
+					else
+					{ 
+						data = realloc(data, strlen(data) + strlen(token));
+						strcat(data, token);	
+					}
 				}
-				
-                else
-                { 
-                    data = realloc(data, strlen(data) + strlen(token));
-					strcat(data, token);	
-                }
+				else
+				{	
+					cut_spaces(token);
+					/*checks that there no chars after macroend*/
+					if(strcmp(token, "mcroend") != 0)
+					{
+						checker = FALSE;
+						error("ERROR - theres a char after macroend", linecounter);
+					}
+					(tail->data = data);
+					tail = add_macro(*Macros);
+					macro_open = FALSE;
+					macrocounter++;
+					data = NULL; /*for the macro data*/
+					macroname = NULL; /*for the macro name*/
+					
+				}
 			}
 			else
-			{	
-				cut_spaces(token);
-				/*checks that there no chars after macroend*/
-				if(strcmp(token, "mcroend") != 0)
-				{
-					checker = FALSE;
-					error("ERROR - theres a char after macroend", linecounter);
-				}
-				(tail->data = data);
-				tail = add_macro(*Macros);
-				macro_open = FALSE;
-				macrocounter++;
-				data = NULL; /*for the macro data*/
-				macroname = NULL; /*for the macro name*/
-				
-			}
-		}
-		else
 		{
             /*checks if start of macro define and not the end*/
 			if (strncmp(token, "mcro", 4) == 0 && strncmp(token, "mcroe", 5) != 0)
@@ -257,6 +258,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				}
 			}	
 		}
+		}	
 	}
 	return checker;
 }
