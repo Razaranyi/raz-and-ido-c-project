@@ -5,6 +5,7 @@
 #include "line_part.h"
 #include "commons.h"
 #include "../core/command.h"
+#include "../core/instruction.h"
 
 
 
@@ -246,6 +247,7 @@ int getmacros(FILE * fp, Macro ** Macros)
 				}
 				/*check valid macro name*/
 				if (strcmp(in_macro_table(macroname, *Macros), "0") != FALSE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE || check_if_registar(macroname) == TRUE)
+
 				{
 					checker = FALSE;
 					error("ERROR - theres a problems with the macro name", linecounter);
