@@ -179,6 +179,8 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
             }
         }
     }
+    
+    printf("finished writing %s...\n",macro_fname_am);
 
     /* Close files and free memory */
     fclose(fp);
