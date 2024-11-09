@@ -71,7 +71,6 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
     while (fgets(line, sizeof(line), fp) != NULL) {
         linecounter++;
 
-        /* Remove leading and trailing whitespace */
         remove_leading_and_trailing_whitespaces(line, clean_line);
 
         /* Check if the line is empty */
@@ -351,6 +350,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
 
         } else {
             /* Line is empty or a comment; do nothing */
+            /*TODO: make sure that those lines are calculated on error prompt
         }
     }
 
