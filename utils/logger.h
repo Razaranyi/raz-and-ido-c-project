@@ -14,6 +14,7 @@ typedef enum {
 void debug(char* message, int line);
 void warn(char* message, int line);
 void error(char* message, int line);
+void errorf(int line, const char *format, ...);
 void fatal(char* message, int line);
 
 #endif

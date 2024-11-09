@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include "logger.h"
 
 
@@ -30,6 +31,16 @@ void warn(char* message, int line) {
 
 void error(char* message, int line) {
     print_log_by_level(ERROR, "[ERROR] ", message, line);
+}
+void errorf(int line, const char *format, ...) {
+    char message[1024];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(message, format, args);
+    va_end(args);
+
+    error(message, line);
 }
 
 void fatal(char* message, int line) {
