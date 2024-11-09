@@ -49,38 +49,47 @@ int check_if_instruction(char *word)
 }
 
 
+/*get word
+with macro REGS and is_word_in_list checks if the word is in the regs list
+return int as boolean*/
+int check_if_registar(char *word)
+{
+    char *regs[REGS_LEN] = REGS;
+    return is_word_in_list(word, regs, REGS_LEN);
+}
+
+
+
 /*get char * (fname)
 add to it ".as" in tne end
 return char* */
-char * add_as(char* fname)
-{
-
-	size_t len = strlen(fname); /*get the length of the original string*/
-	fname = realloc(fname, len + 4); /*allocate memory for the one with the ".as"*/
-	if (fname == NULL)
-	{
-		printf("Memory allocation failed. \n");
-		return NULL;
-	}
-	strcat(fname, ".as");
-	return fname;
+char* add_as( char* fname) {
+    int len = strlen(fname);
+    char *new_fname = (char *)malloc(len + 4);
+    if (new_fname == NULL) {
+        fprintf(stderr, "Memory allocation failed in add_as\n");
+        exit(1);
+    }
+    strcpy(new_fname, fname);
+    strcat(new_fname, ".as");
+    return new_fname;
 }
+
 
 
 /*get char * (fname)
 add to it ".am" in tne end
 return char* */
-char * add_am(char* fname)
-{
-	size_t len = strlen(fname); /*get the length of the original string*/
-	fname = realloc(fname, len + 4*sizeof(char)); /*allocate memory for the one with the ".as"*/
-	if (fname == NULL)
-	{
-		printf("Memory allocation failed. \n");
-		return NULL;
-	}
-	strcat(fname, ".am");
-	return fname;
+char* add_am( char* fname) {
+    int len = strlen(fname);
+    char *new_fname = (char *)malloc(len + 4);
+    if (new_fname == NULL) {
+        fprintf(stderr, "Memory allocation failed in add_am\n");
+        exit(1);
+    }
+    strcpy(new_fname, fname);
+    strcat(new_fname, ".am");
+    return new_fname;
 }
 
 /*get input and remove the whitespaces in word
@@ -100,6 +109,25 @@ void cut_spaces(char * input)
     
 }
 
+/*cut out vhars from the begging of string till "":"
+return void, change the input*/
+void cut_two_dots_start(char * input)
+{
+    int i = 0, j =0;
+    /*till space*/
+    while(input[i] != ':')
+    {
+        i++;
+    }
+    i++;
+    /*till end*/
+    while(input[i] != '\0')
+    {
+        input[j++] = input[i++]; 
+    }
+    input[j] = '\0';
+    
+}
 /*get input and remove the whitespaces from the start of the word
 return void, change the input*/
 void cut_spaces_start(char * input)
@@ -143,7 +171,7 @@ int is_string_begin_with_substring(char* string, char* substring){
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
-    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*:.*";
+    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*[ ]*:.*";
     return is_string_equal_by_regex(line, pattern);
 }
 
@@ -151,7 +179,6 @@ int is_label( char* line) {
 int is_string_equal_by_regex(char* string, char* pattern) {
     regex_t reg;
     int res;
-
     /* compile the regular expression */
     if (regcomp(&reg, pattern, REG_EXTENDED | REG_ICASE) != 0) {
         return 0;  /*regex compilation fails */
@@ -159,7 +186,6 @@ int is_string_equal_by_regex(char* string, char* pattern) {
 
     /* exec the regular expression */
     res = regexec(&reg, string, 0, NULL, 0);
-
     regfree(&reg);
 
     return res != REG_NOMATCH;

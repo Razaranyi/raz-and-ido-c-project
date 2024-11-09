@@ -27,6 +27,6 @@ jobs:
             make test TEST_NAME=doubly_linked_list &&
             make test TEST_NAME=symbol &&
             make test TEST_NAME=commons &&
-            ./assembler file
+            ./assembler data
 
           "
