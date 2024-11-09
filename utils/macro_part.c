@@ -4,6 +4,7 @@
 #include "macro_part.h"
 #include "commons.h"
 #include "../core/command.h"
+#include "../core/instruction.h"
 
 
 
@@ -199,10 +200,10 @@ int getmacros(FILE * fp, Macro ** Macros)
 				token++;                
 				macroname = strtok(token, " \t\0");
 				/*check valid macro name*/
-				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || is_command_name(macroname) == TRUE || check_if_instruction(macroname) == TRUE)
+				if (strcmp(in_macro_table(macroname, *Macros), "0") != TRUE || is_command_name(macroname) == TRUE || get_instruction_enum(macroname))
 				{
 					checker = FALSE;
-					error("ERROR - theres a problems with the macro name in line: %d\n", linecounter);
+					error("ERROR - theres a problems with the macro name", linecounter);
 				}
 				else /*adds the macro name*/
 				{
