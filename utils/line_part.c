@@ -9,104 +9,100 @@
 
 
 /*get char name and list of Lines, checks if the name is in the Line name list and return int as boolean*/
-int in_line_table(char * name, Line * Lines)
-{
-	Line * temp = Lines;
-	while(temp->next != NULL) /*run all over the Lines*/
-	{
-            if(temp->label != NULL)
-            {
-    		    if (strcmp(name, temp->label) == 0)
-			    {
-    		    	return TRUE;
-			    }
-            }
-    		temp = temp->next;
-	}
-    if(temp->label != NULL)
-    {
-        if (strcmp(name, temp->label) == 0)
-        {
+int in_line_table(char *name, DoublyLinkedList *line_list) {
+    DoublyLinkedList *current = get_list_head(line_list);
+    while (current != NULL) {
+        Line *line = (Line *)current->data;
+        if (line->label != NULL && strcmp(name, line->label) == 0) {
             return TRUE;
         }
-    }   
-	return FALSE;
-    
+        current = current->next;
+    }
+    return FALSE;
 }
 
 
+
 /*get null and return list of Lines, create the data struct*/
-Line * create_line_table()
-{
-	Line * head = (Line*)malloc(sizeof(Line));
-	check_malloc(head);
-	memset(head, 0, sizeof(Line));
-	return head;
-	
+DoublyLinkedList* create_line_table() {
+    return allocate_node_mem();
 }
 
 /*get the data for the line columns and create new node of type Line
 return pointer to Line*/
-Line* createNodeLine(char * labelname, char * data, int index)
+Line* createNodeLine( char *labelname,  char *data, int index)
 {
-    Line * newNode = (Line *)malloc(sizeof(Line));
-    if(newNode == NULL)
+    Line *newNode = (Line *)malloc(sizeof(Line));
+    if (newNode == NULL)
     {
-        printf("Memory allocation failed");
+        error("Memory allocation failed for Line\n",index);
+        return NULL;
     }
+
     newNode->label = (char *)malloc(strlen(labelname) + 1);
-    newNode->data = (char *)malloc(strlen(data) + 1);
-    strcpy(newNode->data, data);
+    if (newNode->label == NULL)
+    {
+        error("Memory allocation failed for Line\n",index);
+        free(newNode);
+        return NULL;
+    }
     strcpy(newNode->label, labelname);
+
+    newNode->data = (char *)malloc(strlen(data) + 1);
+    if (newNode->data == NULL)
+    {
+        error("Memory allocation failed for Line\n",index);
+        free(newNode->label);
+        free(newNode);
+        return NULL;
+    }
+    strcpy(newNode->data, data);
+
     newNode->index = index;
-    newNode->next = NULL;
+
     return newNode;
 }
 
+
 /*get list of lines and data the line columns, use createNodeLine and append the new Node to the list
 return void*/
-void appendNodeLine(Line **head, char * labelname, char * data, int index)
+void append_line(DoublyLinkedList *lineList,  char *labelname, char *data, int index)
 {
-    Line * newNode = createNodeLine(labelname, data, index);
-    if(*head == NULL)
+    Line *newLine = createNodeLine(labelname, data, index);
+    if (newLine == NULL)
     {
-        *head = newNode;
+        error("Can't create node",index);
+        return;
     }
-    else
-    {
-        Line *current = *head;
-        while(current->next != NULL)
-        {
-            current = current->next;
-        }
-        current->next = newNode;
-    }
+    add_to_list(lineList, newLine);
 }
+
+
 
 /*get pointer to lines run from the head to the end and print any line
 return void */
-void printLines(Line * head)
-{
-    Line * current = head;
-    while (current != NULL)
-    {
-        printf("Index: %d, Label: %s, Data: %s\n", current->index, current->label, current->data);
+void print_lines(DoublyLinkedList *line_list) {
+    DoublyLinkedList *current = get_list_head(line_list);
+    while (current != NULL) {
+        Line *line = (Line *)current->data;
+        printf("Index: %d, Label: %s, Data: %s\n", line->index, line->label, line->data);
         current = current->next;
     }
-    
-
 }
+
 
 /*get head to line list, run over it and free the memory*/
-void free_line_table(Line * head)
-{
-	Line * temp = head; /*to run over the Lines*/
-	while(head != NULL)
-	{
-		temp = head;
-		head = head->next;
-		free(temp);
-		
-	}
+void free_line_data(void* data) {
+    Line *line = (Line *)data;
+    if (line) {
+        free(line->label);
+        free(line->data);
+        free(line);
+    }
 }
+
+void free_line_table(DoublyLinkedList* line_list) {
+    free_list(&line_list, free_line_data);
+}
+
 

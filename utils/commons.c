@@ -63,35 +63,33 @@ int check_if_registar(char *word)
 /*get char * (fname)
 add to it ".as" in tne end
 return char* */
-char * add_as(char* fname)
-{
-
-	size_t len = strlen(fname); /*get the length of the original string*/
-	fname = realloc(fname, len + 4); /*allocate memory for the one with the ".as"*/
-	if (fname == NULL)
-	{
-		printf("Memory allocation failed. \n");
-		return NULL;
-	}
-	strcat(fname, ".as");
-	return fname;
+char* add_as( char* fname) {
+    int len = strlen(fname);
+    char *new_fname = (char *)malloc(len + 4);
+    if (new_fname == NULL) {
+        fprintf(stderr, "Memory allocation failed in add_as\n");
+        exit(1);
+    }
+    strcpy(new_fname, fname);
+    strcat(new_fname, ".as");
+    return new_fname;
 }
+
 
 
 /*get char * (fname)
 add to it ".am" in tne end
 return char* */
-char * add_am(char* fname)
-{
-	size_t len = strlen(fname); /*get the length of the original string*/
-	fname = realloc(fname, len + 4*sizeof(char)); /*allocate memory for the one with the ".as"*/
-	if (fname == NULL)
-	{
-		printf("Memory allocation failed. \n");
-		return NULL;
-	}
-	strcat(fname, ".am");
-	return fname;
+char* add_am( char* fname) {
+    int len = strlen(fname);
+    char *new_fname = (char *)malloc(len + 4);
+    if (new_fname == NULL) {
+        fprintf(stderr, "Memory allocation failed in add_am\n");
+        exit(1);
+    }
+    strcpy(new_fname, fname);
+    strcat(new_fname, ".am");
+    return new_fname;
 }
 
 /*get input and remove the whitespaces in word

@@ -70,10 +70,10 @@ int str_substring(char* string, int start_ind, int end_ind, char* result);
    str_substring("Hello", 0, 3, result); // result = "Hel"
 */
 /*adds .as to the file names we get from the user in the CLI*/
-char * add_as(char * fname);
+char * add_as( char * fname);
 
 /*adds .am to the file names we get from the user in the CLI*/
-char * add_am(char * fname);
+char * add_am( char * fname);
 
 /*get input and remove the whitespaces in word
 return void, change the input*/

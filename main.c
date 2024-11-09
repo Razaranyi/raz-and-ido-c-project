@@ -9,9 +9,9 @@
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
-	Macro * Macros = create_macro_table(); /*for the macros*/
-	Line * Lines = create_line_table(); /*for the lines*/
-    printf("Assembler started.\n");
+    DoublyLinkedList *macro_list = create_macro_table(); /*for the macros*/
+    DoublyLinkedList *line_list = create_line_table(); /*for the lines*/
+    printf("Assembler started...\n");
 	if (argc < 2)
 	{
 		printf("ERROR - There is not a file name \n");
@@ -29,17 +29,18 @@ int main(int argc, char* argv[]) {
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
 		/*write without macros, and get the line list index and macros list*/
-		checker = write_without_macro(fname, &Macros, &Lines);
-		free(fname);
+		checker = write_without_macro(fname, macro_list, line_list);
 		if (checker == FALSE)
 		{
 			printf("Error in the Macros part - the program stop \n");
+            free_macro_table(macro_list);
+            free_line_table(line_list);
 			exit(FALSE);
 		}
 		/*checker = first_reading(fname);*/
 	}
+    free_macro_table(macro_list);
+    free_line_table(line_list);
 
-	free_macro_table(Macros);
-	free_line_table(Lines);
     return 0;
 }
