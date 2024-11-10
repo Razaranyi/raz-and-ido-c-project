@@ -88,6 +88,7 @@ void print_lines(DoublyLinkedList *line_list) {
         printf("Index: %d, Label: %s, Data: %s\n", line->index, line->label, line->data);
         current = current->next;
     }
+
 }
 
 
