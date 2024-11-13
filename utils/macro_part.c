@@ -196,6 +196,7 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
 			{
 				labelname = "";
 			}
+			/*adding line to the line list*/
 			remove_leading_and_trailing_whitespaces(clean_line, clean_line);
 			append_line(line_list, labelname, clean_line, linecounter);
 

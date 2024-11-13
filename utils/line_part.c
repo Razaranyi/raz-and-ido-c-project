@@ -79,7 +79,7 @@ void append_line(DoublyLinkedList *lineList,  char *labelname, char *data, int i
 
 
 
-/*get pointer to lines run from the head to the end and print any line
+/*get pointer to doublyLinkedList (lines) run from the head to the end and print any line
 return void */
 void print_lines(DoublyLinkedList *line_list) {
     DoublyLinkedList *current = get_list_head(line_list);
