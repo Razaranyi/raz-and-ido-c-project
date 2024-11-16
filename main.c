@@ -3,8 +3,8 @@
 #include <string.h>
 #include "utils/commons.h"
 #include "utils/logger.h"
-#include "utils/macro_part.h"
-#include "utils/line_part.h"
+#include "exec/macro_parsing.h"
+#include "utils/line_indexing.h"
 #include "core/doubly_linked_list.h"
 
 int main(int argc, char* argv[]) {

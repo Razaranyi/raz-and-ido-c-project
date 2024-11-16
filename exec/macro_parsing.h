@@ -1,6 +1,6 @@
 #ifndef __MACRO_PART__H__
 #define __MACRO_PART__H__
-#include "line_part.h"
+#include "../utils/line_indexing.h"
 #include "../core/doubly_linked_list.h"
 
 
