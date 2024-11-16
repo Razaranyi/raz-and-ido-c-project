@@ -6,13 +6,11 @@
 #include "../core/command.h"
 
 
-
-
 /*get char name and list of Lines, checks if the name is in the Line name list and return int as boolean*/
 int in_line_table(char *name, DoublyLinkedList *line_list) {
     DoublyLinkedList *current = get_list_head(line_list);
     while (current != NULL) {
-        Line *line = (Line *)current->data;
+        Line *line = (Line *) current->data;
         if (line->label != NULL && strcmp(name, line->label) == 0) {
             return TRUE;
         }
@@ -22,36 +20,31 @@ int in_line_table(char *name, DoublyLinkedList *line_list) {
 }
 
 
-
 /*get null and return list of Lines, create the data struct*/
-DoublyLinkedList* create_line_table() {
+DoublyLinkedList *create_line_table() {
     return allocate_node_mem();
 }
 
 /*get the data for the line columns and create new node of type Line
 return pointer to Line*/
-Line* createNodeLine( char *labelname,  char *data, int index)
-{
-    Line *newNode = (Line *)malloc(sizeof(Line));
-    if (newNode == NULL)
-    {
-        error("Memory allocation failed for Line\n",index);
+Line *createNodeLine(char *labelname, char *data, int index) {
+    Line *newNode = (Line *) malloc(sizeof(Line));
+    if (newNode == NULL) {
+        error("Memory allocation failed for Line\n", index);
         return NULL;
     }
 
-    newNode->label = (char *)malloc(strlen(labelname) + 1);
-    if (newNode->label == NULL)
-    {
-        error("Memory allocation failed for Line\n",index);
+    newNode->label = (char *) malloc(strlen(labelname) + 1);
+    if (newNode->label == NULL) {
+        error("Memory allocation failed for Line\n", index);
         free(newNode);
         return NULL;
     }
     strcpy(newNode->label, labelname);
 
-    newNode->data = (char *)malloc(strlen(data) + 1);
-    if (newNode->data == NULL)
-    {
-        error("Memory allocation failed for Line\n",index);
+    newNode->data = (char *) malloc(strlen(data) + 1);
+    if (newNode->data == NULL) {
+        error("Memory allocation failed for Line\n", index);
         free(newNode->label);
         free(newNode);
         return NULL;
@@ -66,17 +59,14 @@ Line* createNodeLine( char *labelname,  char *data, int index)
 
 /*get list of lines and data the line columns, use createNodeLine and append the new Node to the list
 return void*/
-void append_line(DoublyLinkedList *lineList,  char *labelname, char *data, int index)
-{
+void append_line(DoublyLinkedList *lineList, char *labelname, char *data, int index) {
     Line *newLine = createNodeLine(labelname, data, index);
-    if (newLine == NULL)
-    {
-        error("Can't create node",index);
+    if (newLine == NULL) {
+        error("Can't create node", index);
         return;
     }
     add_to_list(lineList, newLine);
 }
-
 
 
 /*get pointer to doublyLinkedList (lines) run from the head to the end and print any line
@@ -84,7 +74,7 @@ return void */
 void print_lines(DoublyLinkedList *line_list) {
     DoublyLinkedList *current = get_list_head(line_list);
     while (current != NULL) {
-        Line *line = (Line *)current->data;
+        Line *line = (Line *) current->data;
         printf("Index: %d, Label: %s, Data: %s\n", line->index, line->label, line->data);
         current = current->next;
     }
@@ -93,8 +83,8 @@ void print_lines(DoublyLinkedList *line_list) {
 
 
 /*get head to line list, run over it and free the memory*/
-void free_line_data(void* data) {
-    Line *line = (Line *)data;
+void free_line_data(void *data) {
+    Line *line = (Line *) data;
     if (line) {
         free(line->label);
         free(line->data);
@@ -102,7 +92,7 @@ void free_line_data(void* data) {
     }
 }
 
-void free_line_table(DoublyLinkedList* line_list) {
+void free_line_table(DoublyLinkedList *line_list) {
     free_list(&line_list, free_line_data);
 }
 
