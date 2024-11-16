@@ -10,6 +10,7 @@
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
     DoublyLinkedList *macro_list = create_macro_table(); /*for the macros*/
+    /*TODO: add file name to the indexed line for logging purposes*/
     DoublyLinkedList *line_list = create_line_table(); /*for the lines*/
     printf("Assembler started...\n");
 	if (argc < 2)
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
 		/*write without macros, and get the line list index and macros list*/
-		checker = write_without_macro(fname, macro_list, line_list);
+		checker = parse_macro(fname, macro_list, line_list);
 
 		if (checker == FALSE)
 		{

@@ -11,7 +11,7 @@
 #include <ctype.h>  /* Include this header for isspace */
 
 
-int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *line_list) {
+int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *line_list) {
     char line[LEN_LINE];
     char clean_line[LEN_LINE];
     int checker = TRUE;
@@ -71,7 +71,6 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
         linecounter++;
 
         remove_leading_and_trailing_whitespaces(line, clean_line);
-
         /* Check if the line is empty and avoid deleting it */
         if (clean_line[0] == '\0') {
             fprintf(macrofile, "\n");
@@ -275,7 +274,6 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
 
     while (fgets(line, sizeof(line), fp) != NULL) {
         linecounter++;
-
         /* Remove leading and trailing whitespace using your function */
         remove_leading_and_trailing_whitespaces(line, clean_line);
 

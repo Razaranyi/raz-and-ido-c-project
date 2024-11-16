@@ -216,9 +216,10 @@ int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     int start_ind;
     int end_ind;
 
-    for (start_ind = 0; isspace((unsigned char)string[start_ind]); start_ind++) {
-        /* Keep looping until not space */
+    for (start_ind = 0; isspace((unsigned char)string[start_ind]) && string[start_ind] != '\n'; start_ind++) {
+        /* Keep looping until not newline */
     }
+
 
     for (end_ind = strlen(string) - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {
         /* Keep looping until not space */
