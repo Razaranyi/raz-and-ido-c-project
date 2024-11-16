@@ -2,7 +2,7 @@
 #define INSTRUCTION_H
 
 typedef enum {
-    INVALID = 0,  /* For unrecognized directives */
+    INVALID = 0,
     DATA = 1,
     STRING = 2,
     ENTRY = 3,

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "command.h"
 #include "../utils/commons.h"
-#include "../utils/boolean.h"
 #include "doubly_linked_list.h"
 
 /* Global command list */

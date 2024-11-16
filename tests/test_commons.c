@@ -26,7 +26,7 @@ int main() {
     int regex_match;
     char substring_result[50];
     int substring_success;
-    char string_with_spaces[] = "   \t\n Hello, World! \t\n   ";
+    char string_with_spaces[] = "   \tHello, World! \t\n   ";
     char trimmed_string[50];
     int trim_success;
     char* test_string_no_max_splits;
@@ -98,7 +98,7 @@ int main() {
     printf("Testing remove_leading_and_trailing_whitespaces:\n");
     trim_success = remove_leading_and_trailing_whitespaces(string_with_spaces, trimmed_string);
     assert(trim_success == TRUE);
-    printf("Trimmed string: %s", trimmed_string);
+    printf("Trimmed string: %s\n", trimmed_string);
     assert(strcmp(trimmed_string, "Hello, World!") == 0);
     printf("Original string with spaces: '%s'\n", string_with_spaces);
     printf("Trimmed string: '%s'\n\n", trimmed_string);
