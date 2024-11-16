@@ -17,7 +17,7 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
     char clean_line[LEN_LINE];
     int checker = TRUE;
     int macro_open = FALSE;
-    int linecounter = 0;
+    int linecounter = -2;
     char *fname_as = add_as(fname);
     char *macro_fname_am = add_am(fname);
     FILE *fp, *macrofile;
@@ -79,6 +79,7 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
         } else {
             /* Declare variables at the beginning */
             char line_copy[LEN_LINE];
+            char *labelname;
             char *token;
             char *line_ptr;
             char *macro_data = NULL;
@@ -176,7 +177,30 @@ int write_without_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedL
                     }
                 }
             }
-        }
+			
+			if(is_label(clean_line)) /*case where the line start with label*/
+			{
+				strcpy(line_copy, clean_line);
+				labelname = strtok(line_copy, ":");
+				cut_two_dots_start(clean_line);
+				cut_spaces(labelname);
+				if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE || is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE || check_if_registar(labelname) == TRUE)
+				{
+					checker = FALSE;
+					error("ERROR - theres a problems with the label name", linecounter);
+					labelname = "";
+				}
+
+			}
+			else
+			{
+				labelname = "";
+			}
+			/*adding line to the line list*/
+			remove_leading_and_trailing_whitespaces(clean_line, clean_line);
+			append_line(line_list, labelname, clean_line, linecounter);
+
+		}
     }
     
     printf("finished writing %s...\n",macro_fname_am);
@@ -350,7 +374,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
 
         } else {
             /* Line is empty or a comment; do nothing */
-            /*TODO: make sure that those lines are calculated on error prompt
+            /*TODO: make sure that those lines are calculated on error prompt*/
         }
     }
 
