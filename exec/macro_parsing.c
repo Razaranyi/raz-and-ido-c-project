@@ -71,6 +71,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
         linecounter++;
 
         remove_leading_and_trailing_whitespaces(line, clean_line);
+
         /* Check if the line is empty and avoid deleting it */
         if (clean_line[0] == '\0') {
             fprintf(macrofile, "\n");
@@ -134,7 +135,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                         /* Remove trailing whitespace from before_macro */
                         remove_leading_and_trailing_whitespaces(before_macro, trimmed_before_macro);
 
-                        if (trimmed_before_macro[0] != '\0') {
+                        if (trimmed_before_macro[0] != '\n') {
                             error("macro is empty",linecounter);
                         }
 

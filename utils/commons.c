@@ -215,13 +215,20 @@ int str_substring(char* string, int start_ind, int end_ind, char* result) {
 int remove_leading_and_trailing_whitespaces(char* string, char* result) {
     int start_ind;
     int end_ind;
+    int string_len = strlen(string);
 
-    for (start_ind = 0; isspace((unsigned char)string[start_ind]) && string[start_ind] != '\n'; start_ind++) {
+
+    for (start_ind = 0; start_ind < string_len && isspace((unsigned char)string[start_ind]) && string[start_ind] != '\n'; start_ind++) {
         /* Keep looping until not newline */
     }
 
+    if (string[start_ind] == '\0') {
+        strcpy(result, "\n");
+        return 0;
+    }
 
-    for (end_ind = strlen(string) - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {
+
+    for (end_ind = string_len - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {
         /* Keep looping until not space */
     }
 
