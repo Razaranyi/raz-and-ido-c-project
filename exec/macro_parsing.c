@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "macro_parsing.h"
-#include "line_part.h"
-#include "commons.h"
+#include "../utils/line_indexing.h"
+#include "../utils/commons.h"
 #include "../core/command.h"
 #include "../core/instruction.h"
 

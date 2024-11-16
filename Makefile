@@ -7,9 +7,9 @@ TESTS_DIR = tests
 OBJ_DIR = obj
 UTILS_DIR = utils
 CORE_DIR = core
-
+EXEC_DIR = exec
 # Source files
-COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c) $(wildcard $(CORE_DIR)/*.c)
+COMMON_SRC = $(wildcard $(UTILS_DIR)/*.c) $(wildcard $(CORE_DIR)/*.c) $(wildcard $(EXEC_DIR)/*.c)
 
 # Object files for the source code (excluding tests and main.c for tests)
 COMMON_OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(COMMON_SRC)))
@@ -51,6 +51,10 @@ $(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
 
 # Compile core object files
 $(OBJ_DIR)/%.o: $(CORE_DIR)/%.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(EXEC_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 

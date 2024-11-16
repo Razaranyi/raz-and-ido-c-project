@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "line_part.h"
+#include "line_indexing.h"
 #include "commons.h"
 #include "../core/command.h"
 
