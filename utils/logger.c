@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "logger.h"
-#define MSG_BUGGER  1024
+#include "line_indexing.h"
+#define MSG_BUFFER  1024
 
 
 
 static LogLevel log_level;
 
 void print_log_by_level(LogLevel level, const char* prefix, const char *message, int line) {
-    char log_res[MSG_BUGGER];
+    char log_res[MSG_BUFFER];
 
     /* Check if the log level is high enough to log the message */
     if (level < log_level) {
@@ -34,7 +35,7 @@ void error(char* message, int line) {
     print_log_by_level(ERROR, "[ERROR] ", message, line);
 }
 void errorf(int line, const char *format, ...) {
-    char message[MSG_BUGGER];
+    char message[MSG_BUFFER];
     va_list args;
 
     va_start(args, format);
@@ -42,6 +43,17 @@ void errorf(int line, const char *format, ...) {
     va_end(args);
 
     error(message, line);
+}
+
+void warnf(int line, const char *format, ...) {
+    char message[MSG_BUFFER];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(message, format, args);
+    va_end(args);
+
+    warn(message, line);
 }
 
 void fatal(char* message, int line) {
