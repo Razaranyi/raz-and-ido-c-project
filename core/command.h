@@ -18,7 +18,7 @@ typedef struct {
     int number_of_operands;
 
     /* Allowed addressing modes for source and destination operands */
-    int allowed_src_addressing_modes[4];
+    int allowed_src_addressing_modes[4]; /* 0 -> A = 1, 1 -> (external)E = 1 || R = 1, 2 -> A = 1, */
     int allowed_dst_addressing_modes[4];
 } Command;
 
@@ -32,7 +32,7 @@ void initialize_command_set();
 /* free command set */
 void free_command_set();
 
-/* Finds an command by name */
+/* Finds a command by name */
 Command* find_command(char* name);
 
 /* Cheks if given name is an command name */

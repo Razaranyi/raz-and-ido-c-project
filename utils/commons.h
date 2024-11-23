@@ -2,7 +2,6 @@
 #define COMMON_H
 #include "../core/doubly_linked_list.h"
 #include "boolean.h"
-#define COMMANDS_LEN 16
 #define INSTRUCTIONS_LEN 4
 #define LEN_LINE 80
 #define INSTRUCTIONS {".data", ".string", ".entry", ".extern"}

@@ -147,11 +147,6 @@ void cut_spaces_start(char * input)
     
 }
 
-
-
-
-
-
 char* allocate_string(char* string){
     int str_len = strlen(string);
     char* res = malloc(str_len + 1);
@@ -171,7 +166,7 @@ int is_string_begin_with_substring(char* string, char* substring){
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
-    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*[ ]*:.*";
+    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*:.*";
     return is_string_equal_by_regex(line, pattern);
 }
 

@@ -2,10 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "macro_parsing.h"
-#include "../utils/line_indexing.h"
 #include "../utils/commons.h"
 #include "../core/command.h"
-#include "../core/instruction.h"
 
 
 #include <ctype.h>  /* Include this header for isspace */
@@ -175,7 +173,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                     }
                 }
             }
-
             if (is_label(clean_line)) /*case where the line start with label*/
             {
                 strcpy(line_copy, clean_line);
@@ -375,5 +372,30 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
         free(macroname);
     }
 
+    print_macros(macro_list);
+
     return checker;
+}
+
+
+/* Function to print all macros in the macro list */
+void print_macros(DoublyLinkedList *macro_list) {
+    DoublyLinkedList *current = get_list_head(macro_list);
+    if (current == NULL) {
+        printf("No macros defined.\n");
+        return;
+    }
+
+    printf("Defined Macros:\n");
+    while (current != NULL) {
+        if (current->data != NULL) {
+            Macro *macro = (Macro *)current->data;
+            if (macro->macroName != NULL && macro->data != NULL) {
+                printf("Macro Name: %s\n", macro->macroName);
+                printf("Macro Data:\n%s\n", macro->data);
+                printf("------------------------------------\n");
+            }
+        }
+        current = current->next;
+    }
 }
