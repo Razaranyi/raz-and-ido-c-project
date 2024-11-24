@@ -81,7 +81,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
             char line_copy[LEN_LINE];
             char *labelname;
             char *token;
-            char *line_ptr;
             char *macro_data = NULL;
             int macro_found = FALSE;
             char *macro_name = NULL;
@@ -103,18 +102,19 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                     /* Do not write macro definitions to the output */
                 } else {
                     /* Not inside macro definition, process tokens */
-                    line_ptr = line_copy;  /* Reset pointer for strtok */
-                    token = strtok(line_ptr, " \t\n");
-                    while (token != NULL) {
-                        macro_data = in_macro_table(token, macro_list);
-                        if (macro_data != NULL) {
-                            macro_found = TRUE;
-                            macro_name = token;
-                            macro_index = get_index_macro_table(macro_data, macro_list);
 
-                        }
-                        token = strtok(NULL, " \t\n");
+                    macro_data = in_macro_table(token, macro_list);
+                    macro_name = token;
+                    token = strtok(NULL, " \t\n");
+
+                    if (macro_data != NULL && token == NULL) 
+                    {
+                        macro_found = TRUE;  
+                        macro_index = get_index_macro_table(macro_name, macro_list);
+
                     }
+                        
+                    
                     if (macro_found) {
                         /* Declare variables at the beginning */
                         int macro_name_pos;
@@ -331,9 +331,11 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
     char temp_line[LEN_LINE];  /* For storing the temp line after removing whitespace */
     int checker = TRUE;
     int linecounter = 0;
+    int macroindex = 0; /*for the index the macro define in*/
     int macro_open = FALSE;
     char *data = NULL;
     char *macroname = NULL;
+    char *token;
 
     while (fgets(line, sizeof(line), fp) != NULL) {
         linecounter++;
@@ -347,7 +349,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                 /* Inside a macro definition */
                 strcpy(temp_line, clean_line);
                 /* Check for "mcroend" */
-                char *token = strtok(temp_line, " \t\n");
+                token = strtok(temp_line, " \t\n");
                 if (token != NULL && strcmp(token, "mcroend") == 0) {
                     /* Check for extra tokens after "mcroend" */
                     if (strtok(NULL, " \t\n") != NULL) {
@@ -355,7 +357,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                         error("there's a character after 'mcroend'", linecounter);
                     } else {
                         /* Add macro to the list */
-                        add_macro(macro_list, macroname, data, linecounter);
+                        add_macro(macro_list, macroname, data, macroindex);
 
                         /* Reset variables for next macro */
                         macro_open = FALSE;
@@ -394,6 +396,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                     if (name_token == NULL) {
                         checker = FALSE;
                         error("Macro name is missing", linecounter);
+                        macroindex = linecounter;
                     } else {
                         /* Check for extra tokens after macro name */
                         if (strtok(NULL, " \t\n") != NULL) {
