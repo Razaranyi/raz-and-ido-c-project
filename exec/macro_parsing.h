@@ -9,6 +9,7 @@
 typedef struct {
     char *macroName;
     char *data;
+    int macroIndex;
 } Macro;
 
 
@@ -24,10 +25,13 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list);
 DoublyLinkedList* create_macro_table();
 
 /*add Macro to the Macro table*/
-void add_macro(DoublyLinkedList *macro_list,char *macroName, char *data);
+void add_macro(DoublyLinkedList *macro_list,char *macroName, char *data, int linecounter);
 
-/*check if name is in the macro table if yes return macro data, else "0"*/
-char* in_macro_table (char *name, DoublyLinkedList *macro_list);
+/*check if name is in the macro table if yes return macro data, else NULL*/
+char* in_macro_table(char *name, DoublyLinkedList *macro_list);
+
+/*check if name is in the macro table if yes return macro index, else -1*/
+int get_index_macro_table (char *name, DoublyLinkedList *macro_list);
 
 /*run over the macros table and free it*/
 void free_macro_table(DoublyLinkedList *macro_list);
