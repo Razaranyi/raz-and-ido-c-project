@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "symbol.h"
 #include "doubly_linked_list.h"
 #include "../utils/boolean.h"
@@ -36,6 +37,40 @@ int is_entry(Symbol symbol){
 
 int is_external(Symbol symbol){
     return is_property(symbol,EXTERNAL);
+}
+
+/* Adds a symbol to the symbol table */
+int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolProperty property) {
+    DoublyLinkedList* current;
+    DoublyLinkedList* properties;
+    Symbol* new_symbol;
+    if (symbol_table == NULL || label == NULL) {
+        return FALSE;
+    }
+
+    /* Check if the label already exists in the symbol table */
+    current = get_list_head(symbol_table);
+    while (current != NULL) {
+        Symbol* existing_symbol = (Symbol*)current->data;
+        if (strcmp(existing_symbol->label, label) == 0) {
+            errorf(0, "Duplicate label found: '%s'", label);
+            return FALSE;
+        }
+        current = current->next;
+    }
+
+    /* Create a new symbol */
+    properties = allocate_node_mem();
+    add_to_list(properties, allocate_int(property));
+    new_symbol = allocate_sym_mem(label, value, properties);
+
+    /* Add the new symbol to the table */
+    if (add_to_list(symbol_table, new_symbol) != TRUE) {
+        free_symbol(new_symbol); /* Free allocated memory on failure */
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 int free_symbol(Symbol* symbol){

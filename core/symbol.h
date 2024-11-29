@@ -15,6 +15,7 @@ typedef enum {
     EXTERNAL
 } SymbolProperty;
 
+int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolProperty property);
 
 Symbol* allocate_sym_mem(char* label, int value, DoublyLinkedList* sym_properties);
 int free_symbol(Symbol* symbol);
