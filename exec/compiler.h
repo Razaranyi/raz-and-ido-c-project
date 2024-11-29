@@ -13,33 +13,41 @@
 
 /* Function prototypes */
 void process_instruction_line(
-        char *instruction_token,
-        DoublyLinkedList *operands,
+        char *line_content,
+        Instruction instruction,
         char *label,
-        DoublyLinkedList *symbol_table,
-        int *IC,
-        int *error_found,
-        int line_number
-);
-
-void process_command_line(
+        int line_index,
         char *command_token,
         DoublyLinkedList *operands,
-        char *label,
         DoublyLinkedList *symbol_table,
-        int *DC,
-        int *error_found,
-        int line_number
+        unsigned long *DC,
+        int *error_found
 );
+
+
+
+
+//void process_command_line(
+//        char *line_content,
+//        char *label,
+//        int line_index,
+//        char *command_token,
+//        DoublyLinkedList *symbol_table,
+//        int *IC,
+//        int *error_found
+//);
 
 void process_line(
         char *line_content,
-        int line_number,
+        char *label,
+        int line_index,
         DoublyLinkedList *symbol_table,
-        int *IC,
-        int *DC,
+        unsigned long *IC,
+        unsigned long *DC,
         int *error_found
 );
+
+
 
 
 #endif

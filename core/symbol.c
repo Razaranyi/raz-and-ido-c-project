@@ -6,12 +6,11 @@
 #include "../utils/commons.h"
 
 
-Symbol* allocate_sym_mem(char* label, int value, DoublyLinkedList* sym_properties){
+Symbol* allocate_sym_mem(char* label, unsigned address, DoublyLinkedList* sym_properties){
     Symbol* res = malloc(sizeof(Symbol));
     res->label = allocate_string(label);
-    res->value = value;
+    res->address = address;
     res->sym_properties = sym_properties;
-    res->sym_addresses = allocate_node_mem();
     return res;
 }
 
@@ -32,15 +31,15 @@ int is_property(Symbol symbol, SymbolProperty property) {
 }
 
 int is_entry(Symbol symbol){
-    return is_property(symbol,ENTRY);
+    return is_property(symbol, ENTRY_PROPERTY);
 }
 
 int is_external(Symbol symbol){
-    return is_property(symbol,EXTERNAL);
+    return is_property(symbol, EXTERNAL_PROPERTY);
 }
 
 /* Adds a symbol to the symbol table */
-int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolProperty property,int index) {
+int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long address, SymbolProperty property, int index) {
     DoublyLinkedList* current;
     DoublyLinkedList* properties;
     Symbol* new_symbol;
@@ -62,7 +61,7 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolPro
     /* Create a new symbol */
     properties = allocate_node_mem();
     add_to_list(properties, allocate_int(property));
-    new_symbol = allocate_sym_mem(label, value, properties);
+    new_symbol = allocate_sym_mem(label, address, properties);
 
     /* Add the new symbol to the table */
     if (add_to_list(symbol_table, new_symbol) != TRUE) {
@@ -74,8 +73,10 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolPro
 }
 
 int free_symbol(Symbol* symbol){
+    if (symbol == NULL){
+        return FALSE
+    }
     free(symbol->label);
-    free_list(&symbol->sym_addresses,free);
     free_list(&symbol->sym_properties,free);
     free(symbol);
     return TRUE;
