@@ -40,7 +40,7 @@ int is_external(Symbol symbol){
 }
 
 /* Adds a symbol to the symbol table */
-int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolProperty property) {
+int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolProperty property,int index) {
     DoublyLinkedList* current;
     DoublyLinkedList* properties;
     Symbol* new_symbol;
@@ -53,7 +53,7 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, int value, SymbolPro
     while (current != NULL) {
         Symbol* existing_symbol = (Symbol*)current->data;
         if (strcmp(existing_symbol->label, label) == 0) {
-            errorf(0, "Duplicate label found: '%s'", label);
+            errorf(index, "Duplicate label found: '%s'", label);
             return FALSE;
         }
         current = current->next;
