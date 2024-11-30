@@ -24,8 +24,6 @@ typedef struct Operand {
     int immediate_value;         /* Immediate value if applicable */
     int is_symbol;               /* TRUE if the operand is a symbol (label) */
     char *symbol_name;           /* Symbol name if operand is a label */
-    int is_indexed;              /* TRUE if the operand uses indexed addressing */
-    int index_value;             /* Index value for indexed addressing */
 } Operand;
 
 /* Function Prototypes */
