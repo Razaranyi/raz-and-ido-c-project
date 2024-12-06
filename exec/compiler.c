@@ -21,11 +21,13 @@ void parse_command_operands(
     DoublyLinkedList *current;
     int operand_count;
 
-    /* Initialize operands list */
     split_string_by_separator(operands_str, ",", operands, -1);
+
 
     /* Validate the number of operands */
     operand_count = get_list_length(*operands);
+
+
     if (operand_count != command->number_of_operands) {
         errorf(
                 line_index,
@@ -43,7 +45,7 @@ void parse_command_operands(
     current = get_list_head(*operands);
     while (current != NULL) {
         operand_str = (char *)current->data;
-        if (!is_valid_operand(operand_str)) {
+        if (!is_valid_operand(operand_str) && !is_string_begin_with_substring(command->command_name,"stop")) {
             errorf(line_index, "Invalid operand: '%s'", operand_str);
             *error_found = TRUE;
             free_list(operands, free);
@@ -72,7 +74,9 @@ void process_command_line(
     }
 
     operands_str = line_content + strlen(command_token);
-    if (!isspace(*operands_str)) {
+    printf("operands_str: %s\n", operands_str);
+
+    if (!isspace(*operands_str) && !is_string_begin_with_substring(command_token,"stop")) {
         errorf(line_index, "Missing space after command: '%s'", command_token);
         *error_found = TRUE;
         return;
@@ -173,7 +177,7 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
     unsigned long IC = 100;
     unsigned long DC = 0;
     int error_found = FALSE;
-    printf("starting first pass...");
+    printf("starting first pass...\n");
 
     DoublyLinkedList *current_node = get_list_head(line_list);
     while (current_node != NULL) {
@@ -181,11 +185,13 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
         char *line_content = line_entry->data;
         char *label = line_entry->label;
         int index = line_entry->index;
-
+        char char1;
         debugf(index, "line content: %s",line_content);
 
-        if (!is_string_begin_with_substring(line_content, "\0") &&
-            !is_string_begin_with_substring(line_content, ";")) {
+
+        if (
+            !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
+            debugf(index,"got in if");
             process_line(line_content, label, index, symbol_table, &IC, &DC, &error_found);
         }
 
@@ -207,15 +213,25 @@ void process_line(
     DoublyLinkedList *tokens = NULL;
     char *line_copy = allocate_string(line_content);
     char *token;
+    debugf(line_index,"starting processing line: %s",line_copy);
 
-    split_string_by_separator(line_copy, " \t", &tokens, -1);
+    split_string_by_separator(line_copy, " ", &tokens, -1);
     token = (char *)tokens->data;
+    cut_spaces_start(token);
+
+
+    debugf(line_index, "checking token: %s",token);
 
     if (find_command(token) != NULL) {
+        debugf(line_index,"command found");
         process_command_line(line_content, label, line_index, token, symbol_table, IC, error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
+        debugf(line_index,"Instruction: %d",instruction);
+
         if (instruction != INVALID) {
+           debugf(line_index,"instruction found");
+
             process_instruction_line(
                     line_content, instruction, label, line_index, token, tokens->next, symbol_table, DC, error_found);
         } else {

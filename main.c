@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
     /*TODO: add file name to the indexed line for logging purposes*/
     DoublyLinkedList *line_list = create_line_table(); /*for the lines*/
     DoublyLinkedList *symbol_table = allocate_node_mem();
+    initialize_command_set();
+
     printf("Assembler started...\n");
 	if (argc < 2)
 	{

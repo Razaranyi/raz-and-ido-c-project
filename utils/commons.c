@@ -161,8 +161,10 @@ int* allocate_int(int integer){
 }
 
 int is_string_begin_with_substring(char* string, char* substring){
-    return strstr(string,substring) == string;
+    return strncmp(string, substring, strlen(substring)) == 0;
 }
+
+
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
@@ -293,6 +295,12 @@ int is_valid_integer(char *operand) {
         return FALSE;
     }
     p = operand;
+    if (*p == '#'){
+        p++;
+    } else
+        {
+            return FALSE;
+        }
     if (*p == '+' || *p == '-') {
         p++;
     }
@@ -322,5 +330,5 @@ int is_valid_string(char *operand) {
 
 /* Checks if an operand is valid */
 int is_valid_operand(char *operand) {
-    return is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand);
+    return is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&';
 }

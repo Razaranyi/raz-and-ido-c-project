@@ -35,6 +35,7 @@ Command* find_command(char* name) {
     Command* command;
 
     if (command_list == NULL || is_list_empty(command_list)) {
+        debugf(-1,"command list is empty");
         return NULL;
     }
 
@@ -171,6 +172,8 @@ void initialize_command_set() {
     int i, j;
     Command *command;
 
+
+
     command_list = allocate_node_mem();
 
     for (i = 0; i < num_commands; i++) {
@@ -200,8 +203,8 @@ void initialize_command_set() {
         for (j = 0; j < 4; j++) {
             command->allowed_dst_addressing_modes[j] = command_init_data[i].allowed_dst_addressing_modes[j];
         }
-
         add_to_list(command_list, command);
+
     }
 }
 
