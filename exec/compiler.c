@@ -21,13 +21,28 @@ void parse_command_operands(
     DoublyLinkedList *current;
     int operand_count;
 
-    split_string_by_separator(operands_str, ",", operands, -1);
+    /* Remove leading and trailing spaces from operands_str */
+    remove_leading_and_trailing_whitespaces(operands_str, operands_str);
 
+    /* Handle the case where no operands are expected */
+    if (command->number_of_operands == 0) {
+        if (strlen(operands_str) > 0) {
+            errorf(
+                    line_index,
+                    "Command '%s' expects 0 operands but got '%s'",
+                    command->command_name,
+                    operands_str
+            );
+            *error_found = TRUE;
+        }
+        return;
+    }
+
+    /* Split operands by ',' */
+    split_string_by_separator(operands_str, ",", operands, -1);
 
     /* Validate the number of operands */
     operand_count = get_list_length(*operands);
-
-
     if (operand_count != command->number_of_operands) {
         errorf(
                 line_index,
@@ -45,7 +60,9 @@ void parse_command_operands(
     current = get_list_head(*operands);
     while (current != NULL) {
         operand_str = (char *)current->data;
-        if (!is_valid_operand(operand_str) && !is_string_begin_with_substring(command->command_name,"stop")) {
+        cut_spaces_start(operand_str);
+        printf("operand: %s\n",operand_str);
+        if (!is_valid_operand(operand_str)) {
             errorf(line_index, "Invalid operand: '%s'", operand_str);
             *error_found = TRUE;
             free_list(operands, free);
@@ -67,6 +84,7 @@ void process_command_line(
     Command *command = find_command(command_token);
     char *operands_str;
     DoublyLinkedList *operands = NULL;
+
     if (command == NULL) {
         errorf(line_index, "Unknown command: '%s'", command_token);
         *error_found = TRUE;
@@ -74,31 +92,39 @@ void process_command_line(
     }
 
     operands_str = line_content + strlen(command_token);
-    printf("operands_str: %s\n", operands_str);
 
-    if (!isspace(*operands_str) && !is_string_begin_with_substring(command_token,"stop")) {
+    /* Ensure there's at least one space after the command token if operands are expected */
+    if (command->number_of_operands > 0 && !isspace(*operands_str)) {
         errorf(line_index, "Missing space after command: '%s'", command_token);
         *error_found = TRUE;
         return;
     }
 
+    /* Remove leading and trailing spaces from operands_str */
     remove_leading_and_trailing_whitespaces(operands_str, operands_str);
+
+    /* Parse operands */
     parse_command_operands(command, operands_str, &operands, error_found, line_index);
 
     if (*error_found) {
         return;
     }
 
-    if (label != NULL) {
+    /* Add the label to the symbol table if it exists */
+    if (strcmp(label,"")!=0) {
         add_symbol(symbol_table, label, *IC, CODE_PROPERTY, line_index);
     }
 
+    /* Increment IC based on the size of the command and operands */
     *IC += calculate_command_size(command, operands);
     free_list(&operands, free);
 }
 
+
+
 void parse_data_or_string_instruction(
         char *instruction_token,
+        char *line_content,
         DoublyLinkedList *operands,
         char *label,
         DoublyLinkedList *symbol_table,
@@ -106,31 +132,56 @@ void parse_data_or_string_instruction(
         int *error_found,
         int line_index
 ) {
+    char *line_copy = allocate_string(line_content);
+    char *after_instruction;
+
+    after_instruction = line_copy + strlen(instruction_token);
+
+    remove_leading_and_trailing_whitespaces(after_instruction, after_instruction);
+
+
+    DoublyLinkedList *operands_list = NULL;
+    split_string_by_separator(after_instruction, ",", &operands_list, -1);
+
+    DoublyLinkedList *current = get_list_head(operands_list);
+
+
+
     if (strcmp(instruction_token, ".data") == 0) {
-        DoublyLinkedList *current = get_list_head(operands);
-        char *operand;
         while (current != NULL) {
-            operand = (char *)current->data;
+            char *operand = (char *)current->data;
+            remove_leading_and_trailing_whitespaces(operand, operand);
+
+            printf("operand: %s\n",operand);
+
             if (!is_valid_integer(operand)) {
                 errorf(line_index, "Invalid operand in .data instruction: '%s'", operand);
                 *error_found = TRUE;
+                free_list(&operands_list, free);
+                free(line_copy);
                 return;
             }
+
             (*DC)++;
             current = current->next;
         }
     } else if (strcmp(instruction_token, ".string") == 0) {
-        char *operand;
-        if (get_list_length(operands) != 1) {
+        if (get_list_length(operands_list) != 1) {
             errorf(line_index, ".string instruction expects a single string operand");
             *error_found = TRUE;
+            free_list(&operands_list, free);
+            free(line_copy);
             return;
         }
 
-        operand = (char *)operands->data;
+        char *operand = (char *)operands_list->data;
+        remove_leading_and_trailing_whitespaces(operand, operand);
+
         if (!is_valid_string(operand)) {
             errorf(line_index, "Invalid string in .string instruction: '%s'", operand);
             *error_found = TRUE;
+            free_list(&operands_list, free);
+            free(line_copy);
             return;
         }
 
@@ -139,6 +190,9 @@ void parse_data_or_string_instruction(
         errorf(line_index, "Unexpected instruction: '%s'", instruction_token);
         *error_found = TRUE;
     }
+
+    free_list(&operands_list, free);
+    free(line_copy);
 }
 
 void process_instruction_line(
@@ -153,11 +207,11 @@ void process_instruction_line(
         int *error_found
 ) {
     if (instruction == DATA || instruction == STRING) {
-        if (label != NULL) {
+        if (strcmp(label,"")!=0) {
             add_symbol(symbol_table, label, *DC, DATA_PROPERTY, line_index);
         }
         parse_data_or_string_instruction(
-                instruction_token, operands, label, symbol_table, DC, error_found, line_index);
+                instruction_token,line_content, operands, label, symbol_table, DC, error_found, line_index);
     } else if (instruction == EXTERN) {
         if (label != NULL) {
             warnf(line_index, "Label '%s' cannot be associated with '.extern' instruction", label);
@@ -191,7 +245,6 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
 
         if (
             !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
-            debugf(index,"got in if");
             process_line(line_content, label, index, symbol_table, &IC, &DC, &error_found);
         }
 

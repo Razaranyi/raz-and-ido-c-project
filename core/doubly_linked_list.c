@@ -19,7 +19,6 @@ DoublyLinkedList* get_list_head(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = doublyLinkedList;
 
     if (current == NULL) {
-        warn("List is empty",__LINE__);
         return NULL;
     }
 
@@ -32,7 +31,6 @@ DoublyLinkedList* get_list_head(DoublyLinkedList* doublyLinkedList){
 DoublyLinkedList* get_list_tail(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = doublyLinkedList;
     if (current == NULL) {
-        warn("List is empty",__LINE__);
         return NULL;
     }
 

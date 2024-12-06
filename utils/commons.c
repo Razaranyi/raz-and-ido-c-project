@@ -251,41 +251,42 @@ char* get_last_separator(char* string, char* separator) {
     return current + 1;
 }
 
-int split_string_by_separator(char* string,char* separator, DoublyLinkedList** result_list, int max_splits){
+int split_string_by_separator(char* string, char* separator, DoublyLinkedList** result_list, int max_splits) {
+    if (!string || !separator || strlen(separator) == 0) {
+        fprintf(stderr, "Invalid arguments to split_string_by_separator.\n");
+        return -1;
+    }
+
     char* current;
     char item[4096];
-    int number_of_splits =0;
+    int number_of_splits = 0;
 
     DoublyLinkedList* items_list = allocate_node_mem();
+    if (!items_list) {
+        fprintf(stderr, "Failed to allocate memory for result list.\n");
+        return -1;
+    }
 
     do {
         number_of_splits++;
-        string = skip_separators(string,separator);
-        current = (strstr(string,separator));
+        string = skip_separators(string, separator);
+        current = strstr(string, separator);
 
-        if(current == NULL){
-            strcpy(item,string);
-        } else{
-            str_substring(string,0,current - string,item);
+        if (current == NULL) {
+            strncpy(item, string, sizeof(item) - 1);
+            item[sizeof(item) - 1] = '\0';
+        } else {
+            str_substring(string, 0, current - string, item);
         }
 
         add_to_list(items_list, allocate_string(item));
-        string = current;
-    } while ((max_splits == -1 || number_of_splits < max_splits) && current != NULL && strlen(string) > 0);
-
-    if(string != NULL && number_of_splits == max_splits){
-        string = skip_separators(string,separator);
-        current = get_last_separator(string,separator);
-
-        if(string != current){
-            str_substring(string, 0, current - string,item);
-            add_to_list(items_list, allocate_string(item));
-        }
-    }
+        string = current ? current + strlen(separator) : NULL;
+    } while ((max_splits == -1 || number_of_splits < max_splits) && current != NULL);
 
     *result_list = items_list;
     return 0;
 }
+
 
 
 /* Validates if a given string is a valid integer */
@@ -297,10 +298,7 @@ int is_valid_integer(char *operand) {
     p = operand;
     if (*p == '#'){
         p++;
-    } else
-        {
-            return FALSE;
-        }
+    }
     if (*p == '+' || *p == '-') {
         p++;
     }

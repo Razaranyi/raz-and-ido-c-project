@@ -42,18 +42,28 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long addres
     DoublyLinkedList* current;
     DoublyLinkedList* properties;
     Symbol* new_symbol;
+
+    if (strcmp(label,"") == 0){
+        return TRUE;
+    }
+
     if (symbol_table == NULL || label == NULL) {
         return FALSE;
     }
 
     /* Check if the label already exists in the symbol table */
+    debugf(index, "Adding symbol: label='%s', address=%lu, property=%d", label, address, property);
     current = get_list_head(symbol_table);
     while (current != NULL) {
         Symbol* existing_symbol = (Symbol*)current->data;
-        if (strcmp(existing_symbol->label, label) == 0) {
-            errorf(index, "Duplicate label found: '%s'", label);
-            return FALSE;
+        if (existing_symbol != NULL ) {
+            if (strcmp(existing_symbol->label, label) == 0) {
+                errorf(index, "Duplicate label found: '%s'", label);
+                return FALSE;
+            }
         }
+
+
         current = current->next;
     }
 
@@ -70,6 +80,7 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long addres
 
     return TRUE;
 }
+
 
 int free_symbol(Symbol* symbol){
     if (symbol == NULL){
