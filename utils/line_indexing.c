@@ -9,7 +9,7 @@
 /*get char name and list of Lines, checks if the name is in the Line name list and return int as boolean*/
 int in_line_table(char *name, DoublyLinkedList *line_list) {
     DoublyLinkedList *current = get_list_head(line_list);
-    while (current != NULL) {
+    while (current != NULL && current->data != NULL) {
         Line *line = (Line *) current->data;
         if (line->label != NULL && strcmp(name, line->label) == 0) {
             return TRUE;
