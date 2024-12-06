@@ -17,5 +17,6 @@ void warnf(int line, const char *format, ...);
 void error(char* message, int line);
 void errorf(int line, const char *format, ...);
 void fatal(char* message, int line);
+void debugf(int line, const char *format, ...);
 
 #endif

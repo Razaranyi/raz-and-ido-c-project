@@ -37,7 +37,6 @@ int is_entry(Symbol symbol){
 int is_external(Symbol symbol){
     return is_property(symbol, EXTERNAL_PROPERTY);
 }
-
 /* Adds a symbol to the symbol table */
 int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long address, SymbolProperty property, int index) {
     DoublyLinkedList* current;
@@ -74,7 +73,7 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long addres
 
 int free_symbol(Symbol* symbol){
     if (symbol == NULL){
-        return FALSE
+        return FALSE;
     }
     free(symbol->label);
     free_list(&symbol->sym_properties,free);

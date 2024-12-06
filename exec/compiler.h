@@ -27,15 +27,15 @@ void process_instruction_line(
 
 
 
-//void process_command_line(
-//        char *line_content,
-//        char *label,
-//        int line_index,
-//        char *command_token,
-//        DoublyLinkedList *symbol_table,
-//        int *IC,
-//        int *error_found
-//);
+void process_command_line(
+        char *line_content,
+        char *label,
+        int line_index,
+        char *command_token,
+        DoublyLinkedList *symbol_table,
+        unsigned long *IC,
+        int *error_found
+);
 
 void process_line(
         char *line_content,
@@ -46,6 +46,9 @@ void process_line(
         unsigned long *DC,
         int *error_found
 );
+
+
+int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table);
 
 
 

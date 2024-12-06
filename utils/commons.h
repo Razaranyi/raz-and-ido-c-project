@@ -21,6 +21,12 @@ int* allocate_int(int integer);
    int* num = allocate_int(5);
 */
 
+int is_valid_integer(char *operand);
+
+int is_valid_string(char *operand);
+
+int is_valid_operand(char *operand);
+
 /* Checks if a string starts with a given substring */
 int is_string_begin_with_substring(char* string, char* substring);
 /* Usage example:

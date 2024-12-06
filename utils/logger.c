@@ -27,6 +27,17 @@ void debug(char* message, int line) {
     print_log_by_level(DEBUG, "[DEBUG] ", message, line);
 }
 
+void debugf(int line, const char *format, ...) {
+    char message[MSG_BUFFER];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(message, format, args);
+    va_end(args);
+
+    debug(message, line);
+}
+
 void warn(char* message, int line) {
     print_log_by_level(WARN, "[WARN] ", message, line);
 }

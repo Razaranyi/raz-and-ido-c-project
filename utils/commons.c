@@ -284,3 +284,43 @@ int split_string_by_separator(char* string,char* separator, DoublyLinkedList** r
     *result_list = items_list;
     return 0;
 }
+
+
+/* Validates if a given string is a valid integer */
+int is_valid_integer(char *operand) {
+    char *p;
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+    p = operand;
+    if (*p == '+' || *p == '-') {
+        p++;
+    }
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+        p++;
+    }
+    return TRUE;
+}
+
+/* Validates if a given string is a valid string literal */
+int is_valid_string(char *operand) {
+    size_t len = strlen(operand);
+    size_t i;
+    if (len < 2 || operand[0] != '"' || operand[len - 1] != '"') {
+        return FALSE;
+    }
+    for ( i = 1; i < len - 1; i++) {
+        if (!isprint(operand[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+/* Checks if an operand is valid */
+int is_valid_operand(char *operand) {
+    return is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand);
+}
