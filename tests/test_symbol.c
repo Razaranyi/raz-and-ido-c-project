@@ -15,8 +15,8 @@ void test_symbol_functions() {
     /* Variable declarations at the beginning */
     char* test_label = "testLabel";
     int test_value = 42;
-    int entry_property = ENTRY;
-    int external_property = EXTERNAL;
+    int entry_property = ENTRY_PROPERTY;
+    int external_property = EXTERNAL_PROPERTY;
     DoublyLinkedList* properties;
     Symbol* symbol;
 
