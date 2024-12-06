@@ -1,0 +1,159 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <ctype.h>
+#include "operand.h"
+#include "../utils/commons.h"
+
+
+int is_valid_label_name(char *label);
+int is_register(char *operand_str);
+
+/* Allocates memory for an Operand struct and initializes its fields */
+Operand* allocate_operand() {
+    Operand *operand = (Operand *)malloc(sizeof(Operand));
+    if (!operand) {
+        fprintf(stderr, "Memory allocation error for Operand\n");
+        exit(1);
+    }
+    memset(operand, 0, sizeof(Operand));
+    return operand;
+}
+
+/* Frees memory allocated for an Operand struct */
+void free_operand(Operand *operand) {
+    if (operand->operand_str) {
+        free(operand->operand_str);
+    }
+    if (operand->symbol_name) {
+        free(operand->symbol_name);
+    }
+    free(operand);
+}
+
+/* Extracts the register index from a register operand (e.g., 'r3' -> 3) */
+int get_register_index(char *raw_op) {
+    if (strlen(raw_op) != 2 || raw_op[0] != 'r' || !isdigit(raw_op[1])) {
+        return -1;
+    }
+    return raw_op[1] - '0';
+}
+
+/* Determines the addressing mode of the operand */
+int determine_addressing_mode(char *operand_str) {
+    if (operand_str[0] == '#') {
+        return IMMEDIATE_ADDRESSING;
+    } else if (operand_str[0] == '&') {
+        return RELATIVE_ADDRESSING;
+    } else if (is_register(operand_str)) {
+        return REGISTER_ADDRESSING;
+    } else if (is_valid_label_name(operand_str)) {
+        return DIRECT_ADDRESSING;
+    } else if (strstr(operand_str, ".") != NULL) {
+        return DIRECT_ADDRESSING; /* Indexed addressing, treated as direct for simplicity */
+    } else {
+        return -1; /* Invalid addressing mode */
+    }
+}
+
+/* Parses an operand string and fills the Operand struct */
+int parse_operand(char *operand_str, int index, Operand *operand, int line_index, char *error_message) {
+    operand->index = index;
+    operand->operand_str = allocate_string(operand_str);
+    operand->addressing_mode = determine_addressing_mode(operand_str);
+
+    if (operand->addressing_mode == -1) {
+        errorf(line_index, "Invalid addressing mode for operand '%s", operand_str, line_index);
+        return FALSE;
+    }
+
+    switch (operand->addressing_mode) {
+        case IMMEDIATE_ADDRESSING:
+            operand->is_immediate = TRUE;
+            operand->immediate_value = atoi(operand_str + 1); /* Skip '#' */
+            break;
+        case DIRECT_ADDRESSING:
+            operand->is_symbol = TRUE;
+            operand->symbol_name = allocate_string(operand_str);
+            break;
+        case RELATIVE_ADDRESSING:
+            operand->is_symbol = TRUE;
+            operand->symbol_name = allocate_string(operand_str + 1); /* Skip '&' */
+            break;
+        case REGISTER_ADDRESSING:
+            operand->is_register = TRUE;
+            operand->register_number = get_register_index(operand_str);
+            if (operand->register_number < 0 || operand->register_number > 7) {
+                errorf(line_index, "Invalid register '%s'", operand_str);
+                return FALSE;
+            }
+            break;
+        default:
+            errorf(line_index, "Unknown addressing mode for operand '%s'", operand_str);
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+/* Counts the extra words needed for an operand based on its addressing mode */
+int count_extra_words_address(Operand *operand) {
+    switch (operand->addressing_mode) {
+        case IMMEDIATE_ADDRESSING:
+        case DIRECT_ADDRESSING:
+        case RELATIVE_ADDRESSING:
+            return 1;
+        case REGISTER_ADDRESSING:
+            return 0;
+        default:
+            return 0;
+    }
+}
+
+/* Counts the extra words needed for a set of operands */
+int count_extra_addresses_words(Operand operands[], int operand_count) {
+    int extra_words = 0;
+    int both_registers = FALSE;
+    int i;
+
+    if (operand_count == 2 &&
+        operands[0].addressing_mode == REGISTER_ADDRESSING &&
+        operands[1].addressing_mode == REGISTER_ADDRESSING) {
+        /* Both operands are registers; they can share one word */
+        both_registers = TRUE;
+    }
+
+    for (i = 0; i < operand_count; i++) {
+        if (both_registers && i == 0) {
+            extra_words += 1;
+            continue;
+        }
+        extra_words += count_extra_words_address(&operands[i]);
+    }
+
+    return extra_words;
+}
+
+/* Helper function to check if a string is a valid register */
+int is_register(char *operand_str) {
+    int reg_num = get_register_index(operand_str);
+    return reg_num >= 0 && reg_num <= 7;
+}
+
+/* Helper function to validate label names */
+int is_valid_label_name(char *label) {
+    int i;
+    if (!isalpha(label[0])) {
+        return FALSE;
+    }
+    if (strlen(label) > MAX_LABEL_LENGTH) {
+        return FALSE;
+    }
+    for (i = 1; label[i] != '\0'; i++) {
+        if (!isalnum(label[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
