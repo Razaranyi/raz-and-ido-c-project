@@ -10,6 +10,27 @@
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
 
+void check_double_commas(int line_index, char *line_copy, int *error_found) {
+    int last_was_comma = 0;
+    int i;
+
+    for (i = 0; line_copy[i] != '\0'; i++) {
+        char current_char = line_copy[i];
+
+        if (current_char == ',') {
+            if (last_was_comma) {
+                errorf(line_index, "Multiple consecutive commas dound");
+                *error_found = TRUE;
+                return;
+            }
+            last_was_comma = 1;
+        } else if (!isspace(current_char)) {
+            last_was_comma = 0;
+        }
+    }
+}
+
+
 void parse_command_operands(
         Command *command,
         char *operands_str,
@@ -21,8 +42,11 @@ void parse_command_operands(
     DoublyLinkedList *current;
     int operand_count;
 
-    /* Remove leading and trailing spaces from operands_str */
     remove_leading_and_trailing_whitespaces(operands_str, operands_str);
+    if (operands_str[0] == ','){
+        errorf(line_index,"Illegal comma after command: %s",command->command_name);
+        *error_found = TRUE;
+    }
 
     /* Handle the case where no operands are expected */
     if (command->number_of_operands == 0) {
@@ -60,7 +84,7 @@ void parse_command_operands(
     current = get_list_head(*operands);
     while (current != NULL) {
         operand_str = (char *)current->data;
-        cut_spaces_start(operand_str);
+        remove_leading_and_trailing_whitespaces(operand_str,operand_str);
         printf("operand: %s\n",operand_str);
         if (!is_valid_operand(operand_str)) {
             errorf(line_index, "Invalid operand: '%s'", operand_str);
@@ -138,6 +162,10 @@ void parse_data_or_string_instruction(
     after_instruction = line_copy + strlen(instruction_token);
 
     remove_leading_and_trailing_whitespaces(after_instruction, after_instruction);
+    if (after_instruction[0] == ','){
+        errorf(line_index,"Illegal comma after instruction: %s",instruction_token);
+        *error_found = TRUE;
+    }
 
 
     DoublyLinkedList *operands_list = NULL;
@@ -268,6 +296,8 @@ void process_line(
     char *token;
     debugf(line_index,"starting processing line: %s",line_copy);
 
+   check_double_commas(line_index,line_copy,error_found);
+
     split_string_by_separator(line_copy, " ", &tokens, -1);
     token = (char *)tokens->data;
     cut_spaces_start(token);
@@ -288,7 +318,11 @@ void process_line(
             process_instruction_line(
                     line_content, instruction, label, line_index, token, tokens->next, symbol_table, DC, error_found);
         } else {
-            errorf(line_index, "Unrecognized command or instruction: '%s'", token);
+            if (strchr(token,',')){
+                errorf(line_index,"Illegal comma after command");
+            } else {
+                errorf(line_index, "Unrecognized command or instruction: '%s'", token);
+            }
             *error_found = TRUE;
         }
     }
