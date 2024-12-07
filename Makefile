@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils -Icore
+CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils -Icore -g
 
 # Directories
 TESTS_DIR = tests

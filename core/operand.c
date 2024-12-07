@@ -125,7 +125,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count) {
 
     for (i = 0; i < operand_count; i++) {
         if (both_registers && i == 0) {
-            extra_words += 1;
+            extra_words += 0;
             continue;
         }
         extra_words += count_extra_words_address(&operands[i]);

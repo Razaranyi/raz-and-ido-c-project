@@ -147,11 +147,6 @@ void cut_spaces_start(char * input)
     
 }
 
-
-
-
-
-
 char* allocate_string(char* string){
     int str_len = strlen(string);
     char* res = malloc(str_len + 1);
@@ -166,12 +161,14 @@ int* allocate_int(int integer){
 }
 
 int is_string_begin_with_substring(char* string, char* substring){
-    return strstr(string,substring) == string;
+    return strncmp(string, substring, strlen(substring)) == 0;
 }
+
+
 
 int is_label( char* line) {
     /* Pattern to match a label: a valid label name ending with ':' */
-    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*[ ]*:.*";
+    char* pattern = "^[a-zA-Z][a-zA-Z0-9]*:.*";
     return is_string_equal_by_regex(line, pattern);
 }
 
@@ -254,38 +251,95 @@ char* get_last_separator(char* string, char* separator) {
     return current + 1;
 }
 
-int split_string_by_separator(char* string,char* separator, DoublyLinkedList** result_list, int max_splits){
+int split_string_by_separator(char* string, char* separator, DoublyLinkedList** result_list, int max_splits) {
     char* current;
     char item[4096];
-    int number_of_splits =0;
+    int number_of_splits = 0;
+    DoublyLinkedList* items_list;
 
-    DoublyLinkedList* items_list = allocate_node_mem();
+
+    if (!string || !separator || strlen(separator) == 0) {
+        fprintf(stderr, "Invalid arguments to split_string_by_separator.\n");
+        return -1;
+    }
+
+
+    items_list = allocate_node_mem();
+    if (!items_list) {
+        fprintf(stderr, "Failed to allocate memory for result list.\n");
+        return -1;
+    }
 
     do {
         number_of_splits++;
-        string = skip_separators(string,separator);
-        current = (strstr(string,separator));
+        string = skip_separators(string, separator);
+        current = strstr(string, separator);
 
-        if(current == NULL){
-            strcpy(item,string);
-        } else{
-            str_substring(string,0,current - string,item);
+        if (current == NULL) {
+            strncpy(item, string, sizeof(item) - 1);
+            item[sizeof(item) - 1] = '\0';
+        } else {
+            str_substring(string, 0, current - string, item);
         }
 
         add_to_list(items_list, allocate_string(item));
-        string = current;
-    } while ((max_splits == -1 || number_of_splits < max_splits) && current != NULL && strlen(string) > 0);
-
-    if(string != NULL && number_of_splits == max_splits){
-        string = skip_separators(string,separator);
-        current = get_last_separator(string,separator);
-
-        if(string != current){
-            str_substring(string, 0, current - string,item);
-            add_to_list(items_list, allocate_string(item));
-        }
-    }
+        string = current ? current + strlen(separator) : NULL;
+    } while ((max_splits == -1 || number_of_splits < max_splits) && current != NULL);
 
     *result_list = items_list;
     return 0;
+}
+
+
+
+/* Validates if a given string is a valid integer */
+int is_valid_integer(char *operand) {
+    char *p;
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+    p = operand;
+    if (*p == '#'){
+        p++;
+    }
+    if (*p == '+' || *p == '-') {
+        p++;
+    }
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+        p++;
+    }
+    return TRUE;
+}
+
+/* Validates if a given string is a valid string literal */
+int is_valid_string(char *operand) {
+    size_t len = strlen(operand);
+    size_t i;
+    if (len < 2 || operand[0] != '"' || operand[len - 1] != '"') {
+        return FALSE;
+    }
+    for ( i = 1; i < len - 1; i++) {
+        if (!isprint(operand[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+int contains_whitespace(char *operand){
+    while (*operand) {
+        if (isspace((unsigned char)*operand)) {
+            return TRUE;
+        }
+        operand++;
+    }
+    return FALSE;
+}
+
+/* Checks if an operand is valid */
+int is_valid_operand(char *operand) {
+    return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
 }

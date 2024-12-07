@@ -36,3 +36,5 @@ int get_index_macro_table (char *name, DoublyLinkedList *macro_list);
 /*run over the macros table and free it*/
 void free_macro_table(DoublyLinkedList *macro_list);
 #endif  /*!__MACRO_PART__H__*/
+
+void print_macros(DoublyLinkedList *macro_list);

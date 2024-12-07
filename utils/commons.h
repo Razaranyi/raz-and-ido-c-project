@@ -2,7 +2,6 @@
 #define COMMON_H
 #include "../core/doubly_linked_list.h"
 #include "boolean.h"
-#define COMMANDS_LEN 16
 #define INSTRUCTIONS_LEN 4
 #define LEN_LINE 80
 #define INSTRUCTIONS {".data", ".string", ".entry", ".extern"}
@@ -21,6 +20,12 @@ int* allocate_int(int integer);
 /* Usage example:
    int* num = allocate_int(5);
 */
+
+int is_valid_integer(char *operand);
+
+int is_valid_string(char *operand);
+
+int is_valid_operand(char *operand);
 
 /* Checks if a string starts with a given substring */
 int is_string_begin_with_substring(char* string, char* substring);

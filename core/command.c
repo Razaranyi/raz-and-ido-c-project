@@ -2,6 +2,7 @@
 #include <string.h>
 #include "command.h"
 #include "../utils/commons.h"
+#include "../core/operand.h"
 #include "doubly_linked_list.h"
 
 /* Global command list */
@@ -34,6 +35,7 @@ Command* find_command(char* name) {
     Command* command;
 
     if (command_list == NULL || is_list_empty(command_list)) {
+        debugf(-1,"command list is empty");
         return NULL;
     }
 
@@ -170,6 +172,8 @@ void initialize_command_set() {
     int i, j;
     Command *command;
 
+
+
     command_list = allocate_node_mem();
 
     for (i = 0; i < num_commands; i++) {
@@ -199,7 +203,33 @@ void initialize_command_set() {
         for (j = 0; j < 4; j++) {
             command->allowed_dst_addressing_modes[j] = command_init_data[i].allowed_dst_addressing_modes[j];
         }
-
         add_to_list(command_list, command);
+
     }
 }
+
+/* Calculates the size (in words) of a command */
+int calculate_command_size(Command *command, DoublyLinkedList *operands) {
+    Operand *operand_array = malloc(sizeof(Operand) * command->number_of_operands);
+    int operand_count = 0;
+    int extra_words = 0;
+    DoublyLinkedList *current;
+
+    if (!operand_array) {
+        error("Memory allocation failed for operand array", __LINE__);
+        return -1;
+    }
+
+    current = get_list_head(operands);
+    while (current != NULL && operand_count < command->number_of_operands) {
+        parse_operand((char *)current->data, operand_count, &operand_array[operand_count], 0, NULL);
+        operand_count++;
+        current = current->next;
+    }
+
+    extra_words = count_extra_addresses_words(operand_array, operand_count);
+
+    free(operand_array);
+    return 1 + extra_words; /* Command word + extra words */
+}
+

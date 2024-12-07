@@ -220,13 +220,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                             labelname = strtok(line_copy, ":");
                             cut_two_dots_start(clean_line);
                             cut_spaces(labelname);
-                            if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
-                                is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE ||
-                                check_if_registar(labelname) == TRUE) {
-                                checker = FALSE;
-                                error("ERROR - theres a problems with the label name", linecounter);
-                                labelname = "";
-                            }
 
                         } else {
                             labelname = "";
