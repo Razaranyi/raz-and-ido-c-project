@@ -4,20 +4,39 @@
 #include "line_indexing.h"
 #define MSG_BUFFER  1024
 
+/* ANSI color codes */
+#define RESET_COLOR   "\033[0m"
+#define DEBUG_COLOR   "\033[36m"
+#define INFO_COLOR    "\033[32m"
+#define WARN_COLOR    "\033[33m"
+#define ERROR_COLOR   "\033[31m"
+#define FATAL_COLOR   "\033[41m\033[30m"
+
 
 
 static LogLevel log_level;
 
 void print_log_by_level(LogLevel level, const char* prefix, const char *message, int line) {
     char log_res[MSG_BUFFER];
+    char* color;
 
     /* Check if the log level is high enough to log the message */
     if (level < log_level) {
         return;
     }
 
+
+    switch (level) {
+        case DEBUG: color = DEBUG_COLOR; break;
+        case INFO: color = INFO_COLOR; break;
+        case WARN: color = WARN_COLOR; break;
+        case ERROR: color = ERROR_COLOR; break;
+        case FATAL: color = FATAL_COLOR; break;
+        default: color = RESET_COLOR; break;
+    }
+
     /* Format the log message and store it in log_res */
-    sprintf(log_res, "%s%s (line: %d)\n", prefix, message, line);
+    sprintf(log_res, "%s%s%s (line: %d)%s\n", color, prefix, message, line, RESET_COLOR);
 
     /* Print the log message to stdout */
     printf("%s", log_res);

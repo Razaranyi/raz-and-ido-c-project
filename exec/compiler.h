@@ -21,6 +21,7 @@ void process_instruction_line(
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
         unsigned long *DC,
+        unsigned long *IC,
         int *error_found
 );
 

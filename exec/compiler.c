@@ -143,7 +143,7 @@ void process_command_line(
 
     /* Add the label to the symbol table if it exists */
     if (strcmp(label,"")!=0) {
-        add_symbol(symbol_table, label, *IC, CODE_PROPERTY, line_index);
+        add_symbol(symbol_table, label, *IC,0, CODE_PROPERTY, line_index);
     }
 
     /* Increment IC based on the size of the command and operands */
@@ -160,6 +160,7 @@ void parse_data_or_string_instruction(
         char *label,
         DoublyLinkedList *symbol_table,
         unsigned long *DC,
+        unsigned long *IC,
         int *error_found,
         int line_index
 ) {
@@ -194,6 +195,7 @@ void parse_data_or_string_instruction(
 
 
     if (strcmp(instruction_token, ".data") == 0) {
+        int counter = 0;
         while (current != NULL) {
             operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
@@ -208,10 +210,14 @@ void parse_data_or_string_instruction(
                 return;
             }
 
-            (*DC)++;
+            (*DC)+=1;
+            counter+=1;
+            printf("counter value: %d\n", counter);
             current = current->next;
         }
+        *IC+=counter;
     } else if (strcmp(instruction_token, ".string") == 0) {
+        debugf(line_index,"found string");
         if (get_list_length(operands_list) != 1) {
             errorf(line_index, ".string instruction expects a single string operand");
             *error_found = TRUE;
@@ -230,8 +236,10 @@ void parse_data_or_string_instruction(
             free(line_copy);
             return;
         }
+        (*DC) += strlen(operand);
+        (*IC) += strlen(operand) -1;
 
-        (*DC) += strlen(operand) + 1;
+        debugf(line_index, "IC after string: %lu, DC after string: %lu",*IC,*DC);
     } else {
         errorf(line_index, "Unexpected instruction: '%s'", instruction_token);
         *error_found = TRUE;
@@ -250,21 +258,22 @@ void process_instruction_line(
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
         unsigned long *DC,
+        unsigned long *IC,
         int *error_found
 ) {
     if (instruction == DATA || instruction == STRING) {
         if (strcmp(label,"")!=0) {
-            add_symbol(symbol_table, label, *DC, DATA_PROPERTY, line_index);
+            add_symbol(symbol_table, label,*IC, *DC, DATA_PROPERTY, line_index);
         }
         parse_data_or_string_instruction(
-                instruction_token,line_content, operands, label, symbol_table, DC, error_found, line_index);
+                instruction_token,line_content, operands, label, symbol_table, DC,IC, error_found, line_index);
     } else if (instruction == EXTERN) {
-        if (label != NULL) {
+        if (strcmp(label,"")!=0) {
             warnf(line_index, "Label '%s' cannot be associated with '.extern' instruction", label);
         }
         parse_extern_instruction(operands, symbol_table, error_found, line_index);
     } else if (instruction == ENTRY) {
-        if (label != NULL) {
+        if (strcmp(label,"")!=0) {
             warnf(line_index, "Label '%s' cannot be associated with '.entry' instruction", label);
         }
     } else {
@@ -287,6 +296,8 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
         char *label = line_entry->label;
         int index = line_entry->index;
         debugf(index, "line content: %s",line_content);
+        debugf(index, "Current IC count: %lu, current DC count: %lu",IC,DC);
+
 
 
         if (
@@ -334,7 +345,7 @@ void process_line(
            debugf(line_index,"instruction found");
 
             process_instruction_line(
-                    line_content, instruction, label, line_index, token, tokens->next, symbol_table, DC, error_found);
+                    line_content, instruction, label, line_index, token, tokens->next, symbol_table, DC,IC, error_found);
         } else {
             if (strchr(token,',')){
                 errorf(line_index,"Illegal comma after command");
@@ -364,7 +375,7 @@ void parse_extern_instruction(
     }
 
     operand = (char *)operands->data;
-    add_symbol(symbol_table, operand, 0, EXTERNAL_PROPERTY, line_index);
+    add_symbol(symbol_table, operand, 0,0, EXTERNAL_PROPERTY, line_index);
 }
 
 void mark_symbol_as_entry(
