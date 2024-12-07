@@ -19,7 +19,7 @@ void check_double_commas(int line_index, char *line_copy, int *error_found) {
 
         if (current_char == ',') {
             if (last_was_comma) {
-                errorf(line_index, "Multiple consecutive commas dound");
+                errorf(line_index, "Multiple consecutive commas");
                 *error_found = TRUE;
                 return;
             }
@@ -68,13 +68,20 @@ void parse_command_operands(
     /* Validate the number of operands */
     operand_count = get_list_length(*operands);
     if (operand_count != command->number_of_operands) {
-        errorf(
-                line_index,
-                "Command '%s' expects %d operands but got %d",
-                command->command_name,
-                command->number_of_operands,
-                operand_count
-        );
+        current = get_list_tail(*operands);
+        operand_str = current->data;
+        if (operand_str[0] == '\0'){
+            errorf(line_index, "Extra comma found at the end of text");
+        } else{
+            errorf(
+                    line_index,
+                    "Command '%s' expects %d operands but got %d",
+                    command->command_name,
+                    command->number_of_operands,
+                    operand_count
+            );
+        }
+
         *error_found = TRUE;
         free_list(operands, free);
         return;
@@ -158,6 +165,9 @@ void parse_data_or_string_instruction(
 ) {
     char *line_copy = allocate_string(line_content);
     char *after_instruction;
+    DoublyLinkedList *current;
+    char *operand;
+    DoublyLinkedList *operands_list = NULL;
 
     after_instruction = line_copy + strlen(instruction_token);
 
@@ -168,16 +178,24 @@ void parse_data_or_string_instruction(
     }
 
 
-    DoublyLinkedList *operands_list = NULL;
+
     split_string_by_separator(after_instruction, ",", &operands_list, -1);
 
-    DoublyLinkedList *current = get_list_head(operands_list);
+    current = get_list_tail(operands_list);
+    operand = current->data;
+    if (operand[0] == '\0'){
+        errorf(line_index,"Extra comma at the end of text");
+        *error_found = TRUE;
+    }
+
+
+    current = get_list_head(operands_list);
 
 
 
     if (strcmp(instruction_token, ".data") == 0) {
         while (current != NULL) {
-            char *operand = (char *)current->data;
+            operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
 
             printf("operand: %s\n",operand);
@@ -202,7 +220,7 @@ void parse_data_or_string_instruction(
             return;
         }
 
-        char *operand = (char *)operands_list->data;
+        operand = operands_list->data;
         remove_leading_and_trailing_whitespaces(operand, operand);
 
         if (!is_valid_string(operand)) {
@@ -259,15 +277,15 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
     unsigned long IC = 100;
     unsigned long DC = 0;
     int error_found = FALSE;
+    DoublyLinkedList *current_node = get_list_head(line_list);
+
     printf("starting first pass...\n");
 
-    DoublyLinkedList *current_node = get_list_head(line_list);
     while (current_node != NULL) {
         Line *line_entry = (Line *)current_node->data;
         char *line_content = line_entry->data;
         char *label = line_entry->label;
         int index = line_entry->index;
-        char char1;
         debugf(index, "line content: %s",line_content);
 
 
@@ -338,6 +356,7 @@ void parse_extern_instruction(
         int line_index
 ) {
     char *operand;
+    debugf(line_index,"Found extern command");
     if (get_list_length(operands) != 1) {
         errorf(line_index, ".extern instruction expects exactly one operand");
         *error_found = TRUE;

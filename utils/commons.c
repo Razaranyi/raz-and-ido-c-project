@@ -252,16 +252,19 @@ char* get_last_separator(char* string, char* separator) {
 }
 
 int split_string_by_separator(char* string, char* separator, DoublyLinkedList** result_list, int max_splits) {
+    char* current;
+    char item[4096];
+    int number_of_splits = 0;
+    DoublyLinkedList* items_list;
+
+
     if (!string || !separator || strlen(separator) == 0) {
         fprintf(stderr, "Invalid arguments to split_string_by_separator.\n");
         return -1;
     }
 
-    char* current;
-    char item[4096];
-    int number_of_splits = 0;
 
-    DoublyLinkedList* items_list = allocate_node_mem();
+    items_list = allocate_node_mem();
     if (!items_list) {
         fprintf(stderr, "Failed to allocate memory for result list.\n");
         return -1;
