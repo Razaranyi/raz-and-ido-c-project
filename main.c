@@ -10,10 +10,11 @@
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
-    DoublyLinkedList *macro_list = create_macro_table(); /*for the macros*/
+    DoublyLinkedList *macro_list = allocate_node_mem(); /*for the macros*/
     /*TODO: add file name to the indexed line for logging purposes*/
-    DoublyLinkedList *line_list = create_line_table(); /*for the lines*/
+    DoublyLinkedList *line_list = allocate_node_mem();/*for the lines*/
     DoublyLinkedList *symbol_table = allocate_node_mem();
+    DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
     initialize_command_set();
 
     printf("Assembler started...\n");
@@ -37,13 +38,13 @@ int main(int argc, char* argv[]) {
 		checker = parse_macro(fname, macro_list, line_list);
 		if (checker == FALSE)
 		{
-			printf("Error in the Macros part - the program stop \n");
+			fatal("Error in the Macros part - the program stop",-1);
             free_macro_table(macro_list);
             free_line_table(line_list);
 			exit(FALSE);
 		}
 
-        first_pass(line_list,symbol_table);
+        first_pass(line_list,symbol_table,address_encoded_line_pair);
 
 
 		/*checker = first_reading(fname);*/

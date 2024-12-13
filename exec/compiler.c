@@ -1,12 +1,5 @@
 #include "compiler.h"
-#include "../core/symbol.h"
-#include "../core/instruction.h"
-#include "../core/command.h"
-#include "../core/operand.h"
-#include "../utils/logger.h"
-#include "../utils/commons.h"
-#include "../core/doubly_linked_list.h"
-#include "../utils/boolean.h"
+
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
 
@@ -109,11 +102,13 @@ void process_command_line(
         int line_index,
         char *command_token,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *IC,
         int *error_found
 ) {
     Command *command = find_command(command_token);
     char *operands_str;
+    EncodedLine *encodedLine = al
     DoublyLinkedList *operands = NULL;
 
     if (command == NULL) {
@@ -121,6 +116,7 @@ void process_command_line(
         *error_found = TRUE;
         return;
     }
+
 
     operands_str = line_content + strlen(command_token);
 
@@ -282,7 +278,7 @@ void process_instruction_line(
     }
 }
 
-int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
+int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,DoublyLinkedList *address_encoded_line_pair) {
     unsigned long IC = 100;
     unsigned long DC = 0;
     int error_found = FALSE;
@@ -302,7 +298,7 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
 
         if (
             !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
-            process_line(line_content, label, index, symbol_table, &IC, &DC, &error_found);
+            process_line(line_content, label, index, symbol_table,address_encoded_line_pair, &IC, &DC, &error_found);
         }
 
         current_node = current_node->next;
@@ -316,6 +312,7 @@ void process_line(
         char *label,
         int line_index,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *IC,
         unsigned long *DC,
         int *error_found
@@ -336,7 +333,7 @@ void process_line(
 
     if (find_command(token) != NULL) {
         debugf(line_index,"command found");
-        process_command_line(line_content, label, line_index, token, symbol_table, IC, error_found);
+        process_command_line(line_content, label, line_index, token, symbol_table,address_encoded_line_pair IC, error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
         debugf(line_index,"Instruction: %d",instruction);
