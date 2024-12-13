@@ -116,6 +116,9 @@ void process_command_line(
         *error_found = TRUE;
         return;
     }
+    debugf(line_index,"assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
+    encoded_line_set_opcode(command);
+    encoded_line_set_funct(command);
 
 
     operands_str = line_content + strlen(command_token);
@@ -333,7 +336,7 @@ void process_line(
 
     if (find_command(token) != NULL) {
         debugf(line_index,"command found");
-        process_command_line(line_content, label, line_index, token, symbol_table,address_encoded_line_pair IC, error_found);
+        process_command_line(line_content, label, line_index, token, symbol_table, address_encoded_line_pair IC, error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
         debugf(line_index,"Instruction: %d",instruction);

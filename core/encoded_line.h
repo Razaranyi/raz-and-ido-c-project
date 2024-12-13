@@ -1,5 +1,8 @@
 #ifndef ENCODED_LINE_H
 #define ENCODED_LINE_H
+#include "command.h"
+#include "../utils/commons.h"
+#include "../utils/logger.h"
 
 typedef struct {
     unsigned int opcode : 4;
@@ -21,8 +24,8 @@ typedef struct {
 EncodedLine* create_encoded_line();
 void free_encoded_line(EncodedLine* encoded_line);
 
-void encoded_line_set_opcode(EncodedLine* line, unsigned int opcode);
-void encoded_line_set_funct(EncodedLine* line, unsigned int funct);
+void encoded_line_set_opcode(EncodedLine* line, Command);
+void encoded_line_set_funct(EncodedLine* line, Command);
 void encoded_line_set_src_addressing(EncodedLine* line, unsigned int mode);
 void encoded_line_set_dst_addressing(EncodedLine* line, unsigned int mode);
 void encoded_line_set_src_reg(EncodedLine* line, unsigned int reg);

@@ -35,7 +35,7 @@ Command* find_command(char* name) {
     Command* command;
 
     if (command_list == NULL || is_list_empty(command_list)) {
-        debugf(-1,"command list is empty");
+        debugf(0,"command list is empty");
         return NULL;
     }
 
@@ -71,13 +71,13 @@ int is_dst_addressing_mode_allowed(Command* command, int mode) {
 static const Command command_init_data[] = {
         /* mov */
         {
-                "mov", 0, -1, 2,
+                "mov", 0, 0, 2,
                 { TRUE, TRUE, FALSE, TRUE },   /* Allowed source: Immediate, Direct, Register */
                 { FALSE, TRUE, FALSE, TRUE }   /* Allowed destination: Direct, Register */
         },
         /* cmp  */
         {
-                "cmp", 1, -1, 2,
+                "cmp", 1, 0, 2,
                 { TRUE, TRUE, FALSE, TRUE },   /* Allowed source: Immediate, Direct, Register */
                 { TRUE, TRUE, FALSE, TRUE }    /* Allowed destination: Immediate, Direct, Register */
         },
@@ -95,7 +95,7 @@ static const Command command_init_data[] = {
         },
         /* lea */
         {
-                "lea", 4, -1, 2,
+                "lea", 4, 0, 2,
                 { FALSE, TRUE, FALSE, FALSE }, /* Allowed source: Direct */
                 { FALSE, TRUE, FALSE, TRUE }   /* Allowed destination: Direct, Register */
         },
@@ -143,25 +143,25 @@ static const Command command_init_data[] = {
         },
         /* red */
         {
-                "red", 12, -1, 1,
+                "red", 12, 0, 1,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, TRUE, FALSE, TRUE }    /* Allowed destination: Direct, Register */
         },
         /* prn */
         {
-                "prn", 13, -1, 1,
+                "prn", 13, 0, 1,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { TRUE, TRUE, FALSE, TRUE }     /* Allowed destination: Immediate, Direct, Register */
         },
         /* trs  */
         {
-                "rts", 14, -1, 0,
+                "rts", 14, 0, 0,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, FALSE, FALSE, FALSE }  /* No destination operand */
         },
         /* stop */
         {
-                "stop", 15, -1, 0,
+                "stop", 15, 0, 0,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, FALSE, FALSE, FALSE }  /* No destination operand */
         }
@@ -217,7 +217,7 @@ int calculate_command_size(Command *command, DoublyLinkedList *operands) {
 
     if (!operand_array) {
         error("Memory allocation failed for operand array", __LINE__);
-        return -1;
+        exit(1);
     }
 
     current = get_list_head(operands);
