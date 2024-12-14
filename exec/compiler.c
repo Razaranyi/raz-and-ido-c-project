@@ -28,7 +28,6 @@ void parse_command_operands(
         Command *command,
         char *operands_str,
         DoublyLinkedList **operands,
-        EncodedLine *encoded_line,
         int *error_found,
         int line_index
 ) {
@@ -138,7 +137,7 @@ void process_command_line(
     remove_leading_and_trailing_whitespaces(operands_str, operands_str);
 
     /* Parse operands */
-    parse_command_operands(command, operands_str, &operands, encodedLine, error_found, line_index);
+    parse_command_operands(command, operands_str, &operands, error_found, line_index);
 
     if (*error_found) {
         return;
@@ -150,7 +149,7 @@ void process_command_line(
     }
 
     /* Increment IC based on the size of the command and operands */
-    *IC += handle_command_operands(command, operands,encodedLine, line_index,error_found);
+    *IC += handle_command_operands(command, operands,address_encoded_line_pair, encodedLine, line_index,error_found,IC);
     free_list(&operands, free);
 }
 

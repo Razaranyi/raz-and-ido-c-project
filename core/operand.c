@@ -1,9 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+
 #include "operand.h"
-#include "../utils/commons.h"
 
 
 int is_valid_label_name(char *label);
@@ -100,25 +96,17 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
     return TRUE;
 }
 
-/* Counts the extra words needed for an operand based on its addressing mode */
-int count_extra_words_address(Operand *operand) {
-    switch (operand->addressing_mode) {
-        case IMMEDIATE_ADDRESSING:
-        case DIRECT_ADDRESSING:
-        case RELATIVE_ADDRESSING:
-            return 1;
-        case REGISTER_ADDRESSING:
-            return 0;
-        default:
-            return 0;
-    }
-}
+
 
 /* Counts the extra words needed for a set of operands */
-int count_extra_addresses_words(Operand operands[], int operand_count) {
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC) {
     int extra_words = 0;
     int both_registers = FALSE;
+    int current_address;
     int i;
+
+
+
 
     if (operand_count == 2 &&
         operands[0].addressing_mode == REGISTER_ADDRESSING &&
@@ -126,14 +114,44 @@ int count_extra_addresses_words(Operand operands[], int operand_count) {
         /* Both operands are registers; they can share one word */
         both_registers = TRUE;
     }
+    if (!both_registers){
+        for (i = 0; i < operand_count; i++) {
+            AddressEncodedPair *address_encoded_pair;
 
-    for (i = 0; i < operand_count; i++) {
-        if (both_registers && i == 0) {
-            extra_words += 0;
-            continue;
+            /* Missing semicolon fixed here */
+            EncodedLine *encodedLine = create_encoded_line();
+
+            switch (operands[i].addressing_mode) {
+                case IMMEDIATE_ADDRESSING:
+                    extra_words +=1;
+                    encoded_line_set_immediate_with_are(encodedLine, operands[i].immediate_value, 4);
+                    print_encoded_immediate_with_are(encodedLine);
+                    break;
+
+                case DIRECT_ADDRESSING:
+                    extra_words+=1;
+                    encoded_line_set_are(encodedLine, 1);
+                    break;
+
+                case RELATIVE_ADDRESSING:
+                    extra_words += 1;
+                    encoded_line_set_are(encodedLine, 4);
+                    break;
+
+                case REGISTER_ADDRESSING:
+                    break;
+
+                default:
+                    break;
+            }
+
+            current_address = IC + extra_words;
+
+            address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
+            add_to_list(address_encoded_line_pair, address_encoded_pair);
         }
-        extra_words += count_extra_words_address(&operands[i]);
     }
+
 
     return extra_words;
 }

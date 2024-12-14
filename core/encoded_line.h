@@ -33,4 +33,6 @@ void encoded_line_set_immediate(EncodedLine* line, int value);
 void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol, int is_dest);
 void print_encoded_line_binary(EncodedLine *line);
 void print_encoded_line_values(EncodedLine *line);
+void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are);
+void print_encoded_immediate_with_are(EncodedLine *encoded_line);
 #endif

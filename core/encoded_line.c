@@ -67,6 +67,20 @@ void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol, int is_
     line->unresolved_is_src = is_src;
 }
 
+void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are) {
+    /* Mask to ensure value is 21 bits (2's complement) */
+    unsigned int masked_value = (unsigned int)(value & 0x1FFFFF); /* Mask lower 21 bits */
+
+    /* Shift the masked value to fit bits 23-3 */
+    masked_value <<= 3;
+
+    /* Add ARE to the lower 3 bits */
+    masked_value |= (are & 0x7); /* Ensure ARE is 3 bits */
+
+    /* Store the combined value in the immediate_value field */
+    encoded_line->immediate_value = masked_value;
+}
+
 void print_encoded_line_binary(EncodedLine *line) {
     unsigned int combined_value = 0;
     int i = 0;
@@ -102,4 +116,18 @@ void print_encoded_line_values(EncodedLine *line){
             line->are
             );
 
+}
+
+void print_encoded_immediate_with_are(EncodedLine *encoded_line) {
+    unsigned int combined_value = (unsigned int)encoded_line->immediate_value;
+    int i=0;
+
+    printf("Binary representation of immediate + ARE: ");
+    for (i = 22; i >= 0; i--) {
+        printf("%d", (combined_value >> i) & 1);
+        if (i % 4 == 0) {
+            printf(" ");
+        }
+    }
+    printf("\n");
 }

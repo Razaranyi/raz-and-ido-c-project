@@ -209,13 +209,22 @@ void initialize_command_set() {
 }
 
 /* Checks commands operands & Calculates the size (in words) of a command */
-int handle_command_operands(Command *command, DoublyLinkedList *operands,EncodedLine *encoded_line, int line_index,int *error_found) {
+int handle_command_operands(Command *command,
+                            DoublyLinkedList *operands,
+                            DoublyLinkedList  *address_encoded_line_pair,
+                            EncodedLine *encoded_line,
+                            int line_index,
+                            int *error_found,
+                            unsigned long *IC
+                            ) {
     Operand *operand_array = calloc(command->number_of_operands, sizeof(Operand));
     int operand_count = 0;
     int extra_words = 0;
     int i;
+    int total_operands;
+
     DoublyLinkedList *current;
-    unsigned int encoded_value;
+    AddressEncodedPair *address_encoded_pair;
 
     if (!operand_array) {
         error("Memory allocation failed for operand array", __LINE__);
@@ -236,7 +245,7 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
         current = current->next;
     }
 
-    int total_operands = command->number_of_operands;
+    total_operands = command->number_of_operands;
 
     if (total_operands == 0) {
         encoded_line_set_src_addressing(encoded_line,0);
@@ -274,14 +283,15 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
         encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
-
     print_encoded_line_binary(encoded_line);
     print_encoded_line_values(encoded_line);
+    address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
+    add_to_list(address_encoded_line_pair,address_encoded_pair);
 
 
     debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
 
-    extra_words = count_extra_addresses_words(operand_array, operand_count);
+    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC);
 
     for (i=0;i<command->number_of_operands;i++){
         free(operand_array[i].operand_str);

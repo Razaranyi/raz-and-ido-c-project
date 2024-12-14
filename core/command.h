@@ -4,6 +4,7 @@
 #include "../utils/boolean.h"
 #include "doubly_linked_list.h"
 #include "encoded_line.h"
+#include "address_encoded_pair.h"
 
 /* addressing modes */
 #define ADDRESSING_IMMEDIATE 0
@@ -45,6 +46,13 @@ int is_src_addressing_mode_allowed(Command* command, int mode);
 /* Checks if a given addressing mode is allowed for the destination operand */
 int is_dst_addressing_mode_allowed(Command* command, int mode);
 
-int handle_command_operands(Command *command, DoublyLinkedList *operands,EncodedLine *encoded_line, int line_index,int *error_found);
+int handle_command_operands(Command *command,
+                            DoublyLinkedList *operands,
+                            DoublyLinkedList  *address_encoded_line_pair,
+                            EncodedLine *encoded_line,
+                            int line_index,
+                            int *error_found,
+                            unsigned long *IC
+);
 
 #endif
