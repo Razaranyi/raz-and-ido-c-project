@@ -19,12 +19,12 @@ void free_encoded_line(EncodedLine* encoded_line) {
     free(encoded_line);
 }
 
-void encoded_line_set_opcode(EncodedLine* line, Command command) {
-    line->opcode = (unsigned int )command.opcode;
+void encoded_line_set_opcode(EncodedLine* line, unsigned int opscode) {
+    line->opcode = opscode;
 }
 
-void encoded_line_set_funct(EncodedLine* line, Command command) {
-    line->funct = (unsigned int)command.funct;
+void encoded_line_set_funct(EncodedLine* line,  unsigned int funct) {
+    line->funct = funct;
 }
 
 void encoded_line_set_src_addressing(EncodedLine* line, unsigned int mode) {

@@ -28,6 +28,7 @@ void parse_command_operands(
         Command *command,
         char *operands_str,
         DoublyLinkedList **operands,
+        EncodedLine *encoded_line,
         int *error_found,
         int line_index
 ) {
@@ -108,7 +109,7 @@ void process_command_line(
 ) {
     Command *command = find_command(command_token);
     char *operands_str;
-    EncodedLine *encodedLine = al
+    EncodedLine *encodedLine = create_encoded_line();
     DoublyLinkedList *operands = NULL;
 
     if (command == NULL) {
@@ -117,8 +118,8 @@ void process_command_line(
         return;
     }
     debugf(line_index,"assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
-    encoded_line_set_opcode(command);
-    encoded_line_set_funct(command);
+    encoded_line_set_opcode(encodedLine,command->opcode);
+    encoded_line_set_funct(encodedLine,command->funct);
 
 
     operands_str = line_content + strlen(command_token);
@@ -134,7 +135,7 @@ void process_command_line(
     remove_leading_and_trailing_whitespaces(operands_str, operands_str);
 
     /* Parse operands */
-    parse_command_operands(command, operands_str, &operands, error_found, line_index);
+    parse_command_operands(command, operands_str, &operands, encodedLine, error_found, line_index);
 
     if (*error_found) {
         return;
@@ -146,7 +147,7 @@ void process_command_line(
     }
 
     /* Increment IC based on the size of the command and operands */
-    *IC += calculate_command_size(command, operands);
+    *IC += handle_command_operands(command, operands,encodedLine, line_index,error_found);
     free_list(&operands, free);
 }
 
@@ -336,7 +337,7 @@ void process_line(
 
     if (find_command(token) != NULL) {
         debugf(line_index,"command found");
-        process_command_line(line_content, label, line_index, token, symbol_table, address_encoded_line_pair IC, error_found);
+        process_command_line(line_content, label, line_index, token, symbol_table, address_encoded_line_pair, IC, error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
         debugf(line_index,"Instruction: %d",instruction);

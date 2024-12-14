@@ -31,8 +31,13 @@ Operand* allocate_operand();
 void free_operand(Operand *operand);
 int get_register_index(char *raw_op);
 int determine_addressing_mode(char *operand_str);
-int parse_operand(char *operand_str, int index, Operand *operand, int line_index, char *error_message);
+int parse_operand(char *operand_str, int index, Operand *operand, int line_index);
 int count_extra_address_words(Operand *operand);
 int count_extra_addresses_words(Operand operands[], int operand_count);
+int is_valid_integer(char *operand);
+
+int is_valid_string(char *operand);
+
+int is_valid_operand(char *operand);
 
 #endif

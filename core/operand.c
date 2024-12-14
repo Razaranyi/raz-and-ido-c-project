@@ -57,10 +57,11 @@ int determine_addressing_mode(char *operand_str) {
 }
 
 /* Parses an operand string and fills the Operand struct */
-int parse_operand(char *operand_str, int index, Operand *operand, int line_index, char *error_message) {
+int parse_operand(char *operand_str, int index, Operand *operand, int line_index) {
     operand->index = index;
     operand->operand_str = allocate_string(operand_str);
     operand->addressing_mode = determine_addressing_mode(operand_str);
+
 
     if (operand->addressing_mode == -1) {
         errorf(line_index, "Invalid addressing mode for operand '%s", operand_str, line_index);
@@ -157,3 +158,55 @@ int is_valid_label_name(char *label) {
     return TRUE;
 }
 
+/* Validates if a given string is a valid integer */
+int is_valid_integer(char *operand) {
+    char *p;
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+    p = operand;
+    if (*p == '#'){
+        p++;
+    }
+    if (*p == '+' || *p == '-') {
+        p++;
+    }
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+        p++;
+    }
+    return TRUE;
+}
+
+/* Validates if a given string is a valid string literal */
+int is_valid_string(char *operand) {
+    size_t len = strlen(operand);
+    size_t i;
+    if (len < 2 || operand[0] != '"' || operand[len - 1] != '"') {
+        return FALSE;
+    }
+    for ( i = 1; i < len - 1; i++) {
+        if (!isprint(operand[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+int contains_whitespace(char *operand){
+    while (*operand) {
+        if (isspace((unsigned char)*operand)) {
+            return TRUE;
+        }
+        operand++;
+    }
+    return FALSE;
+}
+
+
+/* Checks if an operand is valid */
+int is_valid_operand(char *operand) {
+    return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
+}
