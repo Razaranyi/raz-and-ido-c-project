@@ -210,9 +210,10 @@ void initialize_command_set() {
 
 /* Checks commands operands & Calculates the size (in words) of a command */
 int handle_command_operands(Command *command, DoublyLinkedList *operands,EncodedLine *encoded_line, int line_index,int *error_found) {
-    Operand *operand_array = malloc(sizeof(Operand) * command->number_of_operands);
+    Operand *operand_array = calloc(command->number_of_operands, sizeof(Operand));
     int operand_count = 0;
     int extra_words = 0;
+    int i;
     DoublyLinkedList *current;
 
     if (!operand_array) {
@@ -222,46 +223,58 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
 
     current = get_list_head(operands);
     while (current != NULL && operand_count < command->number_of_operands) {
-        int total_operands = command->number_of_operands;
         parse_operand((char *)current->data, operand_count, &operand_array[operand_count], line_index);
-        debugf(line_index,"checking operands: %s, %s addressing modes: %d, %d",
-               operand_array[0].operand_str,
-               operand_array[1].operand_str,
-               operand_array[0].addressing_mode,
-               operand_array[1].addressing_mode);
-
-        if (total_operands == 0) {
-            /* No operands: Nothing to validate */
-        } else if (total_operands == 1) {
-            /* The single operand is a destination operand */
-            if (!is_dst_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
-                errorf(line_index, "Invalid addressing mode for command '%s', operand '%s'",
-                       command->command_name, operand_array[0].operand_str);
-                *error_found = TRUE;
-            }
-            encoded_line_set_dst_addressing(encoded_line, operand_array[0].addressing_mode);
-        } else if (total_operands == 2) {
-            /* First operand is source, second is destination */
-            if (!is_src_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
-                errorf(line_index, "Invalid source addressing mode for command '%s', operand '%s'",
-                       command->command_name, operand_array[0].operand_str);
-                *error_found = TRUE;
-            }
-            if (!is_dst_addressing_mode_allowed(command, operand_array[1].addressing_mode)) {
-                errorf(line_index, "Invalid destination addressing mode for command '%s', operand '%s'",
-                       command->command_name, operand_array[1].operand_str);
-                *error_found = TRUE;
-            }
-            encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
-            encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
-        }
 
         operand_count++;
         current = current->next;
     }
 
+    int total_operands = command->number_of_operands;
+
+    if (total_operands == 0) {
+        encoded_line_set_src_addressing(encoded_line,0);
+        encoded_line_set_dst_addressing(encoded_line,0);
+
+    } else if (total_operands == 1) {
+        debugf(line_index,"checking operand: %s addressing mode: %d",
+               operand_array[0].operand_str,
+               operand_array[0].addressing_mode);
+        /* The single operand is a destination operand */
+        if (!is_dst_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
+            errorf(line_index, "Invalid addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[0].operand_str);
+            *error_found = TRUE;
+        }
+        encoded_line_set_dst_addressing(encoded_line, operand_array[0].addressing_mode);
+        encoded_line_set_src_addressing(encoded_line,0);
+    } else if (total_operands == 2) {
+        debugf(line_index,"checking operands: %s, %s addressing modes: %d, %d",
+               operand_array[0].operand_str,
+               operand_array[1].operand_str,
+               operand_array[0].addressing_mode,
+               operand_array[1].addressing_mode);
+        /* First operand is source, second is destination */
+        if (!is_src_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
+            errorf(line_index, "Invalid source addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[0].operand_str);
+            *error_found = TRUE;
+        }
+        if (!is_dst_addressing_mode_allowed(command, operand_array[1].addressing_mode)) {
+            errorf(line_index, "Invalid destination addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[1].operand_str);
+            *error_found = TRUE;
+        }
+        encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
+        encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
+    }
+    debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
+
     extra_words = count_extra_addresses_words(operand_array, operand_count);
 
+    for (i=0;i<command->number_of_operands;i++){
+        free(operand_array[i].operand_str);
+        free(operand_array[i].symbol_name);
+    }
     free(operand_array);
     return 1 + extra_words; /* Command word + extra words */
 }

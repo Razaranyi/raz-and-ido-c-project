@@ -22,13 +22,16 @@ Operand* allocate_operand() {
 
 /* Frees memory allocated for an Operand struct */
 void free_operand(Operand *operand) {
+    if (operand == NULL){
+        return;
+    }
     if (operand->operand_str) {
         free(operand->operand_str);
     }
     if (operand->symbol_name) {
         free(operand->symbol_name);
     }
-    free(operand);
+
 }
 
 /* Extracts the register index from a register operand (e.g., 'r3' -> 3) */

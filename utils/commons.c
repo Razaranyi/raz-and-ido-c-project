@@ -201,7 +201,7 @@ int str_substring(char* string, int start_ind, int end_ind, char* result) {
     }
 
     /* Copy the substring to result */
-    strncpy(result, string + start_ind, end_ind - start_ind);
+    memmove(result, string + start_ind, end_ind - start_ind);
     result[end_ind - start_ind] = '\0';
 
     return TRUE;
