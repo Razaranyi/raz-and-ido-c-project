@@ -51,5 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+assembler
 
 /valgrind-3.21.0/

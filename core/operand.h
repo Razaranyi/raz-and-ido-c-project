@@ -4,6 +4,7 @@
 #include "../core/symbol.h"
 #include "../utils/boolean.h"
 #include "../utils/logger.h"
+#include "encoded_line.h"
 
 
 #define MAX_LABEL_LENGTH 31

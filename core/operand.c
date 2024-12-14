@@ -60,7 +60,7 @@ int determine_addressing_mode(char *operand_str) {
 }
 
 /* Parses an operand string and fills the Operand struct */
-int parse_operand(char *operand_str, int index, Operand *operand, int line_index) {
+int parse_operand(char *operand_str, int index, Operand *operand, int line_index)  {
     operand->index = index;
     operand->operand_str = allocate_string(operand_str);
     operand->addressing_mode = determine_addressing_mode(operand_str);

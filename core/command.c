@@ -215,6 +215,7 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
     int extra_words = 0;
     int i;
     DoublyLinkedList *current;
+    unsigned int encoded_value;
 
     if (!operand_array) {
         error("Memory allocation failed for operand array", __LINE__);
@@ -224,7 +225,13 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
     current = get_list_head(operands);
     while (current != NULL && operand_count < command->number_of_operands) {
         parse_operand((char *)current->data, operand_count, &operand_array[operand_count], line_index);
-
+        if (operand_array[operand_count].is_register){
+            if (command->number_of_operands == 1){
+                encoded_line_set_reg(encoded_line,
+                                     operand_array[operand_count].register_number, TRUE);
+            } else
+                encoded_line_set_reg(encoded_line,operand_array[operand_count].register_number,operand_count);
+        }
         operand_count++;
         current = current->next;
     }
@@ -267,6 +274,11 @@ int handle_command_operands(Command *command, DoublyLinkedList *operands,Encoded
         encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
+
+    print_encoded_line_binary(encoded_line);
+    print_encoded_line_values(encoded_line);
+
+
     debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
 
     extra_words = count_extra_addresses_words(operand_array, operand_count);

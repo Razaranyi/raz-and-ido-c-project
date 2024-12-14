@@ -118,8 +118,11 @@ void process_command_line(
         return;
     }
     debugf(line_index,"assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
+
     encoded_line_set_opcode(encodedLine,command->opcode);
     encoded_line_set_funct(encodedLine,command->funct);
+    encoded_line_set_are(encodedLine,4);
+
 
 
     operands_str = line_content + strlen(command_token);
