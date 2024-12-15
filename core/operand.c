@@ -207,6 +207,57 @@ int is_valid_integer(char *operand) {
     return TRUE;
 }
 
+int assign_valid_integer(char *operand, int *out_value) {
+    char *p;
+    int sign = 1;
+    long result = 0; /* Use a long to avoid overflow issues, then cast */
+
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+
+    p = operand;
+
+    /* If operand starts with '#', skip it */
+    if (*p == '#') {
+        p++;
+    }
+
+    /* Check for optional sign */
+    if (*p == '+') {
+        p++;
+    } else if (*p == '-') {
+        sign = -1;
+        p++;
+    }
+
+    /* Ensure at least one digit exists */
+    if (!isdigit(*p)) {
+        return FALSE;
+    }
+
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+
+        /* Convert digit to integer and accumulate */
+        result = result * 10 + (*p - '0');
+        p++;
+    }
+
+    /* Apply sign */
+    result = result * sign;
+
+    /* If out_value is not NULL, store the result */
+    if (out_value != NULL) {
+        *out_value = (int)result;
+    }
+
+    return TRUE;
+}
+
+
 /* Validates if a given string is a valid string literal */
 int is_valid_string(char *operand) {
     size_t len = strlen(operand);
