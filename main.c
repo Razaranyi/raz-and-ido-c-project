@@ -5,6 +5,7 @@
 #include "utils/logger.h"
 #include "exec/macro_parsing.h"
 #include "utils/line_indexing.h"
+#include "core/address_encoded_pair.h"
 #include "core/doubly_linked_list.h"
 #include "exec/compiler.h"
 
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]) {
 		}
 
         first_pass(line_list,symbol_table,address_encoded_line_pair);
+        print_address_encode_list(address_encoded_line_pair);
 
 
 		/*checker = first_reading(fname);*/

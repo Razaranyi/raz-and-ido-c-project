@@ -144,11 +144,12 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
                 default:
                     break;
             }
+            if(i != 0 || operands[i].addressing_mode == IMMEDIATE_ADDRESSING){
+                current_address = IC + extra_words;
 
-            current_address = IC + extra_words;
-
-            address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
-            add_to_list(address_encoded_line_pair, address_encoded_pair);
+                address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
+                add_to_list(address_encoded_line_pair, address_encoded_pair);
+            }
         }
     }
 
