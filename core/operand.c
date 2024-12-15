@@ -117,6 +117,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
     if (!both_registers){
         for (i = 0; i < operand_count; i++) {
             AddressEncodedPair *address_encoded_pair;
+            int is_reg;
 
             /* Missing semicolon fixed here */
             EncodedLine *encodedLine = create_encoded_line();
@@ -126,25 +127,29 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
                     extra_words +=1;
                     encoded_line_set_immediate_with_are(encodedLine, operands[i].immediate_value, 4);
                     print_encoded_immediate_with_are(encodedLine);
+                    is_reg = FALSE;
                     break;
 
                 case DIRECT_ADDRESSING:
                     extra_words+=1;
                     encoded_line_set_are(encodedLine, 1);
+                    is_reg = FALSE;
                     break;
 
                 case RELATIVE_ADDRESSING:
                     extra_words += 1;
                     encoded_line_set_are(encodedLine, 4);
+                    is_reg = FALSE;
                     break;
 
                 case REGISTER_ADDRESSING:
+                    is_reg = TRUE;
                     break;
 
                 default:
                     break;
             }
-            if(i != 0 || operands[i].addressing_mode == IMMEDIATE_ADDRESSING){
+            if(!is_reg){
                 current_address = IC + extra_words;
 
                 address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
