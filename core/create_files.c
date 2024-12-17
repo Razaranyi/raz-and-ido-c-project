@@ -9,8 +9,38 @@
 #include "../utils/commons.h"
 #include "../core/doubly_linked_list.h"
 #include "../utils/boolean.h"
+#include "../core/address_encoded_pair.h"
 
+/*todo: changes the address part for list options*/
 
+/*get double linked list of encode line pairs, run over it and for any line enter her hex representation to the object file*/
+void create_object_file(DoublyLinkedList *encode_line_pair, int dc, int ic)
+{
+    FILE *f; /*to write in*/
+    const char *filename = "ps.ob";
+    DoublyLinkedList *current = get_list_head(encode_line_pair);
+    AddressEncodedPair *pair;
+
+    if (current == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+    f = fopen(filename, "w");
+    if(f == NULL)
+    {
+        printf("Error opening file: %s", filename);
+        exit(1);
+    }
+    fprintf(f, "% 7d  %d\n", dc - 100, ic);
+    while (current != NULL) {
+        pair = (AddressEncodedPair *)current->data;
+
+        if (pair != NULL && pair->encoded_line != NULL) {
+            fprintf(f, "%07lu  %06x\n", pair->address, get_encoded_line_as_binary(pair->encoded_line));
+        }
+        current = current->next;
+    }
+}
 
 
 
@@ -58,7 +88,7 @@ void create_entry_file(DoublyLinkedList *symbol_table)
 
 
 
-/*get double linked list symbol table, run over it and for entry symbols write to ps.ent file*/
+/*get double linked list symbol table, run over it and for extern symbols write to ps.ext file*/
 void create_extern_file(DoublyLinkedList *symbol_table)
 {
     FILE *f; /*to write in*/
@@ -100,3 +130,11 @@ void create_extern_file(DoublyLinkedList *symbol_table)
     }
 }
 
+
+/*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
+void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, int ic, int dc)
+{
+    create_entry_file(symbol_table);
+    create_extern_file(symbol_table);
+    create_object_file(encode_line_pair, ic, dc);
+}

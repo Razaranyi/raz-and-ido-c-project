@@ -83,9 +83,26 @@ void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, u
 }
 
 void encoded_line_set_data(EncodedLine *encoded_line,int value){
-    /*do dummy for now*/
-    encoded_line->immediate_value = value;
+    encoded_line->opcode = (value >> 18) & 0x3F; /*extract bits 18-23*/
+    encoded_line->src_addressing = (value >> 16) & 0x3; /*extract bits 16-17*/
+    encoded_line->src_reg = (value >> 13) & 0x7; /*extract bits 13-15*/
+    encoded_line->dst_addressing = (value >> 11) & 0x3; /*extract bits 11-12*/
+    encoded_line->dst_reg = (value >> 8) & 0x7; /*extract bits 8-10*/
+    encoded_line->funct = (value >> 3) & 0x1F; /*extract bits 3-7*/
+    encoded_line->are = value & 0x7; /*extract bits 0-2*/
 }
+
+void encoded_line_set_without_data(EncodedLine *encoded_line,int value){
+    encoded_line->opcode = (value >> 18) & 0x3F; /*extract bits 18-23*/
+    encoded_line->src_addressing = (value >> 16) & 0x3; /*extract bits 16-17*/
+    encoded_line->src_reg = (value >> 13) & 0x7; /*extract bits 13-15*/
+    encoded_line->dst_addressing = (value >> 11) & 0x3; /*extract bits 11-12*/
+    encoded_line->dst_reg = (value >> 8) & 0x7; /*extract bits 8-10*/
+    encoded_line->funct = (value >> 3) & 0x1F; /*extract bits 3-7*/
+    encoded_line->are = 0x4; /*set bits 0-2 to 4*/
+}
+
+
 
 void print_encoded_line_binary(EncodedLine *line) {
     unsigned int combined_value = 0;

@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 
 		/*checker = first_reading(fname);*/
 	}
-	create_entry_file(symbol_table);
+	create_files(symbol_table, address_encoded_line_pair, 125, 9);
     free_macro_table(macro_list);
     free_line_table(line_list);
 

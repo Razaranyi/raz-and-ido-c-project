@@ -291,60 +291,6 @@ int split_string_by_separator(char* string, char* separator, DoublyLinkedList** 
 }
 
 
-
-
-
-/* Validates if a given string is a valid integer */
-int is_valid_integer(char *operand) {
-    char *p;
-    if (operand == NULL || *operand == '\0') {
-        return FALSE;
-    }
-    p = operand;
-    if (*p == '#'){
-        p++;
-    }
-    if (*p == '+' || *p == '-') {
-        p++;
-    }
-    while (*p) {
-        if (!isdigit(*p)) {
-            return FALSE;
-        }
-        p++;
-    }
-    return TRUE;
-}
-
-/* Validates if a given string is a valid string literal */
-int is_valid_string(char *operand) {
-    size_t len = strlen(operand);
-    size_t i;
-    if (len < 2 || operand[0] != '"' || operand[len - 1] != '"') {
-        return FALSE;
-    }
-    for ( i = 1; i < len - 1; i++) {
-        if (!isprint(operand[i])) {
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
-
-int contains_whitespace(char *operand){
-    while (*operand) {
-        if (isspace((unsigned char)*operand)) {
-            return TRUE;
-        }
-        operand++;
-    }
-    return FALSE;
-}
-
-/* Checks if an operand is valid */
-int is_valid_operand(char *operand) {
-    return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
-}
  
 /*cinvert address from usigned long to char * and add 0 in the begging for the files format*/
 char * fix_address(unsigned long address)
@@ -363,18 +309,4 @@ char * fix_address(unsigned long address)
     strcat(new_str, str);
     free(str);
     return new_str;
-}
-
-
-/*get unsigned long address with bits format, convert it to hex format and return as char * */
-char * convert_to_hex(char * binary)
-{
-    char * hex, padding_binary;
-    size_t hexlen, padding, len;
-    len = strlen(binary);
-    hexlen = (len + 3) / 4; /*any 4 bits is 1 hex*/
-    hex = (char *)malloc(hexlen + 1);
-    padding = ((len + 3) / 4) * 4;
-    padding_binary = (char *)malloc(padding + 1);
-    
 }
