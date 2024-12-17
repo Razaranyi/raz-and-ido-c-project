@@ -35,7 +35,7 @@ Command* find_command(char* name) {
     Command* command;
 
     if (command_list == NULL || is_list_empty(command_list)) {
-        debugf(-1,"command list is empty");
+        debugf(0,"command list is empty");
         return NULL;
     }
 
@@ -71,13 +71,13 @@ int is_dst_addressing_mode_allowed(Command* command, int mode) {
 static const Command command_init_data[] = {
         /* mov */
         {
-                "mov", 0, -1, 2,
+                "mov", 0, 0, 2,
                 { TRUE, TRUE, FALSE, TRUE },   /* Allowed source: Immediate, Direct, Register */
                 { FALSE, TRUE, FALSE, TRUE }   /* Allowed destination: Direct, Register */
         },
         /* cmp  */
         {
-                "cmp", 1, -1, 2,
+                "cmp", 1, 0, 2,
                 { TRUE, TRUE, FALSE, TRUE },   /* Allowed source: Immediate, Direct, Register */
                 { TRUE, TRUE, FALSE, TRUE }    /* Allowed destination: Immediate, Direct, Register */
         },
@@ -95,7 +95,7 @@ static const Command command_init_data[] = {
         },
         /* lea */
         {
-                "lea", 4, -1, 2,
+                "lea", 4, 0, 2,
                 { FALSE, TRUE, FALSE, FALSE }, /* Allowed source: Direct */
                 { FALSE, TRUE, FALSE, TRUE }   /* Allowed destination: Direct, Register */
         },
@@ -143,25 +143,25 @@ static const Command command_init_data[] = {
         },
         /* red */
         {
-                "red", 12, -1, 1,
+                "red", 12, 0, 1,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, TRUE, FALSE, TRUE }    /* Allowed destination: Direct, Register */
         },
         /* prn */
         {
-                "prn", 13, -1, 1,
+                "prn", 13, 0, 1,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { TRUE, TRUE, FALSE, TRUE }     /* Allowed destination: Immediate, Direct, Register */
         },
         /* trs  */
         {
-                "rts", 14, -1, 0,
+                "rts", 14, 0, 0,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, FALSE, FALSE, FALSE }  /* No destination operand */
         },
         /* stop */
         {
-                "stop", 15, -1, 0,
+                "stop", 15, 0, 0,
                 { FALSE, FALSE, FALSE, FALSE }, /* No source operand */
                 { FALSE, FALSE, FALSE, FALSE }  /* No destination operand */
         }
@@ -208,27 +208,95 @@ void initialize_command_set() {
     }
 }
 
-/* Calculates the size (in words) of a command */
-int calculate_command_size(Command *command, DoublyLinkedList *operands) {
-    Operand *operand_array = malloc(sizeof(Operand) * command->number_of_operands);
+/* Checks commands operands & Calculates the size (in words) of a command */
+int handle_command_operands(Command *command,
+                            DoublyLinkedList *operands,
+                            DoublyLinkedList  *address_encoded_line_pair,
+                            EncodedLine *encoded_line,
+                            int line_index,
+                            int *error_found,
+                            unsigned long *IC
+                            ) {
+    Operand *operand_array = calloc(command->number_of_operands, sizeof(Operand));
     int operand_count = 0;
     int extra_words = 0;
+    int i;
+    int total_operands;
+
     DoublyLinkedList *current;
+    AddressEncodedPair *address_encoded_pair;
 
     if (!operand_array) {
         error("Memory allocation failed for operand array", __LINE__);
-        return -1;
+        exit(1);
     }
 
     current = get_list_head(operands);
     while (current != NULL && operand_count < command->number_of_operands) {
-        parse_operand((char *)current->data, operand_count, &operand_array[operand_count], 0, NULL);
+        parse_operand((char *)current->data, operand_count, &operand_array[operand_count], line_index);
+        if (operand_array[operand_count].is_register){
+            if (command->number_of_operands == 1){
+                encoded_line_set_reg(encoded_line,
+                                     operand_array[operand_count].register_number, TRUE);
+            } else
+                encoded_line_set_reg(encoded_line,operand_array[operand_count].register_number,operand_count);
+        }
         operand_count++;
         current = current->next;
     }
 
-    extra_words = count_extra_addresses_words(operand_array, operand_count);
+    total_operands = command->number_of_operands;
 
+    if (total_operands == 0) {
+        encoded_line_set_src_addressing(encoded_line,0);
+        encoded_line_set_dst_addressing(encoded_line,0);
+
+    } else if (total_operands == 1) {
+        debugf(line_index,"checking operand: %s addressing mode: %d",
+               operand_array[0].operand_str,
+               operand_array[0].addressing_mode);
+        /* The single operand is a destination operand */
+        if (!is_dst_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
+            errorf(line_index, "Invalid addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[0].operand_str);
+            *error_found = TRUE;
+        }
+        encoded_line_set_dst_addressing(encoded_line, operand_array[0].addressing_mode);
+        encoded_line_set_src_addressing(encoded_line,0);
+    } else if (total_operands == 2) {
+        debugf(line_index,"checking operands: %s, %s addressing modes: %d, %d",
+               operand_array[0].operand_str,
+               operand_array[1].operand_str,
+               operand_array[0].addressing_mode,
+               operand_array[1].addressing_mode);
+        /* First operand is source, second is destination */
+        if (!is_src_addressing_mode_allowed(command, operand_array[0].addressing_mode)) {
+            errorf(line_index, "Invalid source addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[0].operand_str);
+            *error_found = TRUE;
+        }
+        if (!is_dst_addressing_mode_allowed(command, operand_array[1].addressing_mode)) {
+            errorf(line_index, "Invalid destination addressing mode for command '%s', operand '%s'",
+                   command->command_name, operand_array[1].operand_str);
+            *error_found = TRUE;
+        }
+        encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
+        encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
+    }
+    print_encoded_line_binary(encoded_line);
+    print_encoded_line_values(encoded_line);
+    address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
+    add_to_list(address_encoded_line_pair,address_encoded_pair);
+
+
+    debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
+
+    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC);
+
+    for (i=0;i<command->number_of_operands;i++){
+        free(operand_array[i].operand_str);
+        free(operand_array[i].symbol_name);
+    }
     free(operand_array);
     return 1 + extra_words; /* Command word + extra words */
 }

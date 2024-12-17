@@ -20,10 +20,6 @@ int in_line_table(char *name, DoublyLinkedList *line_list) {
 }
 
 
-/*get null and return list of Lines, create the data struct*/
-DoublyLinkedList *create_line_table() {
-    return allocate_node_mem();
-}
 
 /*get the data for the line columns and create new node of type Line
 return pointer to Line*/

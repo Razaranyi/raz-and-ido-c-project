@@ -201,7 +201,7 @@ int str_substring(char* string, int start_ind, int end_ind, char* result) {
     }
 
     /* Copy the substring to result */
-    strncpy(result, string + start_ind, end_ind - start_ind);
+    memmove(result, string + start_ind, end_ind - start_ind);
     result[end_ind - start_ind] = '\0';
 
     return TRUE;
@@ -292,6 +292,8 @@ int split_string_by_separator(char* string, char* separator, DoublyLinkedList** 
 
 
 
+
+
 /* Validates if a given string is a valid integer */
 int is_valid_integer(char *operand) {
     char *p;
@@ -343,7 +345,7 @@ int contains_whitespace(char *operand){
 int is_valid_operand(char *operand) {
     return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
 }
-
+ 
 /*cinvert address from usigned long to char * and add 0 in the begging for the files format*/
 char * fix_address(unsigned long address)
 {

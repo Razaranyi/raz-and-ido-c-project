@@ -282,10 +282,7 @@ int get_index_macro_table(char *name, DoublyLinkedList *macro_list) {
 }
 
 
-/*return list of Macros, create the data struct*/
-DoublyLinkedList *create_macro_table() {
-    return allocate_node_mem();
-}
+
 
 /*get a pointer to Macro list and add a new macro to it return the head of the list*/
 void add_macro(DoublyLinkedList *macro_list, char *macroName, char *data, int linecounter) {

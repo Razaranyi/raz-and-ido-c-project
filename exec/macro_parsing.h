@@ -21,8 +21,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
 /*get all the macros from the file return int to check if get errors in the macro names, if 0 unvalid if 1 valid*/
 int get_macros(FILE *fp, DoublyLinkedList *macro_list);
 
-/*create new macro table for the macro section*/
-DoublyLinkedList* create_macro_table();
 
 /*add Macro to the Macro table*/
 void add_macro(DoublyLinkedList *macro_list,char *macroName, char *data, int linecounter);
