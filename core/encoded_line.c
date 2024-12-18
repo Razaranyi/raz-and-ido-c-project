@@ -82,14 +82,25 @@ void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, u
     encoded_line->are = 4;
 }
 
-void encoded_line_set_data(EncodedLine *encoded_line,int value){
-    encoded_line->opcode = (value >> 18) & 0x3F; /*extract bits 18-23*/
-    encoded_line->src_addressing = (value >> 16) & 0x3; /*extract bits 16-17*/
-    encoded_line->src_reg = (value >> 13) & 0x7; /*extract bits 13-15*/
-    encoded_line->dst_addressing = (value >> 11) & 0x3; /*extract bits 11-12*/
-    encoded_line->dst_reg = (value >> 8) & 0x7; /*extract bits 8-10*/
-    encoded_line->funct = (value >> 3) & 0x1F; /*extract bits 3-7*/
-    encoded_line->are = value & 0x7; /*extract bits 0-2*/
+void encoded_line_set_data(EncodedLine *encoded_line,int value, int are){
+    int padding = 0;
+    if (are == -1) /*case data line*/
+    {
+        encoded_line->are = value & 0x7; /*extract bits 0-2*/
+        padding = 3;
+    }
+    else /*other cases*/
+        encoded_line->are = are & 0x7;
+    encoded_line->opcode = (value >> (15 + padding)) & 0x3F; /*extract bits 18-23*/
+    encoded_line->src_addressing = (value >> (13 + padding)) & 0x3; /*extract bits 16-17*/
+    encoded_line->src_reg = (value >> (10 + padding)) & 0x7; /*extract bits 13-15*/
+    encoded_line->dst_addressing = (value >> (8 + padding)) & 0x3; /*extract bits 11-12*/
+    encoded_line->dst_reg = (value >> (5 + padding)) & 0x7; /*extract bits 8-10*/
+    encoded_line->funct = (value >> padding) & 0x1F; /*extract bits 3-7*/
+    if (are == -1) /*case data line*/
+        encoded_line->are = value & 0x7; /*extract bits 0-2*/
+    else /*other cases*/
+        encoded_line->are = are & 0x7;
 }
 
 void encoded_line_set_without_data(EncodedLine *encoded_line,int value){
