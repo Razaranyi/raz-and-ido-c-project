@@ -29,6 +29,8 @@ void free_symbol_data(void* data);
 int free_symbol(Symbol* symbol);
 int is_entry(Symbol symbol);
 int is_external(Symbol symbol);
+int is_property(Symbol symbol, SymbolProperty property);
+int symbols_table_get_symbol(DoublyLinkedList *symbol_table, char *name, Symbol **symbol);
 
 
 

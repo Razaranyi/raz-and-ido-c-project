@@ -437,26 +437,35 @@ void parse_entry_instruction(DoublyLinkedList *operands, DoublyLinkedList *entry
     add_to_list(entry_list,entry);
 }
 
-void mark_symbol_as_entry(
-        DoublyLinkedList *symbol_table,
-        char *symbol_name,
-        int line_index
-) {
+int mark_symbol_as_entry(DoublyLinkedList *symbol_table, char *symbol_name, int line_index) {
     DoublyLinkedList *current = get_list_head(symbol_table);
 
     while (current != NULL) {
         Symbol *symbol = (Symbol *)current->data;
+
         if (strcmp(symbol->label, symbol_name) == 0) {
-            if (symbol->sym_properties != ENTRY_PROPERTY) {
-                symbol->sym_properties = ENTRY_PROPERTY;
+            /* Check if ENTRY_PROPERTY already present */
+            DoublyLinkedList *prop_node = get_list_head(symbol->sym_properties);
+            while (prop_node != NULL) {
+                SymbolProperty *sym_prop = (SymbolProperty *)prop_node->data;
+                if (*sym_prop == ENTRY_PROPERTY) {
+                    /* Already entry */
+                    return TRUE;
+                }
+                prop_node = prop_node->next;
             }
-            return;
+
+            /* Add ENTRY_PROPERTY if not found */
+            add_to_list(symbol->sym_properties, allocate_int(ENTRY_PROPERTY));
+            return TRUE;
         }
         current = current->next;
     }
 
-    warnf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+    errorf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+    return FALSE;
 }
+
 
 int first_pass(DoublyLinkedList *line_list,
                DoublyLinkedList *symbol_table,
@@ -493,3 +502,72 @@ int first_pass(DoublyLinkedList *line_list,
 
     return !error_found;
 }
+
+void mark_entries(DoublyLinkedList *entry_list, DoublyLinkedList *symbol_table, int *error_found) {
+    DoublyLinkedList *current = get_list_head(entry_list);
+
+    while (current != NULL) {
+        Entry *entry = (Entry *)current->data;
+        if (!mark_symbol_as_entry(symbol_table, entry->name, entry->index)) {
+            *error_found = TRUE;
+        }
+        current = current->next;
+    }
+}
+
+void resolve_symbol(
+        DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair_list,
+        int *error_found
+) {
+    DoublyLinkedList *current = get_list_head(address_encoded_line_pair_list);
+    while (current != NULL) {
+        AddressEncodedPair *pair = (AddressEncodedPair *)current->data;
+        EncodedLine *line = pair->encoded_line;
+
+        if (line->unresolved_symbol != NULL) {
+            Symbol *symbol;
+            if (!symbols_table_get_symbol(symbol_table, line->unresolved_symbol, &symbol)) {
+                errorf(-1, "Unresolved symbol '%s' not found", line->unresolved_symbol);
+                *error_found = TRUE;
+            } else {
+                unsigned long symbol_address = symbol->address;
+
+
+                if (line->are == 2) {
+                    if (is_property(*symbol,EXTERNAL_PROPERTY)){
+                        add_external_usage(symbol,(long )pair->address);
+                        encoded_line_set_data(line,symbol_address,1);
+                    } else
+                        encoded_line_set_data(line,symbol_address,2);
+
+                } else if (line->are == 4) {
+                    unsigned long dist = (unsigned long)symbol_address - (unsigned long)(pair->address) +1;
+                    debugf(-1, "Calc %lu - %lu = %lu",(unsigned long)symbol_address,(unsigned long)pair->address,dist);
+                    encoded_line_set_data(line, dist, 4);
+                }
+
+                free(line->unresolved_symbol);
+                line->unresolved_symbol = NULL;
+            }
+        }
+
+        current = current->next;
+    }
+}
+
+
+int second_pass(DoublyLinkedList *symbol_table,
+                DoublyLinkedList *address_encoded_line_pair_list,
+                DoublyLinkedList *entry_list) {
+    int error_found = FALSE;
+
+    /* Mark all entries */
+    mark_entries(entry_list, symbol_table, &error_found);
+
+    /* Resolve all symbol references */
+    resolve_symbol(symbol_table, address_encoded_line_pair_list, &error_found);
+
+    return !error_found;
+}
+

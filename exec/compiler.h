@@ -30,7 +30,9 @@ int first_pass(DoublyLinkedList *line_list,
                DoublyLinkedList *address_encoded_line_pair,
                DoublyLinkedList *entry_list);
 
-
+int second_pass(DoublyLinkedList *symbol_table,
+                DoublyLinkedList *address_encoded_line_pair_list,
+                DoublyLinkedList *entry_list);
 
 
 #endif

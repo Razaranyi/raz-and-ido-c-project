@@ -61,6 +61,14 @@ int main(int argc, char* argv[]) {
             free_line_table(line_list);
         }
 
+        checker = second_pass(symbol_table,address_encoded_line_pair,entry_list);
+
+        if (!checker){
+            got_error("Compile - Second pass", fname);
+            free_macro_table(macro_list);
+            free_line_table(line_list);
+        }
+
         print_address_encode_list(address_encoded_line_pair);
         printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 		create_files(symbol_table, address_encoded_line_pair, final_IC, final_DC);
