@@ -61,12 +61,15 @@ AddressEncodedPair* create_address_encoded_pair(unsigned long address, EncodedLi
     return pair;
 }
 
-void free_address_encoded_pair(void *data) {
-    AddressEncodedPair *pair = (AddressEncodedPair *)data;
-    if (pair->encoded_line) {
-        free_encoded_line(pair->encoded_line);
+void free_address_encoded_pair(void* data) {
+    AddressEncodedPair* pair = (AddressEncodedPair*)data;
+    if (pair != NULL) {
+        if (pair->encoded_line != NULL) {
+            free_encoded_line(pair->encoded_line);
+            pair->encoded_line = NULL;
+        }
+        free(pair);
     }
-    free(pair);
 }
 
 

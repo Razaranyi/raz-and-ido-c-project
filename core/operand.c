@@ -111,14 +111,13 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
     if (operand_count == 2 &&
         operands[0].addressing_mode == REGISTER_ADDRESSING &&
         operands[1].addressing_mode == REGISTER_ADDRESSING) {
-        /* Both operands are registers; they can share one word */
+        /* Both operands are registers; they don't need a word*/
         both_registers = TRUE;
     }
     if (!both_registers){
         for (i = 0; i < operand_count; i++) {
             AddressEncodedPair *address_encoded_pair;
             int is_reg;
-
             EncodedLine *encodedLine = create_encoded_line();
 
             switch (operands[i].addressing_mode) {
@@ -150,9 +149,10 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             }
             if(!is_reg){
                 current_address = IC + extra_words;
-
                 address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
                 add_to_list(address_encoded_line_pair, address_encoded_pair);
+            } else{
+                free_encoded_line(encodedLine);
             }
         }
     }

@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         free_line_table(line_list);
         free(fname);
     }
-
+    free_command_set();
     return 0;
 }
 

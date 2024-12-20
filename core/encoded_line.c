@@ -12,11 +12,11 @@ EncodedLine* create_encoded_line() {
     memset(line, 0, sizeof(EncodedLine));
     return line;
 }
-
 void free_encoded_line(EncodedLine *line) {
     if (!line) return;
     if (line->unresolved_symbol) {
         free(line->unresolved_symbol);
+        line->unresolved_symbol = NULL;
     }
     free(line);
 }
