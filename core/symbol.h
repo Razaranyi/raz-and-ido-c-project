@@ -1,12 +1,18 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 #include "doubly_linked_list.h"
+#include "doubly_linked_list.h"
+#include "../utils/boolean.h"
+#include "../utils/commons.h"
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct Symbol {
     char* label;
     unsigned long address;
     unsigned long value;
     DoublyLinkedList* sym_properties;
+    DoublyLinkedList* external_usages;
 
 }Symbol;
 
@@ -19,6 +25,7 @@ typedef enum {
 
 int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long address,unsigned long value,SymbolProperty property, int index);
 Symbol* allocate_sym_mem(char* label, unsigned int address,unsigned long value, DoublyLinkedList* sym_properties);
+int add_external_usage(Symbol* symbol, unsigned long usage_address);
 
 int free_symbol(Symbol* symbol);
 int is_entry(Symbol symbol);

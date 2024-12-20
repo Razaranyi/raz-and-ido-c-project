@@ -1,9 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
+
 #include "symbol.h"
-#include "doubly_linked_list.h"
-#include "../utils/boolean.h"
-#include "../utils/commons.h"
 
 
 Symbol* allocate_sym_mem(char* label, unsigned address, unsigned long value, DoublyLinkedList* sym_properties){
@@ -12,6 +8,7 @@ Symbol* allocate_sym_mem(char* label, unsigned address, unsigned long value, Dou
     res->address = address;
     res->value = value;
     res->sym_properties = sym_properties;
+    res->external_usages = NULL; /*will be added on second pass if needed*/
     return res;
 }
 
@@ -82,6 +79,28 @@ int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long addres
     return TRUE;
 }
 
+int add_external_usage(Symbol* symbol, unsigned long usage_address) {
+    unsigned long* usage_ptr;
+    if (symbol == NULL) {
+        return FALSE;
+    }
+
+    if (symbol->external_usages == NULL) {
+        symbol->external_usages = allocate_node_mem();
+    }
+
+    /* Add the usage address to the external_usages list */
+    usage_ptr = (unsigned long*)malloc(sizeof(unsigned long));
+    if (!usage_ptr) {
+        return FALSE;
+    }
+    *usage_ptr = usage_address;
+
+    add_to_list(symbol->external_usages, usage_ptr);
+    return TRUE;
+}
+
+
 
 int free_symbol(Symbol* symbol){
     if (symbol == NULL){
@@ -89,6 +108,9 @@ int free_symbol(Symbol* symbol){
     }
     free(symbol->label);
     free_list(&symbol->sym_properties,free);
+    if (symbol->external_usages != NULL){
+        free_list(&symbol->external_usages,free);
+    }
     free(symbol);
     return TRUE;
 }
