@@ -61,9 +61,6 @@ int main(int argc, char* argv[]) {
         print_address_encode_list(address_encoded_line_pair);
         printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 
-
-        free_list(&address_encoded_line_pair, free_address_encoded_pair);
-        free_list(&symbol_table, free_symbol_data);
         free_macro_table(macro_list);
         free_line_table(line_list);
     }
