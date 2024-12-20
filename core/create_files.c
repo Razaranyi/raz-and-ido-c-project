@@ -10,11 +10,12 @@
 #include "../core/doubly_linked_list.h"
 #include "../utils/boolean.h"
 #include "../core/address_encoded_pair.h"
+#include "../exec/compiler.h"
 
 /*todo: changes the address part for list options*/
 
 /*get double linked list of encode line pairs, run over it and for any line enter her hex representation to the object file*/
-void create_object_file(DoublyLinkedList *encode_line_pair, int dc, int ic)
+void create_object_file(DoublyLinkedList *encode_line_pair)
 {
     FILE *f; /*to write in*/
     const char *filename = "ps.ob";
@@ -31,7 +32,7 @@ void create_object_file(DoublyLinkedList *encode_line_pair, int dc, int ic)
         printf("Error opening file: %s", filename);
         exit(1);
     }
-    fprintf(f, "% 7d  %d\n", dc, ic);
+    fprintf(f, "% 7ld  %ld\n", final_DC, final_IC);
     while (current != NULL) {
         pair = (AddressEncodedPair *)current->data;
 
@@ -40,6 +41,7 @@ void create_object_file(DoublyLinkedList *encode_line_pair, int dc, int ic)
         }
         current = current->next;
     }
+    fclose(f);
 }
 
 
@@ -96,7 +98,7 @@ void create_extern_file(DoublyLinkedList *symbol_table)
 	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
     DoublyLinkedList* address; /*for the external multipule address*/
     char * label; /*for label part*/
-    unsigned long current_address; /*for the addresss writing part*/
+    unsigned long *current_address; /*for the addresss writing part*/
     char * fixed_address; /*for the fixed address*/
     while(new_symbol!=NULL)
     {
@@ -127,23 +129,22 @@ void create_extern_file(DoublyLinkedList *symbol_table)
                     printf("Error opening file: %s", filename);
                     exit(1);
                 }
-                current_address = (unsigned long)(address->data);
-                fixed_address = fix_address(current_address);
+                current_address = (unsigned long *)(address->data);
+                fixed_address = fix_address(*current_address);
                 fprintf(f, "%s %s\n", label, fixed_address);
                 fclose(f);
                 address = address->next;
             }
         }
-        
         new_symbol = new_symbol->next;
     }
 }
 
 
 /*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
-void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, int ic, int dc)
+void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair)
 {
     create_entry_file(symbol_table);
     create_extern_file(symbol_table);
-    create_object_file(encode_line_pair, ic, dc);
+    create_object_file(encode_line_pair);
 }
