@@ -4,6 +4,7 @@ unsigned long final_IC = 0;
 unsigned long final_DC = 0;
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
+void parse_entry_instruction(DoublyLinkedList *operands,DoublyLinkedList* entry_list,int *error_found,int line_index);
 
 void check_double_commas(int line_index, char *line_copy, int *error_found) {
     int last_was_comma = 0;
@@ -290,6 +291,7 @@ void process_instruction_line(
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
         DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *entry_list,
         unsigned long *DC,
         unsigned long *IC,
         int *error_found
@@ -299,7 +301,16 @@ void process_instruction_line(
             add_symbol(symbol_table, label,*IC, *DC, DATA_PROPERTY, line_index);
         }
         parse_data_or_string_instruction(
-                instruction_token,line_content, operands, label, symbol_table,address_encoded_line_pair, DC,IC, error_found, line_index);
+                instruction_token,
+                line_content,
+                operands,
+                label,
+                symbol_table,
+                address_encoded_line_pair,
+                DC,
+                IC,
+                error_found,
+                line_index);
     } else if (instruction == EXTERN) {
         if (strcmp(label,"")!=0) {
             warnf(line_index, "Label '%s' cannot be associated with '.extern' instruction", label);
@@ -309,6 +320,7 @@ void process_instruction_line(
         if (strcmp(label,"")!=0) {
             warnf(line_index, "Label '%s' cannot be associated with '.entry' instruction", label);
         }
+        parse_entry_instruction(operands,entry_list,error_found,line_index);
     } else {
         errorf(line_index, "Unknown instruction: '%s'", instruction_token);
         *error_found = TRUE;
@@ -323,6 +335,7 @@ void process_line(
         int line_index,
         DoublyLinkedList *symbol_table,
         DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *entry_list,
         unsigned long *IC,
         unsigned long *DC,
         int *error_found
@@ -343,7 +356,14 @@ void process_line(
 
     if (find_command(token) != NULL) {
         debugf(line_index,"command found");
-        process_command_line(line_content, label, line_index, token, symbol_table, address_encoded_line_pair, IC, error_found);
+        process_command_line(line_content,
+                             label,
+                             line_index,
+                             token,
+                             symbol_table,
+                             address_encoded_line_pair,
+                             IC,
+                             error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
         debugf(line_index,"Instruction: %d",instruction);
@@ -352,7 +372,18 @@ void process_line(
            debugf(line_index,"instruction found");
 
             process_instruction_line(
-                    line_content, instruction, label, line_index, token, tokens->next, symbol_table,address_encoded_line_pair, DC,IC, error_found);
+                    line_content,
+                    instruction,
+                    label,
+                    line_index,
+                    token,
+                    tokens->next,
+                    symbol_table,
+                    address_encoded_line_pair,
+                    entry_list,
+                    DC,
+                    IC,
+                    error_found);
         } else {
             if (strchr(token,',')){
                 errorf(line_index,"Illegal comma after command");
@@ -385,28 +416,61 @@ void parse_extern_instruction(
     add_symbol(symbol_table, operand, 0,0, EXTERNAL_PROPERTY, line_index);
 }
 
-void mark_symbol_as_entry(
-        DoublyLinkedList *symbol_table,
-        char *symbol_name,
-        int line_index
-) {
+void parse_entry_instruction(DoublyLinkedList *operands, DoublyLinkedList *entry_list, int *error_found, int line_index) {
+    Entry *entry;
+    char *operand = (char *)operands->data;
+    if (get_list_length(operands) != 1) {
+        errorf(line_index, ".entry instruction expects exactly one operand");
+        *error_found = TRUE;
+        return;
+    }
+
+    if (!is_string_equal_by_regex(operand, "^[a-zA-Z][a-zA-Z0-9]*$")) {
+        errorf(line_index, "Invalid label name '%s' in .entry instruction", operand);
+        *error_found = TRUE;
+        return;
+    }
+    entry = allocate_entry_mem(operand,line_index);
+
+    debugf(line_index,"Adding entry %s line %d to entry list",entry->name,entry->index);
+
+    add_to_list(entry_list,entry);
+}
+
+int mark_symbol_as_entry(DoublyLinkedList *symbol_table, char *symbol_name, int line_index) {
     DoublyLinkedList *current = get_list_head(symbol_table);
 
     while (current != NULL) {
         Symbol *symbol = (Symbol *)current->data;
+
         if (strcmp(symbol->label, symbol_name) == 0) {
-            if (symbol->sym_properties != ENTRY_PROPERTY) {
-                symbol->sym_properties = ENTRY_PROPERTY;
+            /* Check if ENTRY_PROPERTY already present */
+            DoublyLinkedList *prop_node = get_list_head(symbol->sym_properties);
+            while (prop_node != NULL) {
+                SymbolProperty *sym_prop = (SymbolProperty *)prop_node->data;
+                if (*sym_prop == ENTRY_PROPERTY) {
+                    /* Already entry */
+                    return TRUE;
+                }
+                prop_node = prop_node->next;
             }
-            return;
+
+            /* Add ENTRY_PROPERTY if not found */
+            add_to_list(symbol->sym_properties, allocate_int(ENTRY_PROPERTY));
+            return TRUE;
         }
         current = current->next;
     }
 
-    warnf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+    errorf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+    return FALSE;
 }
 
-int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,DoublyLinkedList *address_encoded_line_pair) {
+
+int first_pass(DoublyLinkedList *line_list,
+               DoublyLinkedList *symbol_table,
+               DoublyLinkedList *address_encoded_line_pair,
+               DoublyLinkedList *entry_list) {
     unsigned long IC = 100;
     unsigned long DC = 0;
     int error_found = FALSE;
@@ -426,7 +490,7 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,Doubl
 
         if (
                 !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
-            process_line(line_content, label, index, symbol_table,address_encoded_line_pair, &IC, &DC, &error_found);
+            process_line(line_content, label, index, symbol_table,address_encoded_line_pair,entry_list, &IC, &DC, &error_found);
         }
 
         current_node = current_node->next;
@@ -438,3 +502,72 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,Doubl
 
     return !error_found;
 }
+
+void mark_entries(DoublyLinkedList *entry_list, DoublyLinkedList *symbol_table, int *error_found) {
+    DoublyLinkedList *current = get_list_head(entry_list);
+
+    while (current != NULL) {
+        Entry *entry = (Entry *)current->data;
+        if (!mark_symbol_as_entry(symbol_table, entry->name, entry->index)) {
+            *error_found = TRUE;
+        }
+        current = current->next;
+    }
+}
+
+void resolve_symbol(
+        DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair_list,
+        int *error_found
+) {
+    DoublyLinkedList *current = get_list_head(address_encoded_line_pair_list);
+    while (current != NULL) {
+        AddressEncodedPair *pair = (AddressEncodedPair *)current->data;
+        EncodedLine *line = pair->encoded_line;
+
+        if (line->unresolved_symbol != NULL) {
+            Symbol *symbol;
+            if (!symbols_table_get_symbol(symbol_table, line->unresolved_symbol, &symbol)) {
+                errorf(-1, "Unresolved symbol '%s' not found", line->unresolved_symbol);
+                *error_found = TRUE;
+            } else {
+                unsigned long symbol_address = symbol->address;
+
+
+                if (line->are == 2) {
+                    if (is_property(*symbol,EXTERNAL_PROPERTY)){
+                        add_external_usage(symbol,(long )pair->address);
+                        encoded_line_set_data(line,symbol_address,1);
+                    } else
+                        encoded_line_set_data(line,symbol_address,2);
+
+                } else if (line->are == 4) {
+                    unsigned long dist = (unsigned long)symbol_address - (unsigned long)(pair->address) +1;
+                    debugf(-1, "Calc %lu - %lu = %lu",(unsigned long)symbol_address,(unsigned long)pair->address,dist);
+                    encoded_line_set_data(line, dist, 4);
+                }
+
+                free(line->unresolved_symbol);
+                line->unresolved_symbol = NULL;
+            }
+        }
+
+        current = current->next;
+    }
+}
+
+
+int second_pass(DoublyLinkedList *symbol_table,
+                DoublyLinkedList *address_encoded_line_pair_list,
+                DoublyLinkedList *entry_list) {
+    int error_found = FALSE;
+
+    /* Mark all entries */
+    mark_entries(entry_list, symbol_table, &error_found);
+
+    /* Resolve all symbol references */
+    resolve_symbol(symbol_table, address_encoded_line_pair_list, &error_found);
+
+    return !error_found;
+}
+

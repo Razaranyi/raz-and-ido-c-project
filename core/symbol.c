@@ -35,6 +35,8 @@ int is_entry(Symbol symbol){
 int is_external(Symbol symbol){
     return is_property(symbol, EXTERNAL_PROPERTY);
 }
+
+
 /* Adds a symbol to the symbol table */
 int add_symbol(DoublyLinkedList* symbol_table, char* label, unsigned long address, unsigned long value, SymbolProperty property, int index) {
     DoublyLinkedList* current;
@@ -87,19 +89,23 @@ int add_external_usage(Symbol* symbol, unsigned long usage_address) {
 
     if (symbol->external_usages == NULL) {
         symbol->external_usages = allocate_node_mem();
+        if (symbol->external_usages == NULL) {
+            errorf(-1, "Failed to allocate memory for external_usages list");
+            return FALSE;
+        }
     }
 
-    /* Add the usage address to the external_usages list */
     usage_ptr = (unsigned long*)malloc(sizeof(unsigned long));
     if (!usage_ptr) {
+        errorf(-1, "Failed to allocate memory for external usage address");
         return FALSE;
     }
     *usage_ptr = usage_address;
 
     add_to_list(symbol->external_usages, usage_ptr);
+
     return TRUE;
 }
-
 
 
 int free_symbol(Symbol* symbol){
@@ -120,6 +126,20 @@ void free_symbol_data(void* data) {
     if (symbol != NULL) {
         free_symbol(symbol);
     }
+}
+int symbols_table_get_symbol(DoublyLinkedList *symbol_table, char *name, Symbol **symbol) {
+    DoublyLinkedList *current = get_list_head(symbol_table);
+
+    while (current != NULL) {
+        Symbol *current_symbol = (Symbol *)current->data;
+        if (strcmp(current_symbol->label, name) == 0) {
+            *symbol = current_symbol;
+            return TRUE;
+        }
+        current = current->next;
+    }
+
+    return FALSE;
 }
 
 

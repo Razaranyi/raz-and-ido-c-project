@@ -16,6 +16,7 @@
 #include "../utils/boolean.h"
 #include "../core/encoded_line.h"
 #include "../utils/globals.h"
+#include "../core/entry.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,9 +25,14 @@
 
 
 
-int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table, DoublyLinkedList *address_encoded_line_pair);
+int first_pass(DoublyLinkedList *line_list,
+               DoublyLinkedList *symbol_table,
+               DoublyLinkedList *address_encoded_line_pair,
+               DoublyLinkedList *entry_list);
 
-
+int second_pass(DoublyLinkedList *symbol_table,
+                DoublyLinkedList *address_encoded_line_pair_list,
+                DoublyLinkedList *entry_list);
 
 
 #endif

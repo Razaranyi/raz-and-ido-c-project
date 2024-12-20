@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
         DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
         DoublyLinkedList *macro_list = allocate_node_mem();
         DoublyLinkedList *line_list = allocate_node_mem();
+        DoublyLinkedList *entry_list = allocate_node_mem();
 
 
 
@@ -52,10 +53,18 @@ int main(int argc, char* argv[]) {
             free_line_table(line_list);
 		}
 
-        checker = first_pass(line_list,symbol_table,address_encoded_line_pair);
+        checker = first_pass(line_list,symbol_table,address_encoded_line_pair, entry_list);
 
         if (!checker){
             got_error("Compile - first pass", fname);
+            free_macro_table(macro_list);
+            free_line_table(line_list);
+        }
+
+        checker = second_pass(symbol_table,address_encoded_line_pair,entry_list);
+
+        if (!checker){
+            got_error("Compile - Second pass", fname);
             free_macro_table(macro_list);
             free_line_table(line_list);
         }
@@ -66,6 +75,7 @@ int main(int argc, char* argv[]) {
         free_macro_table(macro_list);
         free_list(&symbol_table, free_symbol_data);
         free_list(&address_encoded_line_pair, free_address_encoded_pair);
+        free_list(&entry_list,free_entry_data);
 
         free_line_table(line_list);
         free(fname);
