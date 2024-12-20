@@ -8,6 +8,8 @@
 #include "core/address_encoded_pair.h"
 #include "core/doubly_linked_list.h"
 #include "exec/compiler.h"
+#include "symbol.h"
+#include "core/create_files.h"
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
@@ -51,7 +53,7 @@ int main(int argc, char* argv[]) {
 
 		/*checker = first_reading(fname);*/
 	}
-
+	create_files(symbol_table, address_encoded_line_pair, 125, 9);
     free_macro_table(macro_list);
     free_line_table(line_list);
 
