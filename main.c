@@ -63,6 +63,9 @@ int main(int argc, char* argv[]) {
 
         free_macro_table(macro_list);
         free_line_table(line_list);
+        free_list(&symbol_table, free_symbol_data);
+        free_list(&address_encoded_line_pair, free_address_encoded_pair);
+        free(fname);
     }
 
     return 0;
