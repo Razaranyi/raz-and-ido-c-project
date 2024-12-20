@@ -1,9 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
+
 #include "operand.h"
-#include "../utils/commons.h"
 
 
 int is_valid_label_name(char *label);
@@ -22,13 +18,16 @@ Operand* allocate_operand() {
 
 /* Frees memory allocated for an Operand struct */
 void free_operand(Operand *operand) {
+    if (operand == NULL){
+        return;
+    }
     if (operand->operand_str) {
         free(operand->operand_str);
     }
     if (operand->symbol_name) {
         free(operand->symbol_name);
     }
-    free(operand);
+
 }
 
 /* Extracts the register index from a register operand (e.g., 'r3' -> 3) */
@@ -57,10 +56,11 @@ int determine_addressing_mode(char *operand_str) {
 }
 
 /* Parses an operand string and fills the Operand struct */
-int parse_operand(char *operand_str, int index, Operand *operand, int line_index, char *error_message) {
+int parse_operand(char *operand_str, int index, Operand *operand, int line_index)  {
     operand->index = index;
     operand->operand_str = allocate_string(operand_str);
     operand->addressing_mode = determine_addressing_mode(operand_str);
+
 
     if (operand->addressing_mode == -1) {
         errorf(line_index, "Invalid addressing mode for operand '%s", operand_str, line_index);
@@ -96,25 +96,17 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
     return TRUE;
 }
 
-/* Counts the extra words needed for an operand based on its addressing mode */
-int count_extra_words_address(Operand *operand) {
-    switch (operand->addressing_mode) {
-        case IMMEDIATE_ADDRESSING:
-        case DIRECT_ADDRESSING:
-        case RELATIVE_ADDRESSING:
-            return 1;
-        case REGISTER_ADDRESSING:
-            return 0;
-        default:
-            return 0;
-    }
-}
+
 
 /* Counts the extra words needed for a set of operands */
-int count_extra_addresses_words(Operand operands[], int operand_count) {
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC) {
     int extra_words = 0;
     int both_registers = FALSE;
+    int current_address;
     int i;
+
+
+
 
     if (operand_count == 2 &&
         operands[0].addressing_mode == REGISTER_ADDRESSING &&
@@ -122,14 +114,50 @@ int count_extra_addresses_words(Operand operands[], int operand_count) {
         /* Both operands are registers; they can share one word */
         both_registers = TRUE;
     }
+    if (!both_registers){
+        for (i = 0; i < operand_count; i++) {
+            AddressEncodedPair *address_encoded_pair;
+            int is_reg;
 
-    for (i = 0; i < operand_count; i++) {
-        if (both_registers && i == 0) {
-            extra_words += 0;
-            continue;
+            /* Missing semicolon fixed here */
+            EncodedLine *encodedLine = create_encoded_line();
+
+            switch (operands[i].addressing_mode) {
+                case IMMEDIATE_ADDRESSING:
+                    extra_words +=1;
+                    encoded_line_set_immediate_with_are(encodedLine, operands[i].immediate_value, 4);
+                    print_encoded_immediate_with_are(encodedLine);
+                    is_reg = FALSE;
+                    break;
+
+                case DIRECT_ADDRESSING:
+                    extra_words+=1;
+                    encoded_line_set_are(encodedLine, 1);
+                    is_reg = FALSE;
+                    break;
+
+                case RELATIVE_ADDRESSING:
+                    extra_words += 1;
+                    encoded_line_set_are(encodedLine, 4);
+                    is_reg = FALSE;
+                    break;
+
+                case REGISTER_ADDRESSING:
+                    is_reg = TRUE;
+                    break;
+
+                default:
+                    break;
+            }
+            if(!is_reg){
+                current_address = IC + extra_words;
+
+                address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
+                add_to_list(address_encoded_line_pair, address_encoded_pair);
+            }
         }
-        extra_words += count_extra_words_address(&operands[i]);
     }
+
 
     return extra_words;
 }
@@ -157,3 +185,106 @@ int is_valid_label_name(char *label) {
     return TRUE;
 }
 
+/* Validates if a given string is a valid integer */
+int is_valid_integer(char *operand) {
+    char *p;
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+    p = operand;
+    if (*p == '#'){
+        p++;
+    }
+    if (*p == '+' || *p == '-') {
+        p++;
+    }
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+        p++;
+    }
+    return TRUE;
+}
+
+int assign_valid_integer(char *operand, int *out_value) {
+    char *p;
+    int sign = 1;
+    long result = 0; /* Use a long to avoid overflow issues, then cast */
+
+    if (operand == NULL || *operand == '\0') {
+        return FALSE;
+    }
+
+    p = operand;
+
+    /* If operand starts with '#', skip it */
+    if (*p == '#') {
+        p++;
+    }
+
+    /* Check for optional sign */
+    if (*p == '+') {
+        p++;
+    } else if (*p == '-') {
+        sign = -1;
+        p++;
+    }
+
+    /* Ensure at least one digit exists */
+    if (!isdigit(*p)) {
+        return FALSE;
+    }
+
+    while (*p) {
+        if (!isdigit(*p)) {
+            return FALSE;
+        }
+
+        /* Convert digit to integer and accumulate */
+        result = result * 10 + (*p - '0');
+        p++;
+    }
+
+    /* Apply sign */
+    result = result * sign;
+
+    /* If out_value is not NULL, store the result */
+    if (out_value != NULL) {
+        *out_value = (int)result;
+    }
+
+    return TRUE;
+}
+
+
+/* Validates if a given string is a valid string literal */
+int is_valid_string(char *operand) {
+    size_t len = strlen(operand);
+    size_t i;
+    if (len < 2 || operand[0] != '"' || operand[len - 1] != '"') {
+        return FALSE;
+    }
+    for ( i = 1; i < len - 1; i++) {
+        if (!isprint(operand[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+int contains_whitespace(char *operand){
+    while (*operand) {
+        if (isspace((unsigned char)*operand)) {
+            return TRUE;
+        }
+        operand++;
+    }
+    return FALSE;
+}
+
+
+/* Checks if an operand is valid */
+int is_valid_operand(char *operand) {
+    return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
+}

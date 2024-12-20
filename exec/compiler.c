@@ -1,12 +1,5 @@
 #include "compiler.h"
-#include "../core/symbol.h"
-#include "../core/instruction.h"
-#include "../core/command.h"
-#include "../core/operand.h"
-#include "../utils/logger.h"
-#include "../utils/commons.h"
-#include "../core/doubly_linked_list.h"
-#include "../utils/boolean.h"
+
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
 
@@ -109,11 +102,13 @@ void process_command_line(
         int line_index,
         char *command_token,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *IC,
         int *error_found
 ) {
     Command *command = find_command(command_token);
     char *operands_str;
+    EncodedLine *encodedLine = create_encoded_line();
     DoublyLinkedList *operands = NULL;
 
     if (command == NULL) {
@@ -121,6 +116,13 @@ void process_command_line(
         *error_found = TRUE;
         return;
     }
+    debugf(line_index,"assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
+
+    encoded_line_set_opcode(encodedLine,command->opcode);
+    encoded_line_set_funct(encodedLine,command->funct);
+    encoded_line_set_are(encodedLine,4);
+
+
 
     operands_str = line_content + strlen(command_token);
 
@@ -147,7 +149,7 @@ void process_command_line(
     }
 
     /* Increment IC based on the size of the command and operands */
-    *IC += calculate_command_size(command, operands);
+    *IC += handle_command_operands(command, operands,address_encoded_line_pair, encodedLine, line_index,error_found,IC);
     free_list(&operands, free);
 }
 
@@ -159,6 +161,7 @@ void parse_data_or_string_instruction(
         DoublyLinkedList *operands,
         char *label,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *DC,
         unsigned long *IC,
         int *error_found,
@@ -169,6 +172,9 @@ void parse_data_or_string_instruction(
     DoublyLinkedList *current;
     char *operand;
     DoublyLinkedList *operands_list = NULL;
+    EncodedLine *encoded_line = create_encoded_line();
+    AddressEncodedPair *addressEncodedPair;
+
 
     after_instruction = line_copy + strlen(instruction_token);
 
@@ -195,14 +201,14 @@ void parse_data_or_string_instruction(
 
 
     if (strcmp(instruction_token, ".data") == 0) {
-        int counter = 0;
+        int value = 0;
         while (current != NULL) {
             operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
 
             printf("operand: %s\n",operand);
 
-            if (!is_valid_integer(operand)) {
+            if (!assign_valid_integer(operand,&value)) {
                 errorf(line_index, "Invalid operand in .data instruction: '%s'", operand);
                 *error_found = TRUE;
                 free_list(&operands_list, free);
@@ -210,13 +216,18 @@ void parse_data_or_string_instruction(
                 return;
             }
 
+            debugf(line_index,"assigning data instruction,address: %lu value: %d ",*IC,value);
+            encoded_line_set_data(encoded_line,value);
+            addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
+            add_to_list(address_encoded_line_pair,addressEncodedPair);
             (*DC)+=1;
-            counter+=1;
-            printf("counter value: %d\n", counter);
+            *IC+=1;
             current = current->next;
         }
-        *IC+=counter;
+
     } else if (strcmp(instruction_token, ".string") == 0) {
+        int i = 1;
+
         debugf(line_index,"found string");
         if (get_list_length(operands_list) != 1) {
             errorf(line_index, ".string instruction expects a single string operand");
@@ -236,8 +247,16 @@ void parse_data_or_string_instruction(
             free(line_copy);
             return;
         }
+        while (operand[i] != '\"'){
+            debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
+            encoded_line_set_data(encoded_line,operand[i]);
+            addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
+            add_to_list(address_encoded_line_pair,addressEncodedPair);
+            (*IC) += 1;
+            i+=1;
+        }
         (*DC) += strlen(operand);
-        (*IC) += strlen(operand) -1;
+
 
         debugf(line_index, "IC after string: %lu, DC after string: %lu",*IC,*DC);
     } else {
@@ -257,6 +276,7 @@ void process_instruction_line(
         char *instruction_token,
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *DC,
         unsigned long *IC,
         int *error_found
@@ -266,7 +286,7 @@ void process_instruction_line(
             add_symbol(symbol_table, label,*IC, *DC, DATA_PROPERTY, line_index);
         }
         parse_data_or_string_instruction(
-                instruction_token,line_content, operands, label, symbol_table, DC,IC, error_found, line_index);
+                instruction_token,line_content, operands, label, symbol_table,address_encoded_line_pair, DC,IC, error_found, line_index);
     } else if (instruction == EXTERN) {
         if (strcmp(label,"")!=0) {
             warnf(line_index, "Label '%s' cannot be associated with '.extern' instruction", label);
@@ -282,40 +302,14 @@ void process_instruction_line(
     }
 }
 
-int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table) {
-    unsigned long IC = 100;
-    unsigned long DC = 0;
-    int error_found = FALSE;
-    DoublyLinkedList *current_node = get_list_head(line_list);
 
-    printf("starting first pass...\n");
-
-    while (current_node != NULL) {
-        Line *line_entry = (Line *)current_node->data;
-        char *line_content = line_entry->data;
-        char *label = line_entry->label;
-        int index = line_entry->index;
-        debugf(index, "line content: %s",line_content);
-        debugf(index, "Current IC count: %lu, current DC count: %lu",IC,DC);
-
-
-
-        if (
-            !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
-            process_line(line_content, label, index, symbol_table, &IC, &DC, &error_found);
-        }
-
-        current_node = current_node->next;
-    }
-
-    return !error_found;
-}
 
 void process_line(
         char *line_content,
         char *label,
         int line_index,
         DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
         unsigned long *IC,
         unsigned long *DC,
         int *error_found
@@ -336,7 +330,7 @@ void process_line(
 
     if (find_command(token) != NULL) {
         debugf(line_index,"command found");
-        process_command_line(line_content, label, line_index, token, symbol_table, IC, error_found);
+        process_command_line(line_content, label, line_index, token, symbol_table, address_encoded_line_pair, IC, error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
         debugf(line_index,"Instruction: %d",instruction);
@@ -345,7 +339,7 @@ void process_line(
            debugf(line_index,"instruction found");
 
             process_instruction_line(
-                    line_content, instruction, label, line_index, token, tokens->next, symbol_table, DC,IC, error_found);
+                    line_content, instruction, label, line_index, token, tokens->next, symbol_table,address_encoded_line_pair, DC,IC, error_found);
         } else {
             if (strchr(token,',')){
                 errorf(line_index,"Illegal comma after command");
@@ -397,4 +391,33 @@ void mark_symbol_as_entry(
     }
 
     warnf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+}
+
+int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,DoublyLinkedList *address_encoded_line_pair) {
+    unsigned long IC = 100;
+    unsigned long DC = 0;
+    int error_found = FALSE;
+    DoublyLinkedList *current_node = get_list_head(line_list);
+
+    printf("starting first pass...\n");
+
+    while (current_node != NULL) {
+        Line *line_entry = (Line *)current_node->data;
+        char *line_content = line_entry->data;
+        char *label = line_entry->label;
+        int index = line_entry->index;
+        debugf(index, "line content: %s",line_content);
+        debugf(index, "Current IC count: %lu, current DC count: %lu",IC,DC);
+
+
+
+        if (
+                !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
+            process_line(line_content, label, index, symbol_table,address_encoded_line_pair, &IC, &DC, &error_found);
+        }
+
+        current_node = current_node->next;
+    }
+
+    return !error_found;
 }
