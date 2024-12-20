@@ -35,5 +35,5 @@ void print_encoded_line_binary(EncodedLine *line);
 void print_encoded_line_values(EncodedLine *line);
 void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are);
 void print_encoded_immediate_with_are(EncodedLine *encoded_line);
-void encoded_line_set_data(EncodedLine *encoded_line,int value);
+void encoded_line_set_data(EncodedLine *encoded_line,int value, int are);
 #endif

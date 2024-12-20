@@ -9,6 +9,8 @@
 #include "core/address_encoded_pair.h"
 #include "core/doubly_linked_list.h"
 #include "exec/compiler.h"
+#include "core/create_files.h"
+
 
 void got_error(char* fname, char* stage_name);
 
@@ -60,7 +62,7 @@ int main(int argc, char* argv[]) {
 
         print_address_encode_list(address_encoded_line_pair);
         printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
-
+		create_files(symbol_table, address_encoded_line_pair, final_IC, final_DC);
         free_macro_table(macro_list);
         free_list(&symbol_table, free_symbol_data);
         free_list(&address_encoded_line_pair, free_address_encoded_pair);

@@ -222,7 +222,7 @@ void parse_data_or_string_instruction(
             }
 
             debugf(line_index,"assigning data instruction,address: %lu value: %d ",*IC,value);
-            encoded_line_set_data(encoded_line,value);
+            encoded_line_set_data(encoded_line,value, -1);
             addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
             add_to_list(address_encoded_line_pair,addressEncodedPair);
             (*DC)+=1;
@@ -255,7 +255,7 @@ void parse_data_or_string_instruction(
         while (operand[i] != '\"'){
             EncodedLine* operand_encoded_line = create_encoded_line();
             debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
-            encoded_line_set_data(operand_encoded_line,operand[i]);
+            encoded_line_set_data(operand_encoded_line,operand[i], -1);
             addressEncodedPair = create_address_encoded_pair(*IC,operand_encoded_line);
             add_to_list(address_encoded_line_pair,addressEncodedPair);
             (*IC) += 1;
@@ -263,7 +263,7 @@ void parse_data_or_string_instruction(
         }
         /* Add the terminating '\0' character as a separate word */
         null_line = create_encoded_line();
-        encoded_line_set_data(null_line, 0); /* null terminator */
+        encoded_line_set_data(null_line, 0, -1); /* null terminator */
         nullPair = create_address_encoded_pair(*IC, null_line);
         add_to_list(address_encoded_line_pair, nullPair);
 

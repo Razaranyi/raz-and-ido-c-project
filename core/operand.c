@@ -123,7 +123,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             switch (operands[i].addressing_mode) {
                 case IMMEDIATE_ADDRESSING:
                     extra_words +=1;
-                    encoded_line_set_immediate_with_are(encodedLine, operands[i].immediate_value, 4);
+                    encoded_line_set_data(encodedLine, operands[i].immediate_value, 4);
                     print_encoded_immediate_with_are(encodedLine);
                     is_reg = FALSE;
                     break;

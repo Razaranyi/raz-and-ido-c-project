@@ -7,6 +7,10 @@
 #define INSTRUCTIONS {".data", ".string", ".entry", ".extern"}
 #define REGS {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"}
 #define REGS_LEN 8
+#define ADDRESS_LEN 7
+
+/*convert address from usigned long to char * and add 0 in the begging for the files format*/
+char * fix_address(unsigned long address);
 
 
 /* Allocates memory for a copy of the string */
