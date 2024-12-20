@@ -94,36 +94,45 @@ void create_extern_file(DoublyLinkedList *symbol_table)
     FILE *f; /*to write in*/
     const char *filename = "ps.ext";
 	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
+    DoublyLinkedList* address; /*for the external multipule address*/
     char * label; /*for label part*/
-    char * address; /*for the addresss writing part*/
+    unsigned long current_address; /*for the addresss writing part*/
+    char * fixed_address; /*for the fixed address*/
     while(new_symbol!=NULL)
     {
         Symbol * current_symbol = new_symbol->data; 
 	    DoublyLinkedList * properties = current_symbol->sym_properties;
-	    int if_entry = FALSE;
+	    int if_extern = FALSE;
         while(properties!=NULL)
         {
             
             int *prop = properties->data;
 	        if (*prop == EXTERNAL_PROPERTY)
             {
-                if_entry = TRUE;
+                if_extern = TRUE;
             }
             properties = properties->next;
         }
-        if(if_entry)
+        if(if_extern)
         {
 
-            f = fopen(filename, "a");
-            if(f == NULL)
-            {
-                printf("Error opening file: %s", filename);
-                exit(1);
-            }
+
             label = current_symbol->label;
-            address = fix_address(current_symbol->address);
-            fprintf(f, "%s %s\n", label, address);
-            fclose(f);
+            address = get_list_head(current_symbol->external_usages);
+            while(address!=NULL)
+            {
+                f = fopen(filename, "a");
+                if(f == NULL)
+                {
+                    printf("Error opening file: %s", filename);
+                    exit(1);
+                }
+                current_address = (unsigned long)(address->data);
+                fixed_address = fix_address(current_address);
+                fprintf(f, "%s %s\n", label, fixed_address);
+                fclose(f);
+                address = address->next;
+            }
         }
         
         new_symbol = new_symbol->next;
