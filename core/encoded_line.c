@@ -61,12 +61,11 @@ void encoded_line_set_reg(EncodedLine* line, unsigned int reg, int is_dest){
     }
 }
 
-void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol, int is_src) {
+void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol) {
     if (line->unresolved_symbol) {
         free(line->unresolved_symbol);
     }
     line->unresolved_symbol = allocate_string(symbol);
-    line->unresolved_is_src = is_src;
 }
 
 void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are) {
