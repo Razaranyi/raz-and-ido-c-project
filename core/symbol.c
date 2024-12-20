@@ -95,7 +95,6 @@ int add_external_usage(Symbol* symbol, unsigned long usage_address) {
         }
     }
 
-    /* Allocate memory for usage_address and assign it */
     usage_ptr = (unsigned long*)malloc(sizeof(unsigned long));
     if (!usage_ptr) {
         errorf(-1, "Failed to allocate memory for external usage address");
@@ -103,17 +102,10 @@ int add_external_usage(Symbol* symbol, unsigned long usage_address) {
     }
     *usage_ptr = usage_address;
 
-    /* Add the usage address to the external_usages list */
     add_to_list(symbol->external_usages, usage_ptr);
 
     return TRUE;
 }
-
-
-
-
-
-
 
 
 int free_symbol(Symbol* symbol){
