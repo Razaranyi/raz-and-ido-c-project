@@ -12,10 +12,10 @@
 #include <ctype.h>
 
 /*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
-void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, int dc, int ic);
+void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair);
 
 /*get double linked list of encode line pairs, run over it and for any line enter her hex representation to the object file*/
-void create_object_file(DoublyLinkedList *encode_line_pair, int dc, int ic);
+void create_object_file(DoublyLinkedList *encode_line_pair);
 
 /*get double linked list symbol table, run over it and for entry symbols write to ps.ent file*/
 void create_entry_file(DoublyLinkedList *symbol_table);

@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
         DoublyLinkedList *macro_list = allocate_node_mem();
         DoublyLinkedList *line_list = allocate_node_mem();
-        DoublyLinkedList *entry_list = allocate_node_mem();
+		DoublyLinkedList *entry_list = allocate_node_mem();
 
 
 
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 
         print_address_encode_list(address_encoded_line_pair);
         printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
-		create_files(symbol_table, address_encoded_line_pair, final_IC, final_DC);
+		create_files(symbol_table, address_encoded_line_pair);
         free_macro_table(macro_list);
         free_list(&symbol_table, free_symbol_data);
         free_list(&address_encoded_line_pair, free_address_encoded_pair);
