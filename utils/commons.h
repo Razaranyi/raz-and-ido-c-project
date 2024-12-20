@@ -7,7 +7,7 @@
 #define INSTRUCTIONS {".data", ".string", ".entry", ".extern"}
 #define REGS {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"}
 #define REGS_LEN 8
-#define ADDRESS_LEN 7
+
 
 /* Allocates memory for a copy of the string */
 char* allocate_string(char* string);
@@ -104,8 +104,5 @@ int check_if_registar(char *word);
 /*get word, list of words and list of words size , 
 return bollean int for true or false*/
 int is_word_in_list(char *word, char *word_list[], int list_size);
-
-/*cinvert address from usigned long to char * and add 0 in the begging for the files format*/
-char * fix_address(unsigned long address);
 
 #endif
