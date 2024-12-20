@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils/globals.h"
 #include "utils/commons.h"
 #include "utils/logger.h"
 #include "exec/macro_parsing.h"
@@ -13,11 +14,6 @@ void got_error(char* fname, char* stage_name);
 
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
-    DoublyLinkedList *macro_list = allocate_node_mem(); /*for the macros*/
-    /*TODO: add file name to the indexed line for logging purposes*/
-    DoublyLinkedList *line_list = allocate_node_mem();/*for the lines*/
-    DoublyLinkedList *symbol_table = allocate_node_mem();
-    DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
     initialize_command_set();
 
     printf("Assembler started...\n");
@@ -29,7 +25,15 @@ int main(int argc, char* argv[]) {
 	
 	for(i = 1; i < argc; i++)
 	{
-		int checker = 0; /*checks if we get problem while reading and parse the file if 1 its all good if 0 its bad*/
+        DoublyLinkedList *symbol_table = allocate_node_mem();
+        DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
+        DoublyLinkedList *macro_list = allocate_node_mem();
+        DoublyLinkedList *line_list = allocate_node_mem();
+
+
+
+
+        int checker = 0; /*checks if we get problem while reading and parse the file if 1 its all good if 0 its bad*/
 		char* fname = malloc(strlen(argv[i]) +1);/*create memory space for fname*/
 		if (fname == NULL) /*looks for allocation problems*/
 		{
@@ -53,19 +57,21 @@ int main(int argc, char* argv[]) {
             free_macro_table(macro_list);
             free_line_table(line_list);
         }
+
         print_address_encode_list(address_encoded_line_pair);
+        printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 
 
-		/*checker = first_reading(fname);*/
-	}
-
-    free_macro_table(macro_list);
-    free_line_table(line_list);
+        free_list(&address_encoded_line_pair, free_address_encoded_pair);
+        free_list(&symbol_table, free_symbol_data);
+        free_macro_table(macro_list);
+        free_line_table(line_list);
+    }
 
     return 0;
 }
 
-void got_error(char* fname, char* stage_name){
-    fatalf(-1,"%s got error. File: %s.as - the program stop. Check logs for details",stage_name,fname);
+void got_error( char* stage_name, char* fname){
+    fatalf(-1,"File: %s.as got error in %s. Check logs for details",fname,stage_name);
     exit(FALSE);
 }

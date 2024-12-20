@@ -1,5 +1,8 @@
 #include "compiler.h"
-
+/*global var for final address*/
+unsigned long final_IC = 0;
+unsigned long final_DC = 0;
+int instructions_count = 0;
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
 
@@ -174,6 +177,8 @@ void parse_data_or_string_instruction(
     DoublyLinkedList *operands_list = NULL;
     EncodedLine *encoded_line = create_encoded_line();
     AddressEncodedPair *addressEncodedPair;
+    printf("got here") ;
+    instructions_count+=1;
 
 
     after_instruction = line_copy + strlen(instruction_token);
@@ -361,6 +366,7 @@ void parse_extern_instruction(
         int line_index
 ) {
     char *operand;
+    instructions_count+=1;
     debugf(line_index,"Found extern command");
     if (get_list_length(operands) != 1) {
         errorf(line_index, ".extern instruction expects exactly one operand");
@@ -418,6 +424,9 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,Doubl
 
         current_node = current_node->next;
     }
+    final_DC = DC -1;
+    final_IC = IC-100 - final_DC + instructions_count;
+
 
     return !error_found;
 }
