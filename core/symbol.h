@@ -1,7 +1,6 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 #include "doubly_linked_list.h"
-#include "doubly_linked_list.h"
 #include "../utils/boolean.h"
 #include "../utils/commons.h"
 #include <stdlib.h>

@@ -1,8 +1,16 @@
-//
-// Created by root on 12/20/24.
-//
+#ifndef ENTRY_H
+#define ENTRY_H
+#include "doubly_linked_list.h"
+#include "../utils/commons.h"
+#include "../utils/boolean.h"
 
-#ifndef RAZ_AND_IDO_C_PROJECT_ENTRY_H
-#define RAZ_AND_IDO_C_PROJECT_ENTRY_H
 
-#endif //RAZ_AND_IDO_C_PROJECT_ENTRY_H
+typedef struct Entry {
+    char* name;
+    int index;
+}Entry;
+Entry* allocate_entry_mem( char* name, int index);
+int free_entry(Entry* entry);
+void free_entry_data(void* data);
+
+#endif
