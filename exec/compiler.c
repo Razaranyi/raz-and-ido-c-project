@@ -1,5 +1,7 @@
 #include "compiler.h"
-
+/*global var for final address*/
+unsigned long final_IC = 0;
+unsigned long final_DC = 0;
 
 void parse_extern_instruction(DoublyLinkedList *operands, DoublyLinkedList *symbol_table, int *error_found, int line_index);
 
@@ -172,8 +174,9 @@ void parse_data_or_string_instruction(
     DoublyLinkedList *current;
     char *operand;
     DoublyLinkedList *operands_list = NULL;
-    EncodedLine *encoded_line = create_encoded_line();
     AddressEncodedPair *addressEncodedPair;
+    EncodedLine *null_line;
+    AddressEncodedPair *nullPair;
 
 
     after_instruction = line_copy + strlen(instruction_token);
@@ -203,6 +206,8 @@ void parse_data_or_string_instruction(
     if (strcmp(instruction_token, ".data") == 0) {
         int value = 0;
         while (current != NULL) {
+            EncodedLine *encoded_line = create_encoded_line();
+
             operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
 
@@ -248,13 +253,21 @@ void parse_data_or_string_instruction(
             return;
         }
         while (operand[i] != '\"'){
+            EncodedLine* operand_encoded_line = create_encoded_line();
             debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
-            encoded_line_set_data(encoded_line,operand[i]);
-            addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
+            encoded_line_set_data(operand_encoded_line,operand[i]);
+            addressEncodedPair = create_address_encoded_pair(*IC,operand_encoded_line);
             add_to_list(address_encoded_line_pair,addressEncodedPair);
             (*IC) += 1;
             i+=1;
         }
+        /* Add the terminating '\0' character as a separate word */
+        null_line = create_encoded_line();
+        encoded_line_set_data(null_line, 0); /* null terminator */
+        nullPair = create_address_encoded_pair(*IC, null_line);
+        add_to_list(address_encoded_line_pair, nullPair);
+
+        (*IC) += 1;
         (*DC) += strlen(operand);
 
 
@@ -418,6 +431,10 @@ int first_pass(DoublyLinkedList *line_list, DoublyLinkedList *symbol_table,Doubl
 
         current_node = current_node->next;
     }
+    debugf(-1, "IC: %lu, DC: %lu",IC,DC);
+    final_DC = DC -1;
+    final_IC = IC-100 - final_DC;
+
 
     return !error_found;
 }

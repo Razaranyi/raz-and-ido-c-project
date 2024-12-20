@@ -115,3 +115,11 @@ int free_symbol(Symbol* symbol){
     return TRUE;
 }
 
+void free_symbol_data(void* data) {
+    Symbol* symbol = (Symbol*)data;
+    if (symbol != NULL) {
+        free_symbol(symbol);
+    }
+}
+
+

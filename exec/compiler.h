@@ -15,6 +15,7 @@
 #include "../core/doubly_linked_list.h"
 #include "../utils/boolean.h"
 #include "../core/encoded_line.h"
+#include "../utils/globals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

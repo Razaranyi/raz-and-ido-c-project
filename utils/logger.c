@@ -36,7 +36,11 @@ void print_log_by_level(LogLevel level, const char* prefix, const char *message,
     }
 
     /* Format the log message and store it in log_res */
-    sprintf(log_res, "%s%s%s (line: %d)%s\n", color, prefix, message, line, RESET_COLOR);
+    if(line > 0){
+        sprintf(log_res, "%s%s%s (line: %d)%s\n", color, prefix, message, line, RESET_COLOR);
+    } else{
+        sprintf(log_res, "%s%s%s %s\n", color, prefix, message, RESET_COLOR);
+    }
 
     /* Print the log message to stdout */
     printf("%s", log_res);
@@ -104,4 +108,15 @@ void warnf(int line, const char *format, ...) {
 
 void fatal(char* message, int line) {
     print_log_by_level(FATAL, "[FATAL] ", message, line);
+}
+
+void fatalf(int line, const char *format, ...) {
+    char message[MSG_BUFFER];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(message, format, args);
+    va_end(args);
+
+    fatal(message, line);
 }
