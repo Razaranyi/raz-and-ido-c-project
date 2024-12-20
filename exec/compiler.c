@@ -174,7 +174,6 @@ void parse_data_or_string_instruction(
     DoublyLinkedList *current;
     char *operand;
     DoublyLinkedList *operands_list = NULL;
-    EncodedLine *encoded_line = create_encoded_line();
     AddressEncodedPair *addressEncodedPair;
     EncodedLine *null_line;
     AddressEncodedPair *nullPair;
@@ -207,6 +206,8 @@ void parse_data_or_string_instruction(
     if (strcmp(instruction_token, ".data") == 0) {
         int value = 0;
         while (current != NULL) {
+            EncodedLine *encoded_line = create_encoded_line();
+
             operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
 
@@ -252,9 +253,10 @@ void parse_data_or_string_instruction(
             return;
         }
         while (operand[i] != '\"'){
+            EncodedLine* operand_encoded_line = create_encoded_line();
             debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
-            encoded_line_set_data(encoded_line,operand[i]);
-            addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
+            encoded_line_set_data(operand_encoded_line,operand[i]);
+            addressEncodedPair = create_address_encoded_pair(*IC,operand_encoded_line);
             add_to_list(address_encoded_line_pair,addressEncodedPair);
             (*IC) += 1;
             i+=1;

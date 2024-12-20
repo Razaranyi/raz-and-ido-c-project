@@ -13,12 +13,14 @@ EncodedLine* create_encoded_line() {
     return line;
 }
 
-void free_encoded_line(EncodedLine* encoded_line) {
-    if (encoded_line->unresolved_symbol) {
-        free(encoded_line->unresolved_symbol);
+void free_encoded_line(EncodedLine *line) {
+    if (!line) return;
+    if (line->unresolved_symbol) {
+        free(line->unresolved_symbol);
     }
-    free(encoded_line);
+    free(line);
 }
+
 
 void encoded_line_set_opcode(EncodedLine* line, unsigned int opscode) {
     line->opcode = opscode;

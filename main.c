@@ -62,9 +62,10 @@ int main(int argc, char* argv[]) {
         printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 
         free_macro_table(macro_list);
-        free_line_table(line_list);
         free_list(&symbol_table, free_symbol_data);
         free_list(&address_encoded_line_pair, free_address_encoded_pair);
+
+        free_line_table(line_list);
         free(fname);
     }
 

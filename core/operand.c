@@ -119,7 +119,6 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             AddressEncodedPair *address_encoded_pair;
             int is_reg;
 
-            /* Missing semicolon fixed here */
             EncodedLine *encodedLine = create_encoded_line();
 
             switch (operands[i].addressing_mode) {
