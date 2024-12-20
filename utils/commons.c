@@ -208,29 +208,30 @@ int str_substring(char* string, int start_ind, int end_ind, char* result) {
 }
 
 
-
 int remove_leading_and_trailing_whitespaces(char* string, char* result) {
-    int start_ind;
-    int end_ind;
+    char temp[4096]; /* Large enough buffer */
+    int start_ind, end_ind;
     int string_len = strlen(string);
 
-
-    for (start_ind = 0; start_ind < string_len && isspace((unsigned char)string[start_ind]) && string[start_ind] != '\n'; start_ind++) {
-        /* Keep looping until not newline */
-    }
-
+    /* Find start_ind */
+    for (start_ind = 0; start_ind < string_len && isspace((unsigned char)string[start_ind]); start_ind++) {}
+    /* If entire string is spaces */
     if (string[start_ind] == '\0') {
-        strcpy(result, "\n");
-        return 0;
+        strcpy(result, "");
+        return TRUE;
     }
 
+    /* Find end_ind */
+    for (end_ind = string_len - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {}
 
-    for (end_ind = string_len - 1; end_ind >= start_ind && isspace((unsigned char)string[end_ind]); end_ind--) {
-        /* Keep looping until not space */
-    }
+    /* copy the substring to temp */
+    str_substring(string, start_ind, end_ind + 1, temp);
 
-    return str_substring(string, start_ind, end_ind + 1, result);
+    /* Copy from temp to result */
+    strcpy(result, temp);
+    return TRUE;
 }
+
 
 
 char* skip_separators(char* string, char* separator) {

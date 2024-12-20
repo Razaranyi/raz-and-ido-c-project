@@ -176,6 +176,8 @@ void parse_data_or_string_instruction(
     DoublyLinkedList *operands_list = NULL;
     EncodedLine *encoded_line = create_encoded_line();
     AddressEncodedPair *addressEncodedPair;
+    EncodedLine *null_line;
+    AddressEncodedPair *nullPair;
 
 
     after_instruction = line_copy + strlen(instruction_token);
@@ -257,9 +259,12 @@ void parse_data_or_string_instruction(
             (*IC) += 1;
             i+=1;
         }
-        encoded_line_set_data(encoded_line,0);
-        addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
-        add_to_list(address_encoded_line_pair,addressEncodedPair);
+        /* Add the terminating '\0' character as a separate word */
+        null_line = create_encoded_line();
+        encoded_line_set_data(null_line, 0); /* null terminator */
+        nullPair = create_address_encoded_pair(*IC, null_line);
+        add_to_list(address_encoded_line_pair, nullPair);
+
         (*IC) += 1;
         (*DC) += strlen(operand);
 
