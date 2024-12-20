@@ -16,8 +16,6 @@ typedef struct {
     int immediate_value;
 
     char *unresolved_symbol;
-    int unresolved_is_src;
-
 } EncodedLine;
 
 EncodedLine* create_encoded_line();
