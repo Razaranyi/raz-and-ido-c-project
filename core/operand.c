@@ -292,3 +292,4 @@ int contains_whitespace(char *operand){
 int is_valid_operand(char *operand) {
     return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
 }
+
