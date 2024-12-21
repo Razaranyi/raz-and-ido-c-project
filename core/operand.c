@@ -130,7 +130,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
                 case DIRECT_ADDRESSING:
                     extra_words+=1;
                     encoded_line_set_are(encodedLine, R);
-                    debugf(line_index1,"Adding %s as unresolved symbol",operands[i].symbol_name);
+                    debugf(line_index,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
                     encodedLine->line_index = line_index;
                     is_reg = FALSE;
