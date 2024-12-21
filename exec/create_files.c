@@ -1,4 +1,4 @@
-#include "create_files.h"
+#include "../core/create_files.h"
 #include "../core/doubly_linked_list.h"
 #include "../core/symbol.h"
 #include "../core/symbol.h"
@@ -10,7 +10,7 @@
 #include "../core/doubly_linked_list.h"
 #include "../utils/boolean.h"
 #include "../core/address_encoded_pair.h"
-#include "../exec/compiler.h"
+#include "compiler.h"
 
 /*todo: changes the address part for list options*/
 

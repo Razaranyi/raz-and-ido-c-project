@@ -124,7 +124,6 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
                 case IMMEDIATE_ADDRESSING:
                     extra_words +=1;
                     encoded_line_set_data(encodedLine, operands[i].immediate_value, A);
-                    print_encoded_immediate_with_are(encodedLine);
                     is_reg = FALSE;
                     break;
 

@@ -66,7 +66,6 @@ void parse_data_or_string_instruction(
             operand = current->data;
             remove_leading_and_trailing_whitespaces(operand, operand);
 
-            printf("operand: %s\n",operand);
 
             if (!assign_valid_integer(operand,&value)) {
                 errorf(line_index, "Invalid operand in .data instruction: '%s'", operand);

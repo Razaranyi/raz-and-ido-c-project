@@ -13,7 +13,7 @@ void check_double_commas(int line_index, char *line_copy, int *error_found) {
 
         if (current_char == ',') {
             if (last_was_comma) {
-                errorf(line_index, "Multiple consecutive commas");
+                errorf(line_index, "Multiple consecutive commas: '%s'",line_copy);
                 *error_found = TRUE;
                 return;
             }
@@ -61,7 +61,6 @@ void process_line(
                              error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
-        debugf(line_index,"Instruction: %d",instruction);
 
         if (instruction != INVALID) {
            debugf(line_index,"instruction found");
@@ -81,7 +80,7 @@ void process_line(
                     error_found);
         } else {
             if (strchr(token,',')){
-                errorf(line_index,"Illegal comma after command");
+                errorf(line_index,"Illegal comma after command '%s'", token);
             } else {
                 errorf(line_index, "Unrecognized command or instruction: '%s'", token);
             }

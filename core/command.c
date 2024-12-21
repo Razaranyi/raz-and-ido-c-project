@@ -283,8 +283,6 @@ int handle_command_operands(Command *command,
         encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
-    print_encoded_line_binary(encoded_line);
-    print_encoded_line_values(encoded_line);
     address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
     add_to_list(address_encoded_line_pair,address_encoded_pair);
 
@@ -313,7 +311,6 @@ void parse_command_operands(
     DoublyLinkedList *current;
     int operand_count;
 
-    remove_leading_and_trailing_whitespaces(operands_str, operands_str);
     if (operands_str[0] == ','){
         errorf(line_index,"Illegal comma after command: %s",command->command_name);
         *error_found = TRUE;
@@ -324,7 +321,7 @@ void parse_command_operands(
         if (strlen(operands_str) > 0) {
             errorf(
                     line_index,
-                    "Command '%s' expects 0 operands but got '%s'",
+                    "Command '%s' expects 0 operands but got operand '%s'",
                     command->command_name,
                     operands_str
             );
@@ -363,9 +360,8 @@ void parse_command_operands(
     while (current != NULL) {
         operand_str = (char *)current->data;
         remove_leading_and_trailing_whitespaces(operand_str,operand_str);
-        printf("operand: %s\n",operand_str);
         if (!is_valid_operand(operand_str)) {
-            errorf(line_index, "Invalid operand: '%s'", operand_str);
+            errorf(line_index, "Missing comma or invalid operand: '%s'", operand_str);
             *error_found = TRUE;
             free_list(operands, free);
             return;
@@ -389,12 +385,7 @@ void process_command_line(
     EncodedLine *encodedLine = create_encoded_line();
     DoublyLinkedList *operands = NULL;
 
-    if (command == NULL) {
-        errorf(line_index, "Unknown command: '%s'", command_token);
-        *error_found = TRUE;
-        return;
-    }
-    debugf(line_index,"assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
+    debugf(line_index,"Assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
 
     encoded_line_set_opcode(encodedLine,command->opcode);
     encoded_line_set_funct(encodedLine,command->funct);
@@ -404,17 +395,9 @@ void process_command_line(
 
     operands_str = line_content + strlen(command_token);
 
-    /* Ensure there's at least one space after the command token if operands are expected */
-    if (command->number_of_operands > 0 && !isspace(*operands_str)) {
-        errorf(line_index, "Missing space after command: '%s'", command_token);
-        *error_found = TRUE;
-        return;
-    }
-
     /* Remove leading and trailing spaces from operands_str */
     remove_leading_and_trailing_whitespaces(operands_str, operands_str);
 
-    /* Parse operands */
     parse_command_operands(command, operands_str, &operands, error_found, line_index);
 
     if (*error_found) {

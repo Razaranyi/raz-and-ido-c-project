@@ -50,9 +50,7 @@ void encoded_line_set_are(EncodedLine* line, unsigned int are_value) {
     line->are = are_value;
 }
 
-void encoded_line_set_immediate(EncodedLine* line, int value) {
-    line->immediate_value = value;
-}
+
 void encoded_line_set_reg(EncodedLine* line, unsigned int reg, int is_dest){
     if (is_dest){
         encoded_line_set_dst_reg(line,reg);
@@ -68,20 +66,6 @@ void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol) {
     line->unresolved_symbol = allocate_string(symbol);
 }
 
-void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are) {
-    /* Mask to ensure value is 21 bits (2's complement) */
-    unsigned int masked_value = (unsigned int)(value & 0x1FFFFF); /* Mask lower 21 bits */
-
-    /* Shift the masked value to fit bits 23-3 */
-    masked_value <<= 3;
-
-    /* Add ARE to the lower 3 bits */
-    masked_value |= (are & 0x7); /* Ensure ARE is 3 bits */
-
-    /* Store the combined value in the immediate_value field */
-    encoded_line->immediate_value = masked_value;
-    encoded_line->are = A;
-}
 
 void encoded_line_set_data(EncodedLine *encoded_line,int value, int are){
     int padding = 0;
@@ -104,53 +88,5 @@ void encoded_line_set_data(EncodedLine *encoded_line,int value, int are){
         encoded_line->are = are & 0x7;
 }
 
-void print_encoded_line_binary(EncodedLine *line) {
-    unsigned int combined_value = 0;
-    int i = 0;
 
-    /* Combine the fields into a single 24-bit integer */
-    combined_value |= (line->opcode & 0x3F) << 18;         /* 6 bits for opcode (23-18) */
-    combined_value |= (line->src_addressing & 0x3) << 16;  /* 2 bits for src addressing (17-16) */
-    combined_value |= (line->src_reg & 0x7) << 13;         /* 3 bits for src reg (15-13) */
-    combined_value |= (line->dst_addressing & 0x3) << 11;  /* 2 bits for dst addressing (12-11) */
-    combined_value |= (line->dst_reg & 0x7) << 8;          /* 3 bits for dst reg (10-8) */
-    combined_value |= (line->funct & 0x1F) << 3;           /* 5 bits for funct (7-3) */
-    combined_value |= (line->are & 0x7);                   /* 3 bits for ARE (2-0) */
 
-    printf("Binary representation: ");
-    for (i = 23; i >= 0; i--) {
-        printf("%d", (combined_value >> i) & 1);
-        if (i % 4 == 0) {
-            printf(" "); /* Add spacing every 4 bits for readability */
-        }
-    }
-    printf("\n");
-}
-
-void print_encoded_line_values(EncodedLine *line){
-    printf(
-            "opcode: %d\naddress_src: %d\nreg_src: %d\naddress_dest: %d\nreg_dest: %d\n""funct: %d\nARE: %d\n",
-            line->opcode,
-            line->src_addressing,
-            line->src_reg,
-            line->dst_addressing,
-            line->dst_reg,
-            line->funct,
-            line->are
-            );
-
-}
-
-void print_encoded_immediate_with_are(EncodedLine *encoded_line) {
-    unsigned int combined_value = (unsigned int)encoded_line->immediate_value;
-    int i=0;
-
-    printf("Binary representation of immediate + ARE: ");
-    for (i = 22; i >= 0; i--) {
-        printf("%d", (combined_value >> i) & 1);
-        if (i % 4 == 0) {
-            printf(" ");
-        }
-    }
-    printf("\n");
-}

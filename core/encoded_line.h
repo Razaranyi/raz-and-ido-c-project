@@ -31,11 +31,6 @@ void encoded_line_set_src_addressing(EncodedLine* line, unsigned int mode);
 void encoded_line_set_dst_addressing(EncodedLine* line, unsigned int mode);
 void encoded_line_set_reg(EncodedLine* line, unsigned int reg, int is_src);
 void encoded_line_set_are(EncodedLine* line, unsigned int are_value);
-void encoded_line_set_immediate(EncodedLine* line, int value);
 void encoded_line_set_unresolved_symbol(EncodedLine* line, char* symbol);
-void print_encoded_line_binary(EncodedLine *line);
-void print_encoded_line_values(EncodedLine *line);
-void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, unsigned int are);
-void print_encoded_immediate_with_are(EncodedLine *encoded_line);
 void encoded_line_set_data(EncodedLine *encoded_line,int value, int are);
 #endif
