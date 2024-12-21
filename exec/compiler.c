@@ -101,7 +101,7 @@ int first_pass(DoublyLinkedList *line_list,
     int error_found = FALSE;
     DoublyLinkedList *current_node = get_list_head(line_list);
 
-    printf("starting first pass...\n");
+    infof(-1,"starting first pass...\n");
 
     while (current_node != NULL) {
         Line *line_entry = (Line *)current_node->data;

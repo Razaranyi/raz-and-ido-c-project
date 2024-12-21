@@ -236,7 +236,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
         }
     }
 
-    printf("finished writing %s...\n", macro_fname_am);
+    infof(-1,"finished writing %s...", macro_fname_am);
 
     /* Close files and free memory */
     fclose(fp);

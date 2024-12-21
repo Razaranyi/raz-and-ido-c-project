@@ -17,8 +17,8 @@ void got_error(char* fname, char* stage_name);
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
     initialize_command_set();
-    set_log_level(DEBUG);
-    printf("Assembler started...\n");
+    set_log_level(INFO);
+    infof(-1,"Assembler started...");
 	if (argc < 2)
 	{
 		printf("ERROR - There is no file name \n");
