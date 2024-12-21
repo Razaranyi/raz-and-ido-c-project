@@ -46,14 +46,16 @@ int main(int argc, char* argv[]) {
 			printf("Memory allocation failed. \n");
             exit(-1);
 		}
-        infof(-1,"Start processing %s",fname);
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
 		/*write without macros, and get the line list index and macros list*/
-		checker = parse_macro(fname, macro_list, line_list);
+        infof(-1,"Start processing %s",fname);
+
+        checker = parse_macro(fname, macro_list, line_list);
 		if (!checker)
 		{
             got_error("Macro parsing", fname);
             free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            exit(-1);
         }
 
         checker = first_pass(line_list,symbol_table,address_encoded_line_pair, entry_list);
@@ -61,6 +63,7 @@ int main(int argc, char* argv[]) {
         if (!checker){
             got_error("Compile - first pass", fname);
             free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            exit(-1);
 
         }
 
@@ -69,7 +72,7 @@ int main(int argc, char* argv[]) {
         if (!checker){
             got_error("Compile - Second pass", fname);
             free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
-            exit(FALSE);
+            exit(-1);
         }
 
         debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
@@ -96,7 +99,6 @@ char* fname){
     free_list(&symbol_table, free_symbol_data);
     free_list(&address_encoded_line_pair, free_address_encoded_pair);
     free_list(&entry_list,free_entry_data);
-
     free_line_table(line_list);
     free(fname);
 }
