@@ -80,7 +80,7 @@ void encoded_line_set_immediate_with_are(EncodedLine *encoded_line, int value, u
 
     /* Store the combined value in the immediate_value field */
     encoded_line->immediate_value = masked_value;
-    encoded_line->are = 4;
+    encoded_line->are = A;
 }
 
 void encoded_line_set_data(EncodedLine *encoded_line,int value, int are){

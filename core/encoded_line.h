@@ -3,6 +3,10 @@
 #include "../utils/commons.h"
 #include "../utils/logger.h"
 
+#define A 4
+#define R 2
+#define E 1
+
 typedef struct {
     unsigned int opcode : 6;         /* Bits 23-18 */
     unsigned int src_addressing : 2; /* Bits 17-16 */

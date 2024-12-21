@@ -150,17 +150,17 @@ void resolve_symbol(
                 unsigned long symbol_address = symbol->address;
 
 
-                if (line->are == 2) {
+                if (line->are == R) {
                     if (is_property(*symbol,EXTERNAL_PROPERTY)){
                         add_external_usage(symbol,(long )pair->address);
-                        encoded_line_set_data(line,symbol_address,1);
+                        encoded_line_set_data(line,symbol_address,E);
                     } else
-                        encoded_line_set_data(line,symbol_address,2);
+                        encoded_line_set_data(line,symbol_address,R);
 
                 } else if (line->are == 4) {
                     unsigned long dist = (unsigned long)symbol_address - (unsigned long)(pair->address) +1;
                     debugf(-1, "Calc %lu - %lu = %lu",(unsigned long)symbol_address,(unsigned long)pair->address,dist);
-                    encoded_line_set_data(line, dist, 4);
+                    encoded_line_set_data(line, dist, A);
                 }
 
                 free(line->unresolved_symbol);

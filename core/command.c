@@ -398,7 +398,7 @@ void process_command_line(
 
     encoded_line_set_opcode(encodedLine,command->opcode);
     encoded_line_set_funct(encodedLine,command->funct);
-    encoded_line_set_are(encodedLine,4);
+    encoded_line_set_are(encodedLine,A);
 
 
 

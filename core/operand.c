@@ -123,14 +123,14 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             switch (operands[i].addressing_mode) {
                 case IMMEDIATE_ADDRESSING:
                     extra_words +=1;
-                    encoded_line_set_data(encodedLine, operands[i].immediate_value, 4);
+                    encoded_line_set_data(encodedLine, operands[i].immediate_value, A);
                     print_encoded_immediate_with_are(encodedLine);
                     is_reg = FALSE;
                     break;
 
                 case DIRECT_ADDRESSING:
                     extra_words+=1;
-                    encoded_line_set_are(encodedLine, 2);
+                    encoded_line_set_are(encodedLine, R);
                     debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
                     is_reg = FALSE;
@@ -138,7 +138,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
 
                 case RELATIVE_ADDRESSING:
                     extra_words += 1;
-                    encoded_line_set_are(encodedLine, 4);
+                    encoded_line_set_are(encodedLine, A);
                     debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
 
