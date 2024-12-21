@@ -9,7 +9,7 @@
 #include "core/address_encoded_pair.h"
 #include "core/doubly_linked_list.h"
 #include "exec/compiler.h"
-#include "core/create_files.h"
+#include "exec/create_files.h"
 
 
 void got_error(char* fname, char* stage_name);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
         }
 
         debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
-		create_files(symbol_table, address_encoded_line_pair);
+		create_files(symbol_table, address_encoded_line_pair, fname);
         infof(-1,"Finished processing %s", fname);
         free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
     }

@@ -297,11 +297,11 @@ char * fix_address(unsigned long address)
     char *str, *new_str;
     int i, num_zeros;
     size_t length;
-    str = malloc(21); /*the biggest unsigend long can be*/
+    str = (char *)malloc(21); /*the biggest unsigend long can be*/
     sprintf(str, "%lu", address);
     length = strlen(str);
     num_zeros = ADDRESS_LEN - length;
-    new_str = malloc(length + num_zeros + 1);
+    new_str = (char *)malloc(length + num_zeros + 1);
     new_str[0] = '\0';
     for(i=0; i < num_zeros; i++) /*to fix the format*/
         strcat(new_str, "0");
