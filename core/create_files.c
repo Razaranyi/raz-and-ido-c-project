@@ -32,7 +32,7 @@ void create_object_file(DoublyLinkedList *encode_line_pair)
         printf("Error opening file: %s", filename);
         exit(1);
     }
-    fprintf(f, "% 7ld  %ld\n", final_DC, final_IC);
+    fprintf(f, "% 7ld  %ld\n", final_IC, final_DC);
     while (current != NULL) {
         pair = (AddressEncodedPair *)current->data;
 
@@ -51,6 +51,7 @@ void create_entry_file(DoublyLinkedList *symbol_table)
 {
     FILE *f; /*to write in*/
     const char *filename = "ps.ent";
+    int first_entry = TRUE; /*to open the file*/
 	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
     char * label; /*for label part*/
     char * address; /*for the addresss writing part*/
@@ -71,6 +72,16 @@ void create_entry_file(DoublyLinkedList *symbol_table)
         }
         if(if_entry)
         {
+            if(first_entry) /*open the file with w*/
+            {
+                first_entry = FALSE; /*to not open again*/
+                f = fopen(filename, "w");
+                if(f == NULL)
+                {
+                    printf("Error opening file: %s", filename);
+                    exit(1);
+                }
+            }
 
             f = fopen(filename, "a");
             if(f == NULL)
@@ -81,6 +92,7 @@ void create_entry_file(DoublyLinkedList *symbol_table)
             label = current_symbol->label;
             address = fix_address(current_symbol->address);
             fprintf(f, "%s %s\n", label, address);
+            free(address);
             fclose(f);
         }
         
@@ -95,6 +107,7 @@ void create_extern_file(DoublyLinkedList *symbol_table)
 {
     FILE *f; /*to write in*/
     const char *filename = "ps.ext";
+    int first_extern = TRUE; /*to open the file*/
 	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
     DoublyLinkedList* address; /*for the external multipule address*/
     char * label; /*for label part*/
@@ -117,6 +130,16 @@ void create_extern_file(DoublyLinkedList *symbol_table)
         }
         if(if_extern)
         {
+            if(first_extern) /*open the file with w*/
+            {
+                first_extern = FALSE; /*to not open again*/
+                f = fopen(filename, "w");
+                if(f == NULL)
+                {
+                    printf("Error opening file: %s", filename);
+                    exit(1);
+                }
+            }
 
 
             label = current_symbol->label;
@@ -132,6 +155,7 @@ void create_extern_file(DoublyLinkedList *symbol_table)
                 current_address = (unsigned long *)(address->data);
                 fixed_address = fix_address(*current_address);
                 fprintf(f, "%s %s\n", label, fixed_address);
+                free(fixed_address);
                 fclose(f);
                 address = address->next;
             }
