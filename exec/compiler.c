@@ -143,7 +143,7 @@ void resolve_symbol(
         if (line->unresolved_symbol != NULL) {
             Symbol *symbol;
             if (!symbols_table_get_symbol(symbol_table, line->unresolved_symbol, &symbol)) {
-                errorf(-1, "Unresolved symbol '%s' not found", line->unresolved_symbol);
+                errorf(line->line_index, "Unresolved symbol '%s' not found", line->unresolved_symbol);
                 *error_found = TRUE;
             } else {
                 unsigned long symbol_address = symbol->address;

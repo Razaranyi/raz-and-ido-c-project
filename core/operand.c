@@ -99,7 +99,7 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
 
 
 /* Counts the extra words needed for a set of operands */
-int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC) {
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC,int line_index) {
     int extra_words = 0;
     int both_registers = FALSE;
     int current_address;
@@ -130,17 +130,18 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
                 case DIRECT_ADDRESSING:
                     extra_words+=1;
                     encoded_line_set_are(encodedLine, R);
-                    debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
+                    debugf(line_index1,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
+                    encodedLine->line_index = line_index;
                     is_reg = FALSE;
                     break;
 
                 case RELATIVE_ADDRESSING:
                     extra_words += 1;
                     encoded_line_set_are(encodedLine, A);
-                    debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
+                    debugf(line_index1,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
-
+                    encodedLine->line_index = line_index;
                     is_reg = FALSE;
                     break;
 

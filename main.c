@@ -52,22 +52,24 @@ int main(int argc, char* argv[]) {
 		checker = parse_macro(fname, macro_list, line_list);
 		if (!checker)
 		{
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
             got_error("Macro parsing", fname);
-		}
+            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+        }
 
         checker = first_pass(line_list,symbol_table,address_encoded_line_pair, entry_list);
 
         if (!checker){
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
             got_error("Compile - first pass", fname);
+            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+
         }
 
         checker = second_pass(symbol_table,address_encoded_line_pair,entry_list);
 
         if (!checker){
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
             got_error("Compile - Second pass", fname);
+            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            exit(FALSE);
         }
 
         debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
@@ -82,7 +84,6 @@ int main(int argc, char* argv[]) {
 
 void got_error( char* stage_name, char* fname){
     fatalf(-1,"File: %s.as got error in %s. Check logs for details",fname,stage_name);
-    exit(FALSE);
 }
 
 void free_all( DoublyLinkedList *symbol_table,

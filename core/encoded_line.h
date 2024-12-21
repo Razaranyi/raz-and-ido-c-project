@@ -14,12 +14,15 @@ typedef struct {
     unsigned int dst_addressing : 2; /* Bits 12-11 */
     unsigned int dst_reg : 3;        /* Bits 10-8 */
     unsigned int funct : 5;          /* Bits 7-3 */
-    unsigned int are : 3;            /* Bits 2-0 */
+    unsigned int are : 3;
+/* Bits 2-0 */
 
     /* If immediate addressing, store the value */
     int immediate_value;
 
     char *unresolved_symbol;
+    int line_index;
+
 } EncodedLine;
 
 EncodedLine* create_encoded_line();

@@ -289,7 +289,7 @@ int handle_command_operands(Command *command,
 
     debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
 
-    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC);
+    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC,line_index);
 
     for (i=0;i<command->number_of_operands;i++){
         free(operand_array[i].operand_str);
