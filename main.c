@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
         }
 
         print_address_encode_list(address_encoded_line_pair);
-        printf("Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
+        debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 		create_files(symbol_table, address_encoded_line_pair);
         free_macro_table(macro_list);
         free_list(&symbol_table, free_symbol_data);
