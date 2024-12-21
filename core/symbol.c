@@ -171,4 +171,16 @@ int mark_symbol_as_entry(DoublyLinkedList *symbol_table, char *symbol_name, int 
     return FALSE;
 }
 
+void mark_entries(DoublyLinkedList *entry_list, DoublyLinkedList *symbol_table, int *error_found) {
+    DoublyLinkedList *current = get_list_head(entry_list);
+
+    while (current != NULL) {
+        Entry *entry = (Entry *)current->data;
+        if (!mark_symbol_as_entry(symbol_table, entry->name, entry->index)) {
+            *error_found = TRUE;
+        }
+        current = current->next;
+    }
+}
+
 
