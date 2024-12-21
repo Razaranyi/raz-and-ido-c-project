@@ -9,7 +9,7 @@
 #include "core/address_encoded_pair.h"
 #include "core/doubly_linked_list.h"
 #include "exec/compiler.h"
-#include "core/create_files.h"
+#include "exec/create_files.h"
 
 
 void got_error(char* fname, char* stage_name);
