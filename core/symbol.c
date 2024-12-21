@@ -142,4 +142,33 @@ int symbols_table_get_symbol(DoublyLinkedList *symbol_table, char *name, Symbol 
     return FALSE;
 }
 
+int mark_symbol_as_entry(DoublyLinkedList *symbol_table, char *symbol_name, int line_index) {
+    DoublyLinkedList *current = get_list_head(symbol_table);
+
+    while (current != NULL) {
+        Symbol *symbol = (Symbol *)current->data;
+
+        if (strcmp(symbol->label, symbol_name) == 0) {
+            /* Check if ENTRY_PROPERTY already present */
+            DoublyLinkedList *prop_node = get_list_head(symbol->sym_properties);
+            while (prop_node != NULL) {
+                SymbolProperty *sym_prop = (SymbolProperty *)prop_node->data;
+                if (*sym_prop == ENTRY_PROPERTY) {
+                    /* Already entry */
+                    return TRUE;
+                }
+                prop_node = prop_node->next;
+            }
+
+            /* Add ENTRY_PROPERTY if not found */
+            add_to_list(symbol->sym_properties, allocate_int(ENTRY_PROPERTY));
+            return TRUE;
+        }
+        current = current->next;
+    }
+
+    errorf(line_index, "Symbol '%s' not found in the symbol table to mark as entry", symbol_name);
+    return FALSE;
+}
+
 

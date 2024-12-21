@@ -31,6 +31,7 @@ int is_entry(Symbol symbol);
 int is_external(Symbol symbol);
 int is_property(Symbol symbol, SymbolProperty property);
 int symbols_table_get_symbol(DoublyLinkedList *symbol_table, char *name, Symbol **symbol);
+int mark_symbol_as_entry(DoublyLinkedList *symbol_table, char *symbol_name, int line_index);
 
 
 
