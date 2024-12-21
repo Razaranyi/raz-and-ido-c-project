@@ -39,16 +39,14 @@ int main(int argc, char* argv[]) {
         DoublyLinkedList *line_list = allocate_node_mem();
 		DoublyLinkedList *entry_list = allocate_node_mem();
 
-
-
-
         int checker = 0; /*checks if we get problem while reading and parse the file if 1 its all good if 0 its bad*/
 		char* fname = malloc(strlen(argv[i]) +1);/*create memory space for fname*/
-		if (fname == NULL) /*looks for allocation problems*/
+		if (fname == NULL)
 		{
 			printf("Memory allocation failed. \n");
-			return -1; 
+            exit(-1);
 		}
+        infof(-1,"Start processing %s",fname);
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
 		/*write without macros, and get the line list index and macros list*/
 		checker = parse_macro(fname, macro_list, line_list);
@@ -74,9 +72,10 @@ int main(int argc, char* argv[]) {
 
         debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
 		create_files(symbol_table, address_encoded_line_pair);
+        infof(-1,"Finished processing %s", fname);
         free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
-
     }
+
     free_command_set();
     return 0;
 }

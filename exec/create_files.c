@@ -144,6 +144,7 @@ void create_extern_file(DoublyLinkedList *symbol_table)
 /*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
 void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair)
 {
+    infof(-1,"Starting to write files...");
     create_entry_file(symbol_table);
     create_extern_file(symbol_table);
     create_object_file(encode_line_pair);
