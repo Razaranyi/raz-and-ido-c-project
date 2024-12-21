@@ -40,7 +40,7 @@ int get_register_index(char *raw_op);
 int determine_addressing_mode(char *operand_str);
 int parse_operand(char *operand_str, int index, Operand *operand, int line_index);
 int count_extra_address_words(Operand *operand);
-int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC);
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC,int line_index);
 
 int is_valid_string(char *operand);
 

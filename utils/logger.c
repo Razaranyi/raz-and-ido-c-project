@@ -120,3 +120,6 @@ void fatalf(int line, const char *format, ...) {
 
     fatal(message, line);
 }
+void set_log_level(LogLevel new_level) {
+    log_level = new_level;
+}

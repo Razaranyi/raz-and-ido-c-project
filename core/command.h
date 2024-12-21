@@ -55,4 +55,24 @@ int handle_command_operands(Command *command,
                             unsigned long *IC
 );
 
+
+void parse_command_operands(
+        Command *command,
+        char *operands_str,
+        DoublyLinkedList **operands,
+        int *error_found,
+        int line_index
+);
+
+void process_command_line(
+        char *line_content,
+        char *label,
+        int line_index,
+        char *command_token,
+        DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
+        unsigned long *IC,
+        int *error_found
+);
+
 #endif

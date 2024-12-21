@@ -99,7 +99,7 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
 
 
 /* Counts the extra words needed for a set of operands */
-int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC) {
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC,int line_index) {
     int extra_words = 0;
     int both_registers = FALSE;
     int current_address;
@@ -123,25 +123,25 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             switch (operands[i].addressing_mode) {
                 case IMMEDIATE_ADDRESSING:
                     extra_words +=1;
-                    encoded_line_set_data(encodedLine, operands[i].immediate_value, 4);
-                    print_encoded_immediate_with_are(encodedLine);
+                    encoded_line_set_data(encodedLine, operands[i].immediate_value, A);
                     is_reg = FALSE;
                     break;
 
                 case DIRECT_ADDRESSING:
                     extra_words+=1;
-                    encoded_line_set_are(encodedLine, 2);
-                    debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
+                    encoded_line_set_are(encodedLine, R);
+                    debugf(line_index,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
+                    encodedLine->line_index = line_index;
                     is_reg = FALSE;
                     break;
 
                 case RELATIVE_ADDRESSING:
                     extra_words += 1;
-                    encoded_line_set_are(encodedLine, 4);
-                    debugf(-1,"Adding %s as unresolved symbol",operands[i].symbol_name);
+                    encoded_line_set_are(encodedLine, A);
+                    debugf(line_index,"Adding %s as unresolved symbol",operands[i].symbol_name);
                     encoded_line_set_unresolved_symbol(encodedLine,operands[i].symbol_name);
-
+                    encodedLine->line_index = line_index;
                     is_reg = FALSE;
                     break;
 
@@ -292,3 +292,4 @@ int contains_whitespace(char *operand){
 int is_valid_operand(char *operand) {
     return (is_valid_integer(operand) || is_valid_string(operand) || isalpha(*operand) || operand[0] == '&') && !contains_whitespace(operand) ;
 }
+
