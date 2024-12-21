@@ -52,7 +52,7 @@ void create_entry_file(DoublyLinkedList *symbol_table)
     FILE *f; /*to write in*/
     const char *filename = "ps.ent";
     int first_entry = TRUE; /*to open the file*/
-	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
+	  DoublyLinkedList* new_symbol = get_list_head(symbol_table);
     char * label; /*for label part*/
     char * address; /*for the addresss writing part*/
     while(new_symbol!=NULL)
@@ -108,7 +108,7 @@ void create_extern_file(DoublyLinkedList *symbol_table)
     FILE *f; /*to write in*/
     const char *filename = "ps.ext";
     int first_extern = TRUE; /*to open the file*/
-	DoublyLinkedList* new_symbol = get_list_head(symbol_table);
+	  DoublyLinkedList* new_symbol = get_list_head(symbol_table);
     DoublyLinkedList* address; /*for the external multipule address*/
     char * label; /*for label part*/
     unsigned long *current_address; /*for the addresss writing part*/
@@ -140,7 +140,6 @@ void create_extern_file(DoublyLinkedList *symbol_table)
                     exit(1);
                 }
             }
-
 
             label = current_symbol->label;
             address = get_list_head(current_symbol->external_usages);

@@ -283,15 +283,13 @@ int handle_command_operands(Command *command,
         encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
-    print_encoded_line_binary(encoded_line);
-    print_encoded_line_values(encoded_line);
     address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
     add_to_list(address_encoded_line_pair,address_encoded_pair);
 
 
     debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
 
-    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC);
+    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC,line_index);
 
     for (i=0;i<command->number_of_operands;i++){
         free(operand_array[i].operand_str);
@@ -301,3 +299,117 @@ int handle_command_operands(Command *command,
     return 1 + extra_words; /* Command word + extra words */
 }
 
+
+void parse_command_operands(
+        Command *command,
+        char *operands_str,
+        DoublyLinkedList **operands,
+        int *error_found,
+        int line_index
+) {
+    char *operand_str;
+    DoublyLinkedList *current;
+    int operand_count;
+
+    if (operands_str[0] == ','){
+        errorf(line_index,"Illegal comma after command: %s",command->command_name);
+        *error_found = TRUE;
+    }
+
+    /* Handle the case where no operands are expected */
+    if (command->number_of_operands == 0) {
+        if (strlen(operands_str) > 0) {
+            errorf(
+                    line_index,
+                    "Command '%s' expects 0 operands but got operand '%s'",
+                    command->command_name,
+                    operands_str
+            );
+            *error_found = TRUE;
+        }
+        return;
+    }
+
+    /* Split operands by ',' */
+    split_string_by_separator(operands_str, ",", operands, -1);
+
+    /* Validate the number of operands */
+    operand_count = get_list_length(*operands);
+    if (operand_count != command->number_of_operands) {
+        current = get_list_tail(*operands);
+        operand_str = current->data;
+        if (operand_str[0] == '\0'){
+            errorf(line_index, "Extra comma found at the end of text");
+        } else{
+            errorf(
+                    line_index,
+                    "Command '%s' expects %d operands but got %d",
+                    command->command_name,
+                    command->number_of_operands,
+                    operand_count
+            );
+        }
+
+        *error_found = TRUE;
+        free_list(operands, free);
+        return;
+    }
+
+    /* Validate each operand */
+    current = get_list_head(*operands);
+    while (current != NULL) {
+        operand_str = (char *)current->data;
+        remove_leading_and_trailing_whitespaces(operand_str,operand_str);
+        if (!is_valid_operand(operand_str)) {
+            errorf(line_index, "Missing comma or invalid operand: '%s'", operand_str);
+            *error_found = TRUE;
+            free_list(operands, free);
+            return;
+        }
+        current = current->next;
+    }
+}
+
+void process_command_line(
+        char *line_content,
+        char *label,
+        int line_index,
+        char *command_token,
+        DoublyLinkedList *symbol_table,
+        DoublyLinkedList *address_encoded_line_pair,
+        unsigned long *IC,
+        int *error_found
+) {
+    Command *command = find_command(command_token);
+    char *operands_str;
+    EncodedLine *encodedLine = create_encoded_line();
+    DoublyLinkedList *operands = NULL;
+
+    debugf(line_index,"Assigning command opt and funct. Command: %s, opscode: %d, funct: %d ",command->command_name,command->opcode,command->funct);
+
+    encoded_line_set_opcode(encodedLine,command->opcode);
+    encoded_line_set_funct(encodedLine,command->funct);
+    encoded_line_set_are(encodedLine,A);
+
+
+
+    operands_str = line_content + strlen(command_token);
+
+    /* Remove leading and trailing spaces from operands_str */
+    remove_leading_and_trailing_whitespaces(operands_str, operands_str);
+
+    parse_command_operands(command, operands_str, &operands, error_found, line_index);
+
+    if (*error_found) {
+        return;
+    }
+
+    /* Add the label to the symbol table if it exists */
+    if (strcmp(label,"")!=0) {
+        add_symbol(symbol_table, label, *IC,0, CODE_PROPERTY, line_index);
+    }
+
+    /* Increment IC based on the size of the command and operands */
+    *IC += handle_command_operands(command, operands,address_encoded_line_pair, encodedLine, line_index,error_found,IC);
+    free_list(&operands, free);
+}
