@@ -11,16 +11,22 @@
 #include <string.h>
 #include <ctype.h>
 
+/*get file path and return the file dir*/
+char *get_dir_path(char *file_path);
+
+/*get dir and file name and return the full path*/
+char *concat_dir_and_fname(char *dir, char *fname);
+
 /*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
-void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair);
+void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, char * dir);
 
-/*get double linked list of encode line pairs, run over it and for any line enter her hex representation to the object file*/
-void create_object_file(DoublyLinkedList *encode_line_pair);
+/*get double linked list of encode line pairs and dir to the file, run over it and for any line enter her hex representation to the object file*/
+void create_object_file(DoublyLinkedList *encode_line_pair, char * dir);
 
-/*get double linked list symbol table, run over it and for entry symbols write to ps.ent file*/
-void create_entry_file(DoublyLinkedList *symbol_table);
+/*get double linked list symbol table and dir to the file, run over it and for entry symbols write to ps.ent file*/
+void create_entry_file(DoublyLinkedList *symbol_table, char * dir);
 
-/*get double linked list symbol table, run over it and for external symbols write to ps.ext file*/
-void create_extern_file(DoublyLinkedList *symbol_table);
+/*get double linked list symbol table and dir to the file, run over it and for extern symbols write to ps.ext file*/
+void create_extern_file(DoublyLinkedList *symbol_table, char * dir);
 
 #endif
