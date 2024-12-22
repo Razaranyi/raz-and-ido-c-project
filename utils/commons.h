@@ -25,7 +25,7 @@ int* allocate_int(int integer);
    int* num = allocate_int(5);
 */
 
-
+int is_all_whitespace(const char *str);
 
 /* Checks if a string starts with a given substring */
 int is_string_begin_with_substring(char* string, char* substring);

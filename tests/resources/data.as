@@ -1,3 +1,6 @@
+mcro as
+dec W
+mcroend
 .entry LIST
 .extern W
 MAIN: add r3, LIST
@@ -9,7 +12,7 @@ LOOP: prn #48
  bne END
  cmp K, #-6
  bne &END
- dec W
+as
 .entry MAIN
  jmp &LOOP
  add L3, L3

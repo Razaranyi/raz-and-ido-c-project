@@ -147,17 +147,34 @@ void cut_spaces_start(char * input)
     
 }
 
-char* allocate_string(char* string){
-    int str_len = strlen(string);
-    char* res = malloc(str_len + 1);
-    strcpy(res,string);
-    return  res;
+char* allocate_string(char* input) {
+    char* copy;
+    if (input == NULL) {
+        fprintf(stderr, "Error: allocate_string received a NULL input\n");
+        return NULL;
+    }
+    copy = (char*)malloc(strlen(input) + 1);
+    if (copy == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+    strcpy(copy, input);
+    return copy;
 }
 
 int* allocate_int(int integer){
     int* ptr = malloc(sizeof (int));
     *ptr = integer;
     return ptr;
+}
+int is_all_whitespace(const char *str) {
+    while (*str) {
+        if (!isspace(*str)) {
+            return FALSE;
+        }
+        str++;
+    }
+    return TRUE;
 }
 
 int is_string_begin_with_substring(char* string, char* substring){

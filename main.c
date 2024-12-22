@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 		char* fname = malloc(strlen(argv[i]) +1);/*create memory space for fname*/
 		if (fname == NULL)
 		{
-			printf("Memory allocation failed. \n");
+			errorf(-1,"Memory allocation failed. \n");
             exit(-1);
 		}
 		strcpy(fname, argv[i]); /*enter the user input to fname*/
