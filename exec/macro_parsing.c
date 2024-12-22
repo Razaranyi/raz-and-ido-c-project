@@ -94,12 +94,10 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                 if (token != NULL && strcmp(token, "mcroend") == 0) {
                     macro_open = FALSE;
                 }
-                /* Do not write macro definitions to the output */
             } else {
                 /* Check for macro definition start */
                 if (token != NULL && strcmp(token, "mcro") == 0) {
                     macro_open = TRUE;
-                    /* Do not write macro definitions to the output */
                 } else {
                     /* Not inside macro definition, process tokens */
 
@@ -320,16 +318,15 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                     } else {
                         if (data == NULL || strlen(data) == 0 || is_all_whitespace(data)) {
                             warnf(linecounter, "Empty macro - macro '%s' is defined but has no content", macroname);
-                            add_macro(macro_list, macroname, "\n", macroindex);
-
-                            free(data);
-                            data = NULL;
+                            add_macro(macro_list, macroname, data, macroindex);
                         } else {
                             add_macro(macro_list, macroname, data, macroindex);
                         }
                         /* Reset variables for next macro */
                         macro_open = FALSE;
                         free(macroname);
+                        free(data);
+                        data = NULL;
                         macroname = NULL;
                     }
                 }
@@ -346,7 +343,6 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                             free(data);
                             return FALSE;
                         }
-                        data = new_data;
                         data = new_data;
                         strcat(data, "\n");
                         strcat(data, clean_line);

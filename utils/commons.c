@@ -150,7 +150,6 @@ void cut_spaces_start(char * input)
 char* allocate_string(char* input) {
     char* copy;
     if (input == NULL) {
-        fprintf(stderr, "Error: allocate_string received a NULL input\n");
         return NULL;
     }
     copy = (char*)malloc(strlen(input) + 1);
