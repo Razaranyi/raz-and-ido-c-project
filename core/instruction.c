@@ -143,7 +143,7 @@ void parse_extern_instruction(
 ) {
     char *operand;
     debugf(line_index,"Found extern command");
-    if (get_list_length(operands) != 1) {
+    if (get_list_length_from_current(operands) != 1) {
         errorf(line_index, ".extern instruction expects exactly one operand");
         *error_found = TRUE;
         return;
@@ -156,7 +156,7 @@ void parse_extern_instruction(
 void parse_entry_instruction(DoublyLinkedList *operands, DoublyLinkedList *entry_list, int *error_found, int line_index) {
     Entry *entry;
     char *operand = (char *)operands->data;
-    if (get_list_length(operands) != 1) {
+    if (get_list_length_from_current(operands) != 1) {
         errorf(line_index, ".entry instruction expects exactly one operand");
         *error_found = TRUE;
         return;

@@ -23,6 +23,8 @@ DoublyLinkedList* get_list_tail(DoublyLinkedList* doubly_linked_list);
 
 /* Returns the length (number of nodes) in the doubly linked list */
 int get_list_length(DoublyLinkedList* doubly_linked_list);
+int get_list_length_from_current(DoublyLinkedList* doubly_linked_list);
+
 
 /* Adds a new node to the tail of the doubly linked list */
 int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
