@@ -38,7 +38,7 @@ void process_line(
     DoublyLinkedList *tokens = NULL;
     char *line_copy = allocate_string(line_content);
     char *token;
-    infof(line_index,"start processing line: %s",line_copy);
+    infof(line_index,"Starting to processing line: %s",line_copy);
 
    check_double_commas(line_index,line_copy,error_found);
 

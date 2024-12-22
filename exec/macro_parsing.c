@@ -135,7 +135,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
 
                         if(is_string_begin_with_substring(macro_name,";")){
                             warnf(linecounter,
-                                  "macro %s being with ';' but its content is not going to be a comment!",
+                                  "Macro %s is starting with ';' but it's not a comment and will be parsed and processed!",
                                   macro_name);
                         }
 
@@ -211,7 +211,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
         }
     }
 
-    infof(-1,"finished writing %s...", macro_fname_am);
+    infof(-1,"Finished writing %s...", macro_fname_am);
 
     /* Close files and free memory */
     fclose(fp);

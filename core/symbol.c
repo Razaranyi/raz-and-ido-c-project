@@ -176,7 +176,7 @@ void mark_entries(DoublyLinkedList *entry_list, DoublyLinkedList *symbol_table, 
 
     while (current != NULL) {
         Entry *entry = (Entry *)current->data;
-        if (!mark_symbol_as_entry(symbol_table, entry->name, entry->index)) {
+        if (entry!= NULL && !mark_symbol_as_entry(symbol_table, entry->name, entry->index)) {
             *error_found = TRUE;
         }
         current = current->next;
