@@ -60,6 +60,26 @@ int get_list_length(DoublyLinkedList* doublyLinkedList){
     return length;
 }
 
+int get_list_length_from_current(DoublyLinkedList* doubly_linked_list){
+    int length = 0;
+    DoublyLinkedList* current = doubly_linked_list;
+
+    if (doubly_linked_list == NULL) {
+        warn("List is Null", __LINE__);
+        return 0;
+    }
+
+    if(current->data != NULL){
+        length++;
+    }
+
+    while (current->next != NULL){
+        length++;
+        current = current->next;
+    }
+    return length;
+}
+
 int add_to_list(DoublyLinkedList* doublyLinkedList, void* data){
     DoublyLinkedList* new_node;
     DoublyLinkedList* tail;
@@ -72,6 +92,7 @@ int add_to_list(DoublyLinkedList* doublyLinkedList, void* data){
     tail = get_list_tail(doublyLinkedList);
     new_node = allocate_node_mem();
     new_node->data=data;
+    new_node->prev = tail;
     tail->next = new_node;
 
     return TRUE;
