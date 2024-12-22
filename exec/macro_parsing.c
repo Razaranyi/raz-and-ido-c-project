@@ -94,12 +94,10 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                 if (token != NULL && strcmp(token, "mcroend") == 0) {
                     macro_open = FALSE;
                 }
-                /* Do not write macro definitions to the output */
             } else {
                 /* Check for macro definition start */
                 if (token != NULL && strcmp(token, "mcro") == 0) {
                     macro_open = TRUE;
-                    /* Do not write macro definitions to the output */
                 } else {
                     /* Not inside macro definition, process tokens */
 
@@ -107,7 +105,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                     macro_name = token;
                     token = strtok(NULL, " \t\n");
 
-                    if (macro_data != NULL && token == NULL) 
+                    if (macro_data != NULL  && token == NULL)
                     {
                         macro_found = TRUE;  
                         macro_index = get_index_macro_table(macro_name, macro_list);
@@ -122,7 +120,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                         char trimmed_before_macro[LEN_LINE];
                         char *macro_data_copy;
                         char *line_start;
-                        char *newline_pos;
                         char *last_line = NULL;
                         /* Expand macro */
                         /* Write any text before macro name */
@@ -133,11 +130,15 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                         /* Remove trailing whitespace from before_macro */
                         remove_leading_and_trailing_whitespaces(before_macro, trimmed_before_macro);
 
-                        if (trimmed_before_macro[0] != '\n') {
-                            error("macro is empty",linecounter);
+
+                        if(is_string_begin_with_substring(macro_name,";")){
+                            warnf(linecounter,
+                                  "Macro %s is starting with ';' but it's not a comment and will be parsed and processed!",
+                                  macro_name);
                         }
 
-                        /* Write macro data line by line */
+
+                            /* Write macro data line by line */
                         macro_data_copy = allocate_string(macro_data);
                         if (macro_data_copy == NULL) {
                             fprintf(stderr, "Memory allocation failed\n");
@@ -149,34 +150,6 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                         }
 
                         line_start = macro_data_copy;
-                        while ((newline_pos = strchr(line_start, '\n')) != NULL) 
-                        {
-                            *newline_pos = '\0'; /* Replace newline with null terminator */
-                            index_to_write = ++macro_index;
-                            strcpy(clean_line, line_start);
-                            if (is_label(clean_line)) /*case where the line start with label*/
-                            {
-                                strcpy(line_copy, clean_line);
-                                labelname = strtok(line_copy, ":");
-                                cut_two_dots_start(clean_line);
-                                cut_spaces(labelname);
-                                if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
-                                    is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE ||
-                                    check_if_registar(labelname) == TRUE) {
-                                    checker = FALSE;
-                                    error("ERROR - theres a problems with the label name", linecounter);
-                                    labelname = "";
-                                }
-
-                            } else {
-                                labelname = "";
-                            }
-                            /*adding line to the line list*/
-                            remove_leading_and_trailing_whitespaces(clean_line, clean_line);
-                            append_line(line_list, labelname, clean_line, index_to_write);
-                            fprintf(macrofile, "%s\n", line_start);
-                            line_start = newline_pos + 1;
-                        }
                         /* Handle last line */
                         if (*line_start != '\0') {
                             last_line = line_start;
@@ -236,7 +209,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
         }
     }
 
-    infof(-1,"finished writing %s...", macro_fname_am);
+    infof(-1,"Finished writing %s...", macro_fname_am);
 
     /* Close files and free memory */
     fclose(fp);
@@ -263,6 +236,7 @@ char *in_macro_table(char *name, DoublyLinkedList *macro_list) {
     }
     return NULL;
 }
+
 
 
 /*get char name and list of Macros, checks if the name is in the macro name list and return the relevant macro index,
@@ -295,6 +269,7 @@ void add_macro(DoublyLinkedList *macro_list, char *macroName, char *data, int li
     new_macro->data = allocate_string(data);
     new_macro->macroIndex = linecounter;
     add_to_list(macro_list, new_macro);
+
 }
 
 
@@ -317,56 +292,54 @@ void free_macro_table(DoublyLinkedList *macro_list) {
 return boolean as int*/
 int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
     char line[LEN_LINE];
-    char clean_line[LEN_LINE];  /* For storing the line after removing whitespace */
-    char temp_line[LEN_LINE];  /* For storing the temp line after removing whitespace */
+    char clean_line[LEN_LINE];
+    char temp_line[LEN_LINE];
     int checker = TRUE;
     int linecounter = 0;
-    int macroindex = 0; /*for the index the macro define in*/
+    int macroindex = 0;
     int macro_open = FALSE;
     char *data = NULL;
-    char *macroname = NULL;
     char *token;
+    char *macroname = NULL;
 
     while (fgets(line, sizeof(line), fp) != NULL) {
         linecounter++;
-        /* Remove leading and trailing whitespace using your function */
         remove_leading_and_trailing_whitespaces(line, clean_line);
 
-        /* Process the line only if it's not empty or a comment */
-        if (!(clean_line[0] == '\0' || clean_line[0] == ';')) {
-
-            if (macro_open == TRUE) {
-                /* Inside a macro definition */
+        if (clean_line[0] != '\0' && clean_line[0] != ';') {
+            if (macro_open) {
                 strcpy(temp_line, clean_line);
-                /* Check for "mcroend" */
                 token = strtok(temp_line, " \t\n");
                 if (token != NULL && strcmp(token, "mcroend") == 0) {
                     /* Check for extra tokens after "mcroend" */
                     if (strtok(NULL, " \t\n") != NULL) {
                         checker = FALSE;
-                        error("there's a character after 'mcroend'", linecounter);
+                        error("There's a character after 'mcroend'", linecounter);
                     } else {
-                        /* Add macro to the list */
-                        add_macro(macro_list, macroname, data, macroindex);
-
+                        if (data == NULL || strlen(data) == 0 || is_all_whitespace(data)) {
+                            warnf(linecounter, "Empty macro - macro '%s' is defined but has no content", macroname);
+                            add_macro(macro_list, macroname, data, macroindex);
+                        } else {
+                            add_macro(macro_list, macroname, data, macroindex);
+                        }
                         /* Reset variables for next macro */
                         macro_open = FALSE;
+                        free(macroname);
                         free(data);
                         data = NULL;
-                        free(macroname);
                         macroname = NULL;
                     }
-                } else {
-                    /* Collect macro data */
+                }
+                else {
                     size_t line_len = strlen(clean_line);
                     if (data == NULL) {
                         data = allocate_string(clean_line);
                     } else {
-                        /* Reallocate data to accommodate new line plus newline character */
-                        size_t new_size = strlen(data) + line_len + 2; /* +2 for newline and null terminator */
+                        size_t new_size = strlen(data) + line_len + 2;
                         char *new_data = realloc(data, new_size);
-                        if (new_data == NULL) {
-                            fprintf(stderr, "Memory allocation failed during macro data concatenation\n");
+                        if (!new_data) {
+                            checker = FALSE;
+                            error("Memory allocation failed during macro data concatenation", linecounter);
                             free(data);
                             return FALSE;
                         }
@@ -376,59 +349,37 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                     }
                 }
             } else {
-                /* Not inside a macro definition */
-
-                /* Check for macro definition start */
                 char *token = strtok(clean_line, " \t\n");
-                if (token != NULL && strcmp(token, "mcro") == 0) {
-                    /* Get macro name */
+                if (token && strcmp(token, "mcro") == 0) {
                     char *name_token = strtok(NULL, " \t\n");
-                    if (name_token == NULL) {
+                    if (!name_token) {
                         checker = FALSE;
                         error("Macro name is missing", linecounter);
-                        macroindex = linecounter;
+                    } else if (in_macro_table(name_token, macro_list) ||
+                               is_command_name(name_token) ||
+                               check_if_instruction(name_token) ||
+                               check_if_registar(name_token)) {
+                        checker = FALSE;
+                        errorf(linecounter, "Invalid macro name: %s", name_token);
                     } else {
-                        /* Check for extra tokens after macro name */
-                        if (strtok(NULL, " \t\n") != NULL) {
-                            checker = FALSE;
-                            error("there's a character after macro definition", linecounter);
-                        } else {
-                            /* Validate macro name */
-                            if (in_macro_table(name_token, macro_list)) {
-                                checker = FALSE;
-                                errorf(linecounter, "macro %s is already defined", name_token);
-                            } else if (is_command_name(name_token) ||
-                                       check_if_instruction(name_token) ||
-                                       check_if_registar(name_token)) {
-                                checker = FALSE;
-                                errorf(linecounter,
-                                       "macro can't be the same as command, instruction or register. Please fix macro name: %s",
-                                       linecounter);
-                            } else {
-                                macro_open = TRUE;
-                                /* Allocate and copy macro name */
-                                macroname = allocate_string(name_token);
-                                data = NULL;
-                            }
-                        }
+                        macro_open = TRUE;
+                        macroname = allocate_string(name_token);
+                        data = NULL;
                     }
                 }
             }
-
-        } else {
-            /* Line is empty or a comment; do nothing */
-            /*TODO: make sure that those lines are calculated on error prompt*/
         }
     }
 
-    /* Check if a macro was left open */
-    if (macro_open == TRUE) {
+    if (macro_open) {
         checker = FALSE;
-        error("Macro not closed before end of file", linecounter);
-        /* Free allocated memory */
-        free(data);
+        error("Unclosed macro at end of file", linecounter);
+        if (data != NULL){
+            free(data);
+        }
         free(macroname);
     }
 
     return checker;
 }
+

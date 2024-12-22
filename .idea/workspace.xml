@@ -19,17 +19,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68b23f3c-1844-4a0f-b372-54dcaa5f974d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/core/address_encoded_pair.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/address_encoded_pair.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/encoded_line.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/encoded_line.h" afterDir="false" />
+    <list default="true" id="68b23f3c-1844-4a0f-b372-54dcaa5f974d" name="Changes" comment="fix mem error on empty macro">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exec/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/exec/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exec/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/exec/compiler.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exec/macro_parsing.c" beforeDir="false" afterPath="$PROJECT_DIR$/exec/macro_parsing.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exec/macro_parsing.h" beforeDir="false" afterPath="$PROJECT_DIR$/exec/macro_parsing.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/line_indexing.c" beforeDir="false" afterPath="$PROJECT_DIR$/utils/line_indexing.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/resources/data.am" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data.am" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/resources/data.as" beforeDir="false" afterPath="$PROJECT_DIR$/tests/resources/data.as" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +40,11 @@
     </projectState>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -53,39 +53,12 @@
     &quot;assignee&quot;: &quot;Razaranyi&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Razaranyi/raz-and-ido-c-project.git",
-    "accountId": "9aac7206-6983-476f-b11a-b7965ddfb3d1"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Razaranyi/raz-and-ido-c-project.git&quot;,
+    &quot;accountId&quot;: &quot;9aac7206-6983-476f-b11a-b7965ddfb3d1&quot;
   }
-}]]></component>
-  <component name="MakefileLocalSettings">
-    <option name="availableProjects">
-      <map>
-        <entry>
-          <key>
-            <ExternalProjectPojo>
-              <option name="name" value="raz-and-ido-c-project" />
-              <option name="path" value="$PROJECT_DIR$" />
-            </ExternalProjectPojo>
-          </key>
-          <value>
-            <list>
-              <ExternalProjectPojo>
-                <option name="name" value="raz-and-ido-c-project" />
-                <option name="path" value="$PROJECT_DIR$" />
-              </ExternalProjectPojo>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="projectSyncType">
-      <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
-      </map>
-    </option>
-  </component>
+}</component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2024" />
@@ -107,7 +80,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "fix-mem-error-on-empty-macro",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -121,12 +94,12 @@
       <window_info id="Bookmarks" show_stripe_button="false" side_tool="true" />
       <window_info id="Merge Requests" show_stripe_button="false" />
       <window_info id="Commit_Guest" show_stripe_button="false" />
-      <window_info id="Pull Requests" show_stripe_button="false" />
       <window_info id="Learn" show_stripe_button="false" />
       <window_info id="DFA" show_stripe_button="false" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3298828" />
-      <window_info id="Commit" order="1" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.108134925" />
+      <window_info id="Commit" order="1" weight="0.108134925" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info id="Pull Requests" order="2" weight="0.6107804" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Packages" show_stripe_button="false" />
@@ -134,17 +107,18 @@
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
       <window_info anchor="bottom" id="Vcpkg" show_stripe_button="false" />
       <window_info anchor="bottom" id="clangd" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="0" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.4936508" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" weight="0.33020833" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.33020833" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.46789473" />
       <window_info anchor="bottom" id="Services" order="4" />
       <window_info anchor="bottom" id="CMake" order="5" />
       <window_info anchor="bottom" id="Build" order="6" weight="0.33020833" />
+      <window_info anchor="bottom" id="Find" order="6" weight="0.33020833" />
       <window_info anchor="right" id="make" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" id="Python Console" show_stripe_button="false" />
-      <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
+      <window_info anchor="right" id="Notifications" order="0" weight="0.32969576" />
       <window_info anchor="right" id="AIAssistant" order="1" weight="0.25" />
       <window_info anchor="right" id="Database" order="2" weight="0.25" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
@@ -168,11 +142,6 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Native Application.GNUmakefile" />
       <item itemvalue="Native Application.Makefile" />
@@ -190,10 +159,34 @@
       <workItem from="1734102719294" duration="132000" />
       <workItem from="1734102852409" duration="1692000" />
     </task>
+    <task id="LOCAL-00001" summary="fix mem error on empty macro">
+      <option name="closed" value="true" />
+      <created>1734896615255</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1734896615255</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix mem error on empty macro" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix mem error on empty macro" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
