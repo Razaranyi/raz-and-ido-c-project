@@ -2,6 +2,7 @@ mcro ;as
 dec W
 mcroend
 .extern W
+.extern B
 MAIN: add r3, LIST
 LOOP: prn #48
  lea W, r6

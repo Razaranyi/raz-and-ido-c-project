@@ -11,12 +11,6 @@
 #include <string.h>
 #include <ctype.h>
 
-/*get file path and return the file dir*/
-char *get_dir_path(char *file_path);
-
-/*get dir and file name and return the full path*/
-char *concat_dir_and_fname(char *dir, char *fname);
-
 /*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
 void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, char * dir);
 

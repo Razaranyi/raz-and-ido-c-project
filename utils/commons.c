@@ -59,37 +59,21 @@ int check_if_registar(char *word)
 }
 
 
-
-/*get char * (fname)
-add to it ".as" in tne end
-return char* */
-char* add_as( char* fname) {
-    int len = strlen(fname);
-    char *new_fname = (char *)malloc(len + 4);
-    if (new_fname == NULL) {
-        fprintf(stderr, "Memory allocation failed in add_as\n");
-        exit(1);
+/*get filename and suffix and add the suffix to the file to write fullpath*/
+char* add_end_to_filename(const char* filename, const char* suffix) {
+    size_t filename_len = strlen(filename);
+    size_t suffix_len = strlen(suffix);
+    char* new_filename = (char*)malloc(filename_len + suffix_len + 1);
+    if (new_filename == NULL) 
+    {
+        perror("Memory allocation failed");
+        return NULL;
     }
-    strcpy(new_fname, fname);
-    strcat(new_fname, ".as");
-    return new_fname;
-}
 
+    strcpy(new_filename, filename);
+    strcat(new_filename, suffix);
 
-
-/*get char * (fname)
-add to it ".am" in tne end
-return char* */
-char* add_am( char* fname) {
-    int len = strlen(fname);
-    char *new_fname = (char *)malloc(len + 4);
-    if (new_fname == NULL) {
-        fprintf(stderr, "Memory allocation failed in add_am\n");
-        exit(1);
-    }
-    strcpy(new_fname, fname);
-    strcat(new_fname, ".am");
-    return new_fname;
+    return new_filename;
 }
 
 /*get input and remove the whitespaces in word
