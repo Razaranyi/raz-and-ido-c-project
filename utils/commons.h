@@ -74,11 +74,9 @@ int str_substring(char* string, int start_ind, int end_ind, char* result);
    char result[100];
    str_substring("Hello", 0, 3, result); // result = "Hel"
 */
-/*adds .as to the file names we get from the user in the CLI*/
-char * add_as( char * fname);
 
-/*adds .am to the file names we get from the user in the CLI*/
-char * add_am( char * fname);
+/*get filename and suffix and add the suffix to the file to write fullpath*/
+char* add_end_to_filename(const char* filename, const char* suffix);
 
 /*get input and remove the whitespaces in word
 return void, change the input*/

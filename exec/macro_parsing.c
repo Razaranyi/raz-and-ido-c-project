@@ -19,8 +19,8 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
     int macro_index = 0;
     int linecounter = 0;
     int index_to_write = 0;
-    char *fname_as = add_as(fname);
-    char *macro_fname_am = add_am(fname);
+    char *fname_as = add_end_to_filename(fname, ".as");
+    char *macro_fname_am = add_end_to_filename(fname, ".am");
     FILE *fp, *macrofile;
 
     if (fname_as == NULL || macro_fname_am == NULL) {
