@@ -116,6 +116,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                     if (macro_found) {
                         /* Declare variables at the beginning */
                         int macro_name_pos;
+                        char * newline_pos;
                         char before_macro[LEN_LINE];
                         char trimmed_before_macro[LEN_LINE];
                         char *macro_data_copy;
@@ -150,6 +151,34 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                         }
 
                         line_start = macro_data_copy;
+                        while ((newline_pos = strchr(line_start, '\n')) != NULL) 
+                        {
+                            *newline_pos = '\0'; /* Replace newline with null terminator */
+                            index_to_write = ++macro_index;
+                            strcpy(clean_line, line_start);
+                            if (is_label(clean_line)) /*case where the line start with label*/
+                            {
+                                strcpy(line_copy, clean_line);
+                                labelname = strtok(line_copy, ":");
+                                cut_two_dots_start(clean_line);
+                                cut_spaces(labelname);
+                                if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
+                                    is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE ||
+                                    check_if_registar(labelname) == TRUE) {
+                                    checker = FALSE;
+                                    error("ERROR - theres a problems with the label name", linecounter);
+                                    labelname = "";
+                                }
+
+                            } else {
+                                labelname = "";
+                            }
+                            /*adding line to the line list*/
+                            remove_leading_and_trailing_whitespaces(clean_line, clean_line);
+                            append_line(line_list, labelname, clean_line, index_to_write);
+                            fprintf(macrofile, "%s\n", line_start);
+                            line_start = newline_pos + 1;
+                        }
                         /* Handle last line */
                         if (*line_start != '\0') {
                             last_line = line_start;
@@ -352,6 +381,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                 char *token = strtok(clean_line, " \t\n");
                 if (token && strcmp(token, "mcro") == 0) {
                     char *name_token = strtok(NULL, " \t\n");
+                    macroindex = linecounter;
                     if (!name_token) {
                         checker = FALSE;
                         error("Macro name is missing", linecounter);
