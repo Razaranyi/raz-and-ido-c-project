@@ -1,7 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
-#include "../core/doubly_linked_list.h"
 #include "boolean.h"
+#include "../core/command.h"
+#include "../core/doubly_linked_list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
 #define LEN_LINE 80
 #define ADDRESS_LEN 7
 
@@ -54,10 +60,5 @@ void cut_spaces_start(char * input);
 return void, change the input*/
 void cut_two_dots_start(char * input);
 
-
-
-/*get word, list of words and list of words size , 
-return bollean int for true or false*/
-int is_word_in_list(char *word, char *word_list[], int list_size);
 
 #endif

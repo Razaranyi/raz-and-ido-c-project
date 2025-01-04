@@ -1,36 +1,4 @@
-#include <string.h>
-#include <stdlib.h>
-#include <regex.h>
-#include <ctype.h>
 #include "commons.h"
-#include "../core/command.h"
-#include "../core/doubly_linked_list.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-
-
-/*get word, list of words and list of words size , run over the list and check if the word is in the list
-return bollean int for true or false*/
-int is_word_in_list(char *word, char *word_list[], int list_size)
-{
-    int i;
-    cut_spaces(word);
-    for (i = 0; i < list_size; i++)
-    {
-        if (strcmp(word, word_list[i]) == 0)
-        {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-
-
-
 
 /*get filename and suffix and add the suffix to the file to write fullpath*/
 char* add_end_to_filename(const char* filename, const char* suffix) {
