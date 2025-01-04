@@ -70,6 +70,13 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
  */
 int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair_list, unsigned long IC, int line_index);
 
+
+/**
+ * Checks if the operand string is a valid register literal.
+ * Returns non-zero if valid, zero if not.
+ */
+
+int is_register(char *operand_str);
 /**
  * Checks if the operand string is a valid string literal.
  * Returns non-zero if valid, zero if not.

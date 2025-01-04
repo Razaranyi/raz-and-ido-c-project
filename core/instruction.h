@@ -18,7 +18,7 @@ typedef enum {
 } Instruction;
 
 /* Return enum of instruction or 0 when not an instruction */
-Instruction get_instruction_enum(const char* instruction_name);
+Instruction get_instruction_enum(char* instruction_name);
 
 
 /*Extract type of data/string instruction and handle operands and calculate binary address accordingly*/

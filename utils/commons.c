@@ -10,15 +10,6 @@
 #include <string.h>
 #include <ctype.h>
 
-/*get pointer and checks if malloc worked OK*/
-void check_malloc(void * p)
-{
-	if(p == NULL)
-	{
-		printf("Memory allocation failed. \n");
-		exit(0); 
-	}
-}
 
 
 /*get word, list of words and list of words size , run over the list and check if the word is in the list
@@ -39,24 +30,6 @@ int is_word_in_list(char *word, char *word_list[], int list_size)
 
 
 
-/*get word
-with macro INSTRUCTIONS and is_word_in_list checks if the word is in the instruction list
-return int as boolean*/
-int check_if_instruction(char *word)
-{
-    char *instructions[INSTRUCTIONS_LEN] = INSTRUCTIONS;
-    return is_word_in_list(word, instructions, INSTRUCTIONS_LEN);
-}
-
-
-/*get word
-with macro REGS and is_word_in_list checks if the word is in the regs list
-return int as boolean*/
-int check_if_registar(char *word)
-{
-    char *regs[REGS_LEN] = REGS;
-    return is_word_in_list(word, regs, REGS_LEN);
-}
 
 
 /*get filename and suffix and add the suffix to the file to write fullpath*/

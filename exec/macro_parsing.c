@@ -163,8 +163,8 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                 cut_two_dots_start(clean_line);
                                 cut_spaces(labelname);
                                 if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
-                                    is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE ||
-                                    check_if_registar(labelname) == TRUE) {
+                                    is_command_name(labelname) || get_instruction_enum(labelname) ||
+                                        is_register(labelname)) {
                                     checker = FALSE;
                                     error("ERROR - theres a problems with the label name", linecounter);
                                     labelname = "";
@@ -195,9 +195,9 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                 labelname = strtok(line_copy, ":");
                                 cut_two_dots_start(clean_line);
                                 cut_spaces(labelname);
-                                if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
-                                    is_command_name(labelname) == TRUE || check_if_instruction(labelname) == TRUE ||
-                                    check_if_registar(labelname) == TRUE) {
+                                if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) ||
+                                    is_command_name(labelname)|| get_instruction_enum(labelname) ||
+                                    is_register(labelname)) {
                                     checker = FALSE;
                                     error("ERROR - theres a problems with the label name", linecounter);
                                     labelname = "";
@@ -387,8 +387,8 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                         error("Macro name is missing", linecounter);
                     } else if (in_macro_table(name_token, macro_list) ||
                                is_command_name(name_token) ||
-                               check_if_instruction(name_token) ||
-                               check_if_registar(name_token)) {
+                            get_instruction_enum(name_token) ||
+                               is_register(name_token)) {
                         checker = FALSE;
                         errorf(linecounter, "Invalid macro name: %s", name_token);
                     } else {
