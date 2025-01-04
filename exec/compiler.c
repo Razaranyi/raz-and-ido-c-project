@@ -29,7 +29,7 @@ void process_line(
         char *label,
         int line_index,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         DoublyLinkedList *entry_list,
         unsigned long *IC,
         unsigned long *DC,
@@ -56,7 +56,7 @@ void process_line(
                              line_index,
                              token,
                              symbol_table,
-                             address_encoded_line_pair,
+                             address_encoded_line_pair_list,
                              IC,
                              error_found);
     } else {
@@ -73,7 +73,7 @@ void process_line(
                     token,
                     tokens->next,
                     symbol_table,
-                    address_encoded_line_pair,
+                    address_encoded_line_pair_list,
                     entry_list,
                     DC,
                     IC,
@@ -94,7 +94,7 @@ void process_line(
 
 int first_pass(DoublyLinkedList *line_list,
                DoublyLinkedList *symbol_table,
-               DoublyLinkedList *address_encoded_line_pair,
+               DoublyLinkedList *address_encoded_line_pair_list,
                DoublyLinkedList *entry_list) {
     unsigned long IC = 100;
     unsigned long DC = 0;
@@ -115,7 +115,7 @@ int first_pass(DoublyLinkedList *line_list,
 
         if (
                 !is_string_begin_with_substring(line_content, ";") && line_content[0] != '\0') {
-            process_line(line_content, label, index, symbol_table,address_encoded_line_pair,entry_list, &IC, &DC, &error_found);
+            process_line(line_content, label, index, symbol_table,address_encoded_line_pair_list,entry_list, &IC, &DC, &error_found);
         }
 
         current_node = current_node->next;
@@ -176,6 +176,7 @@ int second_pass(DoublyLinkedList *symbol_table,
                 DoublyLinkedList *address_encoded_line_pair_list,
                 DoublyLinkedList *entry_list) {
     int error_found = FALSE;
+    infof(-1,"Starting second pass...");
 
     /* Mark all entries */
     mark_entries(entry_list, symbol_table, &error_found);

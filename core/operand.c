@@ -9,7 +9,7 @@ int is_register(char *operand_str);
 Operand* allocate_operand() {
     Operand *operand = (Operand *)malloc(sizeof(Operand));
     if (!operand) {
-        fprintf(stderr, "Memory allocation error for Operand\n");
+        errorf(-1, "Memory allocation error for Operand");
         exit(1);
     }
     memset(operand, 0, sizeof(Operand));
@@ -99,7 +99,7 @@ int parse_operand(char *operand_str, int index, Operand *operand, int line_index
 
 
 /* Counts the extra words needed for a set of operands */
-int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair, unsigned long IC,int line_index) {
+int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLinkedList *address_encoded_line_pair_list, unsigned long IC,int line_index) {
     int extra_words = 0;
     int both_registers = FALSE;
     int current_address;
@@ -155,7 +155,7 @@ int count_extra_addresses_words(Operand operands[], int operand_count, DoublyLin
             if(!is_reg){
                 current_address = IC + extra_words;
                 address_encoded_pair = create_address_encoded_pair(current_address, encodedLine);
-                add_to_list(address_encoded_line_pair, address_encoded_pair);
+                add_to_list(address_encoded_line_pair_list, address_encoded_pair);
             } else{
                 free_encoded_line(encodedLine);
             }

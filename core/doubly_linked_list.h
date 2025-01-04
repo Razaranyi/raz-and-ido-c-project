@@ -29,9 +29,6 @@ int get_list_length_from_current(DoublyLinkedList* doubly_linked_list);
 /* Adds a new node to the tail of the doubly linked list */
 int add_to_list(DoublyLinkedList* doubly_linked_list, void* data);
 
-/* Merges the second list into the first one by appending its elements */
-int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_linked_list2);
-
 /*deletes list content w/o free its memory for re-use*/
 int clear_list(DoublyLinkedList* doubly_linked_list, void (*free_node_data)(void*));
 

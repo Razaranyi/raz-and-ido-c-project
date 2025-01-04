@@ -45,7 +45,7 @@ int get_list_length(DoublyLinkedList* doublyLinkedList){
     DoublyLinkedList* current = get_list_head(doublyLinkedList);
 
     if (doublyLinkedList == NULL) {
-        warn("List is Null", __LINE__);
+        warnf(-1,"List is Null");
         return 0;
     }
 
@@ -65,7 +65,7 @@ int get_list_length_from_current(DoublyLinkedList* doubly_linked_list){
     DoublyLinkedList* current = doubly_linked_list;
 
     if (doubly_linked_list == NULL) {
-        warn("List is Null", __LINE__);
+        warnf(-1,"List is Null");
         return 0;
     }
 
@@ -97,16 +97,6 @@ int add_to_list(DoublyLinkedList* doublyLinkedList, void* data){
 
     return TRUE;
 }
-
-int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_linked_list2) {
-    DoublyLinkedList* current = get_list_head(doubly_linked_list2);
-    while (current != NULL) {
-        add_to_list(doubly_linked_list1, current->data);
-        current = current->next;
-    }
-    return TRUE;
-}
-
 
 int is_list_empty(DoublyLinkedList* doubly_linked_list) {
     if (doubly_linked_list == NULL) {

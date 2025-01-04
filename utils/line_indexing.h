@@ -2,8 +2,14 @@
 #define __LINE_PART__H__
 
 #include "../core/doubly_linked_list.h"
+#include "commons.h"
+#include "../core/command.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
+/**Line structure including label, the content (data) and the line number (index) of the line*/
 typedef struct {
     char *label;
     char *data;
@@ -32,4 +38,4 @@ int in_line_table(char *name, DoublyLinkedList *line_list);
 /*run over the lines table and free it*/
 void free_line_table(DoublyLinkedList* line_list);
 
-#endif  /*!__Line_PART__H__*/
+#endif

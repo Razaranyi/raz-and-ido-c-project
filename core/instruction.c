@@ -1,7 +1,7 @@
 #include <string.h>
 #include "instruction.h"
 
-Instruction get_instruction_enum(const char* instruction_name) {
+Instruction get_instruction_enum(char* instruction_name) {
     if (strcmp(instruction_name, ".data") == 0) return DATA;
     if (strcmp(instruction_name, ".string") == 0) return STRING;
     if (strcmp(instruction_name, ".entry") == 0) return ENTRY;
@@ -18,7 +18,7 @@ void parse_data_or_string_instruction(
         DoublyLinkedList *operands,
         char *label,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *DC,
         unsigned long *IC,
         int *error_found,
@@ -78,7 +78,7 @@ void parse_data_or_string_instruction(
             debugf(line_index,"assigning data instruction,address: %lu value: %d ",*IC,value);
             encoded_line_set_data(encoded_line,value, -1);
             addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
-            add_to_list(address_encoded_line_pair,addressEncodedPair);
+            add_to_list(address_encoded_line_pair_list,addressEncodedPair);
             (*DC)+=1;
             *IC+=1;
             current = current->next;
@@ -111,7 +111,7 @@ void parse_data_or_string_instruction(
             debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
             encoded_line_set_data(operand_encoded_line,operand[i], -1);
             addressEncodedPair = create_address_encoded_pair(*IC,operand_encoded_line);
-            add_to_list(address_encoded_line_pair,addressEncodedPair);
+            add_to_list(address_encoded_line_pair_list,addressEncodedPair);
             (*IC) += 1;
             i+=1;
         }
@@ -119,7 +119,7 @@ void parse_data_or_string_instruction(
         null_line = create_encoded_line();
         encoded_line_set_data(null_line, 0, -1); /* null terminator */
         nullPair = create_address_encoded_pair(*IC, null_line);
-        add_to_list(address_encoded_line_pair, nullPair);
+        add_to_list(address_encoded_line_pair_list, nullPair);
 
         (*IC) += 1;
         (*DC) += strlen(operand);
@@ -183,7 +183,7 @@ void process_instruction_line(
         char *instruction_token,
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         DoublyLinkedList *entry_list,
         unsigned long *DC,
         unsigned long *IC,
@@ -199,7 +199,7 @@ void process_instruction_line(
                 operands,
                 label,
                 symbol_table,
-                address_encoded_line_pair,
+                address_encoded_line_pair_list,
                 DC,
                 IC,
                 error_found,
