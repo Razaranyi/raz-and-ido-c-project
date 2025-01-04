@@ -17,10 +17,11 @@ typedef enum {
     EXTERN = 4
 } Instruction;
 
-/* Return enum of instruction // 0 when not an instruction */
+/* Return enum of instruction or 0 when not an instruction */
 Instruction get_instruction_enum(const char* instruction_name);
 
 
+/*Extract type of data/string instruction and handle operands and calculate binary address accordingly*/
 void parse_data_or_string_instruction(
         char *instruction_token,
         char *line_content,
@@ -34,7 +35,7 @@ void parse_data_or_string_instruction(
         int line_index
 );
 
-
+/*Extract instruction type in a line and send it to the appropriate function for additional processing*/
 void process_instruction_line(
         char *line_content,
         Instruction instruction,
