@@ -9,7 +9,7 @@ int is_register(char *operand_str);
 Operand* allocate_operand() {
     Operand *operand = (Operand *)malloc(sizeof(Operand));
     if (!operand) {
-        fprintf(stderr, "Memory allocation error for Operand\n");
+        errorf(-1, "Memory allocation error for Operand");
         exit(1);
     }
     memset(operand, 0, sizeof(Operand));

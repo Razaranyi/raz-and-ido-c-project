@@ -179,14 +179,14 @@ void initialize_command_set() {
     for (i = 0; i < num_commands; i++) {
         command = (Command *) malloc(sizeof(Command));
         if (command == NULL) {
-            error("Aloocation failed",__LINE__);
+            errorf(-1,"Aloocation failed");
             exit(1);
         }
 
         command->command_name = allocate_string(command_init_data[i].command_name);
         if (command->command_name == NULL) {
             free(command);
-            error("Command not found",__LINE__);
+            errorf(-1,"Command not found");
             exit(1);
         }
 
@@ -227,7 +227,7 @@ int handle_command_operands(Command *command,
     AddressEncodedPair *address_encoded_pair;
 
     if (!operand_array) {
-        error("Memory allocation failed for operand array", __LINE__);
+        errorf(-1,"Memory allocation failed for operand array");
         exit(1);
     }
 

@@ -176,6 +176,7 @@ int second_pass(DoublyLinkedList *symbol_table,
                 DoublyLinkedList *address_encoded_line_pair_list,
                 DoublyLinkedList *entry_list) {
     int error_found = FALSE;
+    infof(-1,"Starting second pass...");
 
     /* Mark all entries */
     mark_entries(entry_list, symbol_table, &error_found);

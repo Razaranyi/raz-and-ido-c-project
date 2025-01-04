@@ -166,7 +166,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname) || get_instruction_enum(labelname) ||
                                         is_register(labelname)) {
                                     checker = FALSE;
-                                    error("ERROR - theres a problems with the label name", linecounter);
+                                    errorf(linecounter,"ERROR - theres a problems with the label name" );
                                     labelname = "";
                                 }
 
@@ -199,7 +199,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname)|| get_instruction_enum(labelname) ||
                                     is_register(labelname)) {
                                     checker = FALSE;
-                                    error("ERROR - theres a problems with the label name", linecounter);
+                                    errorf(linecounter,"ERROR - theres a problems with the label name");
                                     labelname = "";
                                 }
 
@@ -343,7 +343,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                     /* Check for extra tokens after "mcroend" */
                     if (strtok(NULL, " \t\n") != NULL) {
                         checker = FALSE;
-                        error("There's a character after 'mcroend'", linecounter);
+                        errorf(linecounter,"There's a character after 'mcroend'");
                     } else {
                         if (data == NULL || strlen(data) == 0 || is_all_whitespace(data)) {
                             warnf(linecounter, "Empty macro - macro '%s' is defined but has no content", macroname);
@@ -368,7 +368,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                         char *new_data = realloc(data, new_size);
                         if (!new_data) {
                             checker = FALSE;
-                            error("Memory allocation failed during macro data concatenation", linecounter);
+                            errorf(linecounter,"Memory allocation failed during macro data concatenation");
                             free(data);
                             return FALSE;
                         }
@@ -384,7 +384,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
                     macroindex = linecounter;
                     if (!name_token) {
                         checker = FALSE;
-                        error("Macro name is missing", linecounter);
+                        errorf(linecounter,"Macro name is missing");
                     } else if (in_macro_table(name_token, macro_list) ||
                                is_command_name(name_token) ||
                             get_instruction_enum(name_token) ||
@@ -403,7 +403,7 @@ int get_macros(FILE *fp, DoublyLinkedList *macro_list) {
 
     if (macro_open) {
         checker = FALSE;
-        error("Unclosed macro at end of file", linecounter);
+        errorf(linecounter,"Unclosed macro at end of file");
         if (data != NULL){
             free(data);
         }

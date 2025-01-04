@@ -1,7 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include "boolean.h"
-#include "../core/command.h"
 #include "../core/doubly_linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>

@@ -12,6 +12,8 @@
 #define ADDRESSING_RELATIVE  2
 #define ADDRESSING_REGISTER  3
 
+
+
 /** Command structure including all command (not instruction) relevant fields*/
 typedef struct {
     char* command_name;

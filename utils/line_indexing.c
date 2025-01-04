@@ -20,13 +20,13 @@ return pointer to Line*/
 Line *createNodeLine(char *labelname, char *data, int index) {
     Line *newNode = (Line *) malloc(sizeof(Line));
     if (newNode == NULL) {
-        error("Memory allocation failed for Line\n", index);
+        errorf(index,"Memory allocation failed for Line");
         return NULL;
     }
 
     newNode->label = (char *) malloc(strlen(labelname) + 1);
     if (newNode->label == NULL) {
-        error("Memory allocation failed for Line\n", index);
+        errorf(index,"Memory allocation failed for Line");
         free(newNode);
         return NULL;
     }
@@ -34,7 +34,7 @@ Line *createNodeLine(char *labelname, char *data, int index) {
 
     newNode->data = (char *) malloc(strlen(data) + 1);
     if (newNode->data == NULL) {
-        error("Memory allocation failed for Line\n", index);
+        errorf(index,"Memory allocation failed for Line");
         free(newNode->label);
         free(newNode);
         return NULL;
@@ -52,7 +52,7 @@ return void*/
 void append_line(DoublyLinkedList *lineList, char *labelname, char *data, int index) {
     Line *newLine = createNodeLine(labelname, data, index);
     if (newLine == NULL) {
-        error("Can't create node", index);
+        errorf(index,"Can't create node");
         return;
     }
     add_to_list(lineList, newLine);
