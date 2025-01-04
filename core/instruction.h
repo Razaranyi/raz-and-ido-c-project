@@ -8,7 +8,7 @@
 #include "symbol.h"
 #include "entry.h"
 
-
+/*Enum to represent types of instruction commands and invalid case*/
 typedef enum {
     INVALID = 0,
     DATA = 1,
@@ -28,7 +28,7 @@ void parse_data_or_string_instruction(
         DoublyLinkedList *operands,
         char *label,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *DC,
         unsigned long *IC,
         int *error_found,
@@ -44,7 +44,7 @@ void process_instruction_line(
         char *instruction_token,
         DoublyLinkedList *operands,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         DoublyLinkedList *entry_list,
         unsigned long *DC,
         unsigned long *IC,

@@ -7,6 +7,8 @@
 #define R 2
 #define E 1
 
+/*Struct to represent a binary code of a line with additional fields
+ * for immediate value and unresolved symbols with their indexed line for later use*/
 typedef struct {
     unsigned int opcode : 6;         /* Bits 23-18 */
     unsigned int src_addressing : 2; /* Bits 17-16 */
@@ -20,13 +22,19 @@ typedef struct {
     /* If immediate addressing, store the value */
     int immediate_value;
 
+    /*if unresolved symbol store it to be resolved in second pass (along with its line in case of error)*/
     char *unresolved_symbol;
     int line_index;
 
 } EncodedLine;
 
+/*Creates new encoded line*/
 EncodedLine* create_encoded_line();
+
+/*Free encoded line*/
 void free_encoded_line(EncodedLine* encoded_line);
+
+/*Setters for encoded lines values*/
 
 void encoded_line_set_opcode(EncodedLine* line, unsigned int opscode);
 void encoded_line_set_funct(EncodedLine* line, unsigned int funct);

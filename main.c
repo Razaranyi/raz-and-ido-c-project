@@ -14,7 +14,7 @@
 
 void got_error(char* fname, char* stage_name);
 void free_all( DoublyLinkedList *symbol_table,
-          DoublyLinkedList *address_encoded_line_pair,
+          DoublyLinkedList *address_encoded_line_pair_list,
           DoublyLinkedList *macro_list,
           DoublyLinkedList *line_list,
           DoublyLinkedList *entry_list,
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 	for(i = 1; i < argc; i++)
 	{
         DoublyLinkedList *symbol_table = allocate_node_mem();
-        DoublyLinkedList *address_encoded_line_pair = allocate_node_mem();
+        DoublyLinkedList *address_encoded_line_pair_list = allocate_node_mem();
         DoublyLinkedList *macro_list = allocate_node_mem();
         DoublyLinkedList *line_list = allocate_node_mem();
 		DoublyLinkedList *entry_list = allocate_node_mem();
@@ -54,31 +54,31 @@ int main(int argc, char* argv[]) {
 		if (!checker)
 		{
             got_error("Macro parsing", fname);
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            free_all(symbol_table,address_encoded_line_pair_list,macro_list,line_list,entry_list,fname);
             exit(-1);
         }
 
-        checker = first_pass(line_list,symbol_table,address_encoded_line_pair, entry_list);
+        checker = first_pass(line_list,symbol_table,address_encoded_line_pair_list, entry_list);
 
         if (!checker){
             got_error("Compile - first pass", fname);
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            free_all(symbol_table,address_encoded_line_pair_list,macro_list,line_list,entry_list,fname);
             exit(-1);
 
         }
 
-        checker = second_pass(symbol_table,address_encoded_line_pair,entry_list);
+        checker = second_pass(symbol_table,address_encoded_line_pair_list,entry_list);
 
         if (!checker){
             got_error("Compile - Second pass", fname);
-            free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+            free_all(symbol_table,address_encoded_line_pair_list,macro_list,line_list,entry_list,fname);
             exit(-1);
         }
 
         debugf(-1,"Final IC: %lu, Final DC: %lu\n", final_IC, final_DC);
-		create_files(symbol_table, address_encoded_line_pair, fname);
+		create_files(symbol_table, address_encoded_line_pair_list, fname);
         infof(-1,"Finished processing %s", fname);
-        free_all(symbol_table,address_encoded_line_pair,macro_list,line_list,entry_list,fname);
+        free_all(symbol_table,address_encoded_line_pair_list,macro_list,line_list,entry_list,fname);
     }
 
     free_command_set();
@@ -90,14 +90,14 @@ void got_error( char* stage_name, char* fname){
 }
 
 void free_all( DoublyLinkedList *symbol_table,
-DoublyLinkedList *address_encoded_line_pair,
+DoublyLinkedList *address_encoded_line_pair_list,
 DoublyLinkedList *macro_list,
 DoublyLinkedList *line_list,
 DoublyLinkedList *entry_list,
 char* fname){
     free_macro_table(macro_list);
     free_list(&symbol_table, free_symbol_data);
-    free_list(&address_encoded_line_pair, free_address_encoded_pair);
+    free_list(&address_encoded_line_pair_list, free_address_encoded_pair);
     free_list(&entry_list,free_entry_data);
     free_line_table(line_list);
     free(fname);

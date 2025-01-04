@@ -1,10 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "address_encoded_pair.h"
-#include "../utils/commons.h"
-#include "../core/encoded_line.h"
-#include "../core/doubly_linked_list.h"
-
 unsigned int get_encoded_line_as_binary(EncodedLine *encoded_line) {
     unsigned int encoded_value = 0;
 

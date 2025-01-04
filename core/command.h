@@ -12,7 +12,7 @@
 #define ADDRESSING_RELATIVE  2
 #define ADDRESSING_REGISTER  3
 
-/* Command structure */
+/** Command structure including all command (not instruction) relevant fields*/
 typedef struct {
     char* command_name;
     int opcode;
@@ -24,38 +24,38 @@ typedef struct {
     int allowed_dst_addressing_modes[4];
 } Command;
 
-/* Global command set */
+/** Global command set */
 extern DoublyLinkedList* command_list;
 
 
-/* Initializes the command set */
+/** Initializes the command set */
 void initialize_command_set();
 
-/* free command set */
+/** free command set */
 void free_command_set();
 
-/* Finds a command by name */
+/** Finds a command by name */
 Command* find_command(char* name);
 
-/* Cheks if given name is an command name */
+/** Cheks if given name is an command name */
 int is_command_name(char* name);
 
-/* Checks if a given addressing mode is allowed for the source operand */
+/** Checks if a given addressing mode is allowed for the source operand */
 int is_src_addressing_mode_allowed(Command* command, int mode);
 
-/* Checks if a given addressing mode is allowed for the destination operand */
+/** Checks if a given addressing mode is allowed for the destination operand */
 int is_dst_addressing_mode_allowed(Command* command, int mode);
-
+/**Handle the command operands including adding it to the encoded line*/
 int handle_command_operands(Command *command,
                             DoublyLinkedList *operands,
-                            DoublyLinkedList  *address_encoded_line_pair,
+                            DoublyLinkedList  *address_encoded_line_pair_list,
                             EncodedLine *encoded_line,
                             int line_index,
                             int *error_found,
                             unsigned long *IC
 );
 
-
+/**Parses command operands including validation checks*/
 void parse_command_operands(
         Command *command,
         char *operands_str,
@@ -63,14 +63,14 @@ void parse_command_operands(
         int *error_found,
         int line_index
 );
-
+/**Parsing command and adding it's details to the encoded line, then sending to additional parsing of the operands*/
 void process_command_line(
         char *line_content,
         char *label,
         int line_index,
         char *command_token,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *IC,
         int *error_found
 );

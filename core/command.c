@@ -211,7 +211,7 @@ void initialize_command_set() {
 /* Checks commands operands & Calculates the size (in words) of a command */
 int handle_command_operands(Command *command,
                             DoublyLinkedList *operands,
-                            DoublyLinkedList  *address_encoded_line_pair,
+                            DoublyLinkedList  *address_encoded_line_pair_list,
                             EncodedLine *encoded_line,
                             int line_index,
                             int *error_found,
@@ -284,12 +284,12 @@ int handle_command_operands(Command *command,
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
     address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
-    add_to_list(address_encoded_line_pair,address_encoded_pair);
+    add_to_list(address_encoded_line_pair_list,address_encoded_pair);
 
 
     debugf(line_index,"Inserted addressing modes. src: %lu, dest: %lu ",encoded_line->src_addressing,encoded_line->dst_addressing);
 
-    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair,*IC,line_index);
+    extra_words = count_extra_addresses_words(operand_array, operand_count,address_encoded_line_pair_list,*IC,line_index);
 
     for (i=0;i<command->number_of_operands;i++){
         free(operand_array[i].operand_str);
@@ -376,7 +376,7 @@ void process_command_line(
         int line_index,
         char *command_token,
         DoublyLinkedList *symbol_table,
-        DoublyLinkedList *address_encoded_line_pair,
+        DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *IC,
         int *error_found
 ) {
@@ -410,6 +410,6 @@ void process_command_line(
     }
 
     /* Increment IC based on the size of the command and operands */
-    *IC += handle_command_operands(command, operands,address_encoded_line_pair, encodedLine, line_index,error_found,IC);
+    *IC += handle_command_operands(command, operands,address_encoded_line_pair_list, encodedLine, line_index,error_found,IC);
     free_list(&operands, free);
 }

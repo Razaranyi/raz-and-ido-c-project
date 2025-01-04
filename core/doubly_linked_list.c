@@ -98,16 +98,6 @@ int add_to_list(DoublyLinkedList* doublyLinkedList, void* data){
     return TRUE;
 }
 
-int merge_lists(DoublyLinkedList* doubly_linked_list1, DoublyLinkedList* doubly_linked_list2) {
-    DoublyLinkedList* current = get_list_head(doubly_linked_list2);
-    while (current != NULL) {
-        add_to_list(doubly_linked_list1, current->data);
-        current = current->next;
-    }
-    return TRUE;
-}
-
-
 int is_list_empty(DoublyLinkedList* doubly_linked_list) {
     if (doubly_linked_list == NULL) {
         return TRUE;
