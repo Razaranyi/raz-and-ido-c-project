@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "line_indexing.h"
-#include "commons.h"
-#include "../core/command.h"
-
 
 /*get char name and list of Lines, checks if the name is in the Line name list and return int as boolean*/
 int in_line_table(char *name, DoublyLinkedList *line_list) {
