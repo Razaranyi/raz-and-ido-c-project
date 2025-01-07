@@ -4,9 +4,9 @@
 #include "encoded_line.h"
 #include "address_encoded_pair.h"
 #include <stdio.h>
-#include "operand.h"
 #include "symbol.h"
 #include "entry.h"
+#include "../core/operand.h"
 
 /*Enum to represent types of instruction commands and invalid case*/
 typedef enum {

@@ -1,0 +1,9 @@
+MAIN:        mov r8, LIST
+add #5,
+sub r1, r4, r3
+jmp MISSING_LABEL
+stop
+STR:         .string "example
+LIST:        .data 7, , , -10
+add r1, r2
+stop
