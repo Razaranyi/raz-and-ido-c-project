@@ -1,3 +1,4 @@
+;     28  17
 .extern EXTERNLABEL
 .extern EXTERNLABEL2
 MAIN:        mov r1, MYLABEL

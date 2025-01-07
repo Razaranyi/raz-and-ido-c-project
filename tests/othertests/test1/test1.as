@@ -1,3 +1,4 @@
+;11  12
 MAIN:        mov r3, LIST
 LOOP:        prn #-48
              lea STR, r6
