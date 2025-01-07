@@ -1,5 +1,6 @@
 #include <string.h>
 #include "instruction.h"
+#include "../core/operand.h"
 
 Instruction get_instruction_enum(char* instruction_name) {
     if (strcmp(instruction_name, ".data") == 0) return DATA;
@@ -148,8 +149,12 @@ void parse_extern_instruction(
         *error_found = TRUE;
         return;
     }
-
     operand = (char *)operands->data;
+    if (!is_string_equal_by_regex(operand, "^[a-zA-Z][a-zA-Z0-9]*$")) {
+        errorf(line_index, "Invalid label name '%s' in .extern instruction", operand);
+        *error_found = TRUE;
+        return;
+    }
     add_symbol(symbol_table, operand, 0,0, EXTERNAL_PROPERTY, line_index);
 }
 

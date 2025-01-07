@@ -166,7 +166,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname) || get_instruction_enum(labelname) ||
                                         is_register(labelname)) {
                                     checker = FALSE;
-                                    errorf(linecounter,"ERROR - theres a problems with the label name" );
+                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname );
                                     labelname = "";
                                 }
 
@@ -199,7 +199,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname)|| get_instruction_enum(labelname) ||
                                     is_register(labelname)) {
                                     checker = FALSE;
-                                    errorf(linecounter,"ERROR - theres a problems with the label name");
+                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname);
                                     labelname = "";
                                 }
 
@@ -222,7 +222,13 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                             labelname = strtok(line_copy, ":");
                             cut_two_dots_start(clean_line);
                             cut_spaces(labelname);
-
+                            if (in_macro_table(labelname, macro_list) || in_line_table(labelname, line_list) == TRUE ||
+                                    is_command_name(labelname) || get_instruction_enum(labelname) ||
+                                        is_register(labelname)) {
+                                    checker = FALSE;
+                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname);
+                                    labelname = "";
+                                        }        
                         } else {
                             labelname = "";
                         }

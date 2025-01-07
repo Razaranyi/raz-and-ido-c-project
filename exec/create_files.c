@@ -34,7 +34,6 @@ void create_object_file(DoublyLinkedList *encode_line_pair, char * fname)
         exit(1);
     }
     fprintf(f, "% 7ld  %ld\n", final_IC, final_DC);
-    fprintf(f, "% 7ld  %ld\n", final_IC, final_DC);
     while (current != NULL) {
         pair = (AddressEncodedPair *)current->data;
 
