@@ -29,18 +29,20 @@ jobs:
 
 
       - name: Commit and push output files
-        run: |
-          # Switch to the same branch name that triggered the workflow
-          git checkout -B "${{ github.ref_name }}"
+        # This runs if:
+        #   1) it's a pull_request event, OR
+        #   2) it's a push event, and the branch is NOT main.
+        if:
+          (github.event_name == 'pull_request') ||
+          (github.event_name == 'push' && github.ref_name != 'main')
 
-          # Configure commit info
+        run: |
+          git checkout -B "${{ github.ref_name }}"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Stage and commit
           git add -f assembler **/*.am **/*.ob **/*.ent **/*.ext
-          git commit -m "Add compiled executable and test results" || echo "No changes to commit."
 
-          # Push changes back to that same branch
+          git commit -m "Add compiled executable and test results" || echo "No changes to commit."
           git push origin HEAD:${{ github.ref_name }}
+
 
