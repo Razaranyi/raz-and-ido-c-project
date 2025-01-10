@@ -33,7 +33,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
     /* Open files */
     fp = fopen(fname_as, "r");
     if (fp == NULL) {
-        fprintf(stderr, "ERROR - there's no file named %s\n", fname_as);
+        errorf(-1, "No file named '%s'", fname_as);
         free(fname_as);
         free(macro_fname_am);
         return FALSE;
@@ -52,7 +52,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
     /* Re-open the input file to process lines */
     fp = fopen(fname_as, "r");
     if (fp == NULL) {
-        fprintf(stderr, "ERROR - there's no file named %s\n", fname_as);
+        errorf(-1, "No file named '%s'", fname_as);
         free(fname_as);
         free(macro_fname_am);
         return FALSE;
@@ -166,7 +166,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname) || get_instruction_enum(labelname) ||
                                         is_register(labelname)) {
                                     checker = FALSE;
-                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname );
+                                    errorf(linecounter,"Label '%s' already defined", labelname );
                                     labelname = "";
                                 }
 
@@ -199,7 +199,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname)|| get_instruction_enum(labelname) ||
                                     is_register(labelname)) {
                                     checker = FALSE;
-                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname);
+                                    errorf(linecounter,"Label '%s' already used", labelname);
                                     labelname = "";
                                 }
 
@@ -226,7 +226,7 @@ int parse_macro(char *fname, DoublyLinkedList *macro_list, DoublyLinkedList *lin
                                     is_command_name(labelname) || get_instruction_enum(labelname) ||
                                         is_register(labelname)) {
                                     checker = FALSE;
-                                    errorf(linecounter,"ERROR - theres a problems with the label %s - already used", labelname);
+                                    errorf(linecounter,"Label '%s' already used", labelname);
                                     labelname = "";
                                         }        
                         } else {

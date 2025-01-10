@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-/** Global values for IC and DC addresses, will be used in several different files, therefore it's global*/
+/** Global values for final IC and DC addresses, will be used in several different files, therefore it's global*/
 
 extern unsigned long final_IC;
 extern unsigned long final_DC;
