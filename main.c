@@ -23,7 +23,7 @@ void free_all( DoublyLinkedList *symbol_table,
 int main(int argc, char* argv[]) {
     int i = 0; /*for the big loop*/
     initialize_command_set();
-    set_log_level(DEBUG);
+    set_log_level(WARN);
     infof(-1,"Assembler started...");
 	if (argc < 2)
 	{
