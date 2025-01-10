@@ -78,10 +78,9 @@ void parse_data_or_string_instruction(
 
             debugf(line_index,"assigning data instruction,address: %lu value: %d ",*IC,value);
             encoded_line_set_data(encoded_line,value, -1);
-            addressEncodedPair = create_address_encoded_pair(*IC,encoded_line);
+            addressEncodedPair = create_address_encoded_pair(*IC + *DC,encoded_line);
             add_to_list(address_encoded_line_pair_list,addressEncodedPair);
             (*DC)+=1;
-            *IC+=1;
             current = current->next;
         }
 
@@ -111,19 +110,19 @@ void parse_data_or_string_instruction(
             EncodedLine* operand_encoded_line = create_encoded_line();
             debugf(line_index,"assigning string instruction to IC: %lu value: %d ",*IC,operand[i]);
             encoded_line_set_data(operand_encoded_line,operand[i], -1);
-            addressEncodedPair = create_address_encoded_pair(*IC,operand_encoded_line);
+            addressEncodedPair = create_address_encoded_pair(*IC + *DC,operand_encoded_line);
             add_to_list(address_encoded_line_pair_list,addressEncodedPair);
-            (*IC) += 1;
             i+=1;
+            (*DC) +=1;
         }
         /* Add the terminating '\0' character as a separate word */
         null_line = create_encoded_line();
         encoded_line_set_data(null_line, 0, -1); /* null terminator */
-        nullPair = create_address_encoded_pair(*IC, null_line);
+        nullPair = create_address_encoded_pair(*IC + *DC, null_line);
+        (*DC) +=1;
         add_to_list(address_encoded_line_pair_list, nullPair);
 
-        (*IC) += 1;
-        (*DC) += strlen(operand);
+
 
 
         debugf(line_index, "IC after string: %lu, DC after string: %lu",*IC,*DC);
@@ -196,7 +195,7 @@ void process_instruction_line(
 ) {
     if (instruction == DATA || instruction == STRING) {
         if (strcmp(label,"")!=0) {
-            add_symbol(symbol_table, label,*IC, *DC, DATA_PROPERTY, line_index);
+            add_symbol(symbol_table, label,*IC + *DC, *DC, DATA_PROPERTY, line_index);
         }
         parse_data_or_string_instruction(
                 instruction_token,

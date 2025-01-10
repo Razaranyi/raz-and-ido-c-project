@@ -54,7 +54,8 @@ int handle_command_operands(Command *command,
                             EncodedLine *encoded_line,
                             int line_index,
                             int *error_found,
-                            unsigned long *IC
+                            unsigned long *IC,
+                            unsigned long *DC
 );
 
 /**Parses command operands including validation checks*/
@@ -74,6 +75,7 @@ void process_command_line(
         DoublyLinkedList *symbol_table,
         DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *IC,
+        unsigned long *DC,
         int *error_found
 );
 
