@@ -25,13 +25,14 @@ jobs:
             make clean &&
             make &&
             ./assembler tests/resources/test tests/resources/test1 tests/resources/test2
+          "
 
 
       - name: Commit and push output files
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add assembler **/*.as **/*.am **/*.ob **/*.ent **/*.ext
+          git add assembler **/*.am **/*.ob **/*.ent **/*.ext
           git commit -m "Add compiled executable and test results"
           git push
           "
