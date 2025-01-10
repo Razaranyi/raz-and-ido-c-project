@@ -15,7 +15,7 @@
 #define ERROR_COLOR   "\033[31m"
 #define FATAL_COLOR   "\033[41m\033[30m"
 
-/* Define the log levels used in the logger */
+/**Define the log levels used in the logger */
 typedef enum {
     DEBUG,
     INFO,
@@ -24,12 +24,14 @@ typedef enum {
     FATAL
 } LogLevel;
 
-/* Function prototypes for logging at different levels */
+/** Function prototypes for logging at different levels */
 void infof(int line, const char *format, ...);
 void warnf(int line, const char *format, ...);
 void errorf(int line, const char *format, ...);
 void debugf(int line, const char *format, ...);
 void fatalf(int line, const char *format, ...);
+
+/**Defines log level for the assembler run DEBUG INFO WARN ERROR FATAL. Will execute logs from the log level and higher*/
 void set_log_level(LogLevel new_level);
 
 #endif

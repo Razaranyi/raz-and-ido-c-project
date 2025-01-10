@@ -91,7 +91,7 @@ int* allocate_int(int integer){
     *ptr = integer;
     return ptr;
 }
-int is_all_whitespace(const char *str) {
+int is_all_whitespace(char *str) {
     while (*str) {
         if (!isspace(*str)) {
             return FALSE;

@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     infof(-1,"Assembler started...");
 	if (argc < 2)
 	{
-		printf("ERROR - There is no file name \n");
+		errorf(-1,"Missing file name");
 		return 1;
 	}
 	
