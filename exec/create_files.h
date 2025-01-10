@@ -11,16 +11,16 @@
 #include <string.h>
 #include <ctype.h>
 
-/*grouping all the create files (extern, entry, object) function, run it and create 3 files*/
+/**grouping all the create files (extern, entry, object) function, run it and create 3 files*/
 void create_files(DoublyLinkedList *symbol_table,DoublyLinkedList *encode_line_pair, char * dir);
 
-/*get double linked list of encode line pairs and dir to the file, run over it and for any line enter her hex representation to the object file*/
+/**get double linked list of encode line pairs and dir to the file, run over it and for any line enter her hex representation to the object file*/
 void create_object_file(DoublyLinkedList *encode_line_pair, char * dir);
 
-/*get double linked list symbol table and dir to the file, run over it and for entry symbols write to ps.ent file*/
+/**get double linked list symbol table and dir to the file, run over it and for entry symbols write to ps.ent file*/
 void create_entry_file(DoublyLinkedList *symbol_table, char * dir);
 
-/*get double linked list symbol table and dir to the file, run over it and for extern symbols write to ps.ext file*/
+/**get double linked list symbol table and dir to the file, run over it and for extern symbols write to ps.ext file*/
 void create_extern_file(DoublyLinkedList *symbol_table, char * dir);
 
 #endif

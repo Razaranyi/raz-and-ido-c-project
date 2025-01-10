@@ -24,8 +24,14 @@ jobs:
             apt-get install -y gcc make diffutils git &&
             make clean &&
             make &&
-            make test TEST_NAME=doubly_linked_list &&
-            make test TEST_NAME=commons &&
-            ./assembler tests/resources/data
+            ./assembler tests/resources/test tests/resources/test1 tests/resources/test2
 
+
+      - name: Commit and push output files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add assembler **/*.as **/*.am **/*.ob **/*.ent **/*.ext
+          git commit -m "Add compiled executable and test results"
+          git push
           "

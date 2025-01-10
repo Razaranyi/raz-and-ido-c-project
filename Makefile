@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -ansi -pedantic -std=c89 -Iutils -Icore -g
+CFLAGS = -Wall -ansi -pedantic -std=c89
 
 # Directories
 TESTS_DIR = tests
@@ -18,26 +18,6 @@ COMMON_OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(COMMON_SRC)))
 assembler: $(COMMON_OBJS) $(OBJ_DIR)/main.o
 	$(CC) $(CFLAGS) -o assembler $(COMMON_OBJS) $(OBJ_DIR)/main.o
 	@echo "Executable 'assembler' created successfully."
-
-# Test target
-TEST_EXEC = test_runner
-
-# User-defined input for test name
-TEST_NAME ?= all
-
-# Test source dynamically determined by the input
-TEST_SRC = $(wildcard $(TESTS_DIR)/test_$(TEST_NAME).c)
-
-# Object files for the test
-TEST_OBJ = $(patsubst $(TESTS_DIR)/%.c, $(OBJ_DIR)/%.o, $(TEST_SRC))
-
-# Default test target (excluding main.c)
-test: $(TEST_EXEC)
-	./$(TEST_EXEC)
-
-# Build test runner based on the input (excluding main.o)
-$(TEST_EXEC): $(TEST_OBJ) $(COMMON_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
 
 # Compile test sources into object files
 $(OBJ_DIR)/%.o: $(TESTS_DIR)/%.c
@@ -67,5 +47,3 @@ $(OBJ_DIR)/main.o: main.c
 clean:
 	rm -rf $(OBJ_DIR)/*.o $(TEST_EXEC) assembler
 
-# Phony targets
-.PHONY: test clean assembler

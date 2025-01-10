@@ -10,7 +10,7 @@ MIDDLE:      bne &END
 END:         dec r2
              lea MISSING, r5
              .data 10, 20
-             .entry START
+redundantLabel:              .entry START
              .entry NOT_DEFINED
              .extern MISSING
              .entry MISSING

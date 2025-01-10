@@ -3,11 +3,13 @@
 #include "../utils/commons.h"
 #include "../utils/logger.h"
 
-#define A 4
-#define R 2
-#define E 1
+/** Those definition are for ARE value according to the bit of each one in the assignment instructions */
 
-/*Struct to represent a binary code of a line with additional fields
+#define A 4 /*100*/
+#define R 2 /*010*/
+#define E 1 /*001*/
+
+/**Struct to represent a binary code of a line with additional fields
  * for immediate value and unresolved symbols with their indexed line for later use*/
 typedef struct {
     unsigned int opcode : 6;         /* Bits 23-18 */
@@ -16,25 +18,24 @@ typedef struct {
     unsigned int dst_addressing : 2; /* Bits 12-11 */
     unsigned int dst_reg : 3;        /* Bits 10-8 */
     unsigned int funct : 5;          /* Bits 7-3 */
-    unsigned int are : 3;
-/* Bits 2-0 */
+    unsigned int are : 3;            /* Bits 2-0 */
 
-    /* If immediate addressing, store the value */
+    /** If immediate addressing, store the value */
     int immediate_value;
 
-    /*if unresolved symbol store it to be resolved in second pass (along with its line in case of error)*/
+    /** if unresolved symbol store it to be resolved in second pass (along with its line in case of error)*/
     char *unresolved_symbol;
     int line_index;
 
 } EncodedLine;
 
-/*Creates new encoded line*/
+/**Creates new encoded line*/
 EncodedLine* create_encoded_line();
 
-/*Free encoded line*/
+/**Free encoded line*/
 void free_encoded_line(EncodedLine* encoded_line);
 
-/*Setters for encoded lines values*/
+/**Setters for encoded lines values*/
 
 void encoded_line_set_opcode(EncodedLine* line, unsigned int opscode);
 void encoded_line_set_funct(EncodedLine* line, unsigned int funct);
