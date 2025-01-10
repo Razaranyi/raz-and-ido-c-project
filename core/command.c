@@ -215,7 +215,8 @@ int handle_command_operands(Command *command,
                             EncodedLine *encoded_line,
                             int line_index,
                             int *error_found,
-                            unsigned long *IC
+                            unsigned long *IC,
+                            unsigned long *DC
                             ) {
     Operand *operand_array = calloc(command->number_of_operands, sizeof(Operand));
     int operand_count = 0;
@@ -283,7 +284,7 @@ int handle_command_operands(Command *command,
         encoded_line_set_src_addressing(encoded_line, operand_array[0].addressing_mode);
         encoded_line_set_dst_addressing(encoded_line, operand_array[1].addressing_mode);
     }
-    address_encoded_pair = create_address_encoded_pair(*IC,encoded_line);
+    address_encoded_pair = create_address_encoded_pair(*IC + *DC,encoded_line);
     add_to_list(address_encoded_line_pair_list,address_encoded_pair);
 
 
@@ -378,6 +379,7 @@ void process_command_line(
         DoublyLinkedList *symbol_table,
         DoublyLinkedList *address_encoded_line_pair_list,
         unsigned long *IC,
+        unsigned long *DC,
         int *error_found
 ) {
     Command *command = find_command(command_token);
@@ -406,10 +408,10 @@ void process_command_line(
 
     /* Add the label to the symbol table if it exists */
     if (strcmp(label,"")!=0) {
-        add_symbol(symbol_table, label, *IC,0, CODE_PROPERTY, line_index);
+        add_symbol(symbol_table, label, *IC + *DC,0, CODE_PROPERTY, line_index);
     }
 
     /* Increment IC based on the size of the command and operands */
-    *IC += handle_command_operands(command, operands,address_encoded_line_pair_list, encodedLine, line_index,error_found,IC);
+    *IC += handle_command_operands(command, operands,address_encoded_line_pair_list, encodedLine, line_index,error_found,IC,DC);
     free_list(&operands, free);
 }

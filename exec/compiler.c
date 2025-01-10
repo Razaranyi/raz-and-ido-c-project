@@ -58,6 +58,7 @@ void process_line(
                              symbol_table,
                              address_encoded_line_pair_list,
                              IC,
+                             DC,
                              error_found);
     } else {
         Instruction instruction = get_instruction_enum(token);
@@ -121,8 +122,8 @@ int first_pass(DoublyLinkedList *line_list,
         current_node = current_node->next;
     }
     debugf(-1, "IC: %lu, DC: %lu",IC,DC);
-    final_DC = DC -1;
-    final_IC = IC-100 - final_DC;
+    final_DC = DC;
+    final_IC = IC-100;
 
 
     return !error_found;
