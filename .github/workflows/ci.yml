@@ -24,7 +24,7 @@ jobs:
             apt-get install -y gcc make diffutils git &&
             make clean &&
             make &&
-            ./assembler tests/resources/test tests/resources/test1 tests/resources/test2
+            ./assembler tests/resources/test tests/resources/negative_test tests/resources/test2
           "
 
 
