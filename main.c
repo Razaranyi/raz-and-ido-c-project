@@ -101,4 +101,5 @@ char* fname){
     free_list(&entry_list,free_entry_data);
     free_line_table(line_list);
     free(fname);
+	/*new comment*/
 }
